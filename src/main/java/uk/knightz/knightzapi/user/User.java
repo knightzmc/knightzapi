@@ -2,10 +2,11 @@ package uk.knightz.knightzapi.user;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.kits.Kit;
+import uk.knightz.knightzapi.kits.KitItem;
 import uk.knightz.knightzapi.kits.PurchasableKit;
 import uk.knightz.knightzapi.utils.CollectionUtils;
 
@@ -70,8 +71,22 @@ public class User {
     public void setInventory(Kit kit) {
         if (root.isOnline()) {
             Player p = root.getPlayer();
+            p.getInventory().clear();
             kit.getItems().forEach(i -> p.getInventory().addItem(i.getItem()));
         }
+    }
+
+    public Optional<Kit> equippedKit() {
+        if (root.isOnline()) {
+            Player p = root.getPlayer();
+            for (Kit kit : ownedKits) {
+                Iterable<ItemStack> items = CollectionUtils.changeListType(kit.getItems(), KitItem::getItem);
+                if (items.equals(p.getInventory())) {
+                    return Optional.of(kit);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     public boolean ownsKit(Kit kit) {
