@@ -40,6 +40,11 @@ public class CollectionUtils {
 
     @SuppressWarnings("unchecked")
     public static <Type, Return> Collection<Return> applyToEach(Collection<Type> collection, Function<Type, Return> toExec) {
+        if (collection instanceof HashSet) {
+            HashSet set = new HashSet();
+            collection.forEach(t -> set.add(toExec.apply(t)));
+            return set;
+        }
         Collection temp = collection;
         temp.clear();
         collection.forEach(t -> temp.add(toExec.apply(t)));

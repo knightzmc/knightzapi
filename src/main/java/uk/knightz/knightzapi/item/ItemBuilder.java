@@ -68,7 +68,7 @@ public class ItemBuilder {
         tempMeta.setLore(Chat.color(lore));
         flags.forEach(tempMeta::addItemFlags);
         temp.setItemMeta(tempMeta);
-        enchantments.forEach(temp::addEnchantment);
+        enchantments.forEach(temp::addUnsafeEnchantment);
         return temp;
     }
 }
