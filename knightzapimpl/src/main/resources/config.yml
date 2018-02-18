@@ -1,0 +1,6 @@
+#Enable debug messages
+debug: false
+#Enable cross-server communication (recommended)
+communication: true
+#Enable automatic bug reporting (highly recommended)
+report: true
