@@ -3,10 +3,11 @@ package uk.knightz.knightzapi.communication.server.authorisaton;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
+import spark.Spark;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
 
-import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -43,11 +44,10 @@ public enum AuthMethod {
         @Override
         boolean validate(Request request, Response response) {
             try {
-                if (Webserver.getInstance().getWhitelist().contains((Inet4Address) Inet4Address.getByName(request.ip()))) {
+                if (Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
                     return true;
                 } else {
-                    response.status(401);
-                    response.body(new Gson().toJson(new JSONMessage(401, "Your IP is not whitelisted!")));
+                    Spark.halt(401, new Gson().toJson(new JSONMessage(401, "Your IP is not whitelisted!")));
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();

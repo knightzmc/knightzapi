@@ -68,4 +68,23 @@ public class CollectionUtils {
         java.util.Collections.sort(list);
         return list;
     }
+
+    public static <E> Iterable<E> iterable(final Enumeration<E> enumeration) {
+        if (enumeration == null) {
+            throw new NullPointerException();
+        }
+        return () -> new Iterator<E>() {
+            public boolean hasNext() {
+                return enumeration.hasMoreElements();
+            }
+
+            public E next() {
+                return enumeration.nextElement();
+            }
+
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
 }

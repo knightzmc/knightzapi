@@ -13,6 +13,10 @@ import uk.knightz.knightzapi.communication.server.Webserver;
 public class AuthFilter implements Filter {
     @Override
     public void handle(Request request, Response response) {
-        Webserver.getInstance().getAuth().validate(request, response);
+        try {
+            Webserver.getInstance().getAuth().validate(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

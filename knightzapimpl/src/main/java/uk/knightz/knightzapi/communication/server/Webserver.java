@@ -3,7 +3,6 @@ package uk.knightz.knightzapi.communication.server;
 import org.apache.commons.lang.Validate;
 import spark.Spark;
 import uk.knightz.knightzapi.KnightzAPI;
-import uk.knightz.knightzapi.communication.MainRoute;
 import uk.knightz.knightzapi.communication.WebModule;
 import uk.knightz.knightzapi.communication.rsa.RSAIO;
 import uk.knightz.knightzapi.communication.rsa.RSAKeyGen;
@@ -11,9 +10,12 @@ import uk.knightz.knightzapi.communication.server.authorisaton.AuthFilter;
 import uk.knightz.knightzapi.communication.server.authorisaton.AuthMethod;
 import uk.knightz.knightzapi.communication.server.authorisaton.Whitelist;
 import uk.knightz.knightzapi.communication.server.defaultmodules.ValidateModule;
+import uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel.LoginModule;
 
 import java.io.File;
 import java.security.KeyPair;
+
+import static spark.Spark.before;
 
 /**
  * This class was created by AlexL (Knightz) on 14/02/2018 at 12:59.
@@ -29,9 +31,6 @@ public class Webserver extends Thread {
     private final KeyPair pair;
     private final AuthMethod auth;
     private Whitelist whitelist;
-    public Whitelist getWhitelist() {
-        return whitelist;
-    }
 
     private Webserver(AuthMethod auth) {
         this.auth = auth;
@@ -50,10 +49,10 @@ public class Webserver extends Thread {
             e.printStackTrace();
         }
         this.pair = pair;
-        registerModule(new ValidateModule());
+        new ValidateModule();
+        new LoginModule();
         if (auth.equals(AuthMethod.WHITELIST) || auth.equals(AuthMethod.WHITEAUTH)) {
             whitelist = Whitelist.deserialize(KnightzAPI.getWebserverFile().getConfigurationSection("auth").getValues(true));
-
         }
         this.start();
     }
@@ -68,6 +67,10 @@ public class Webserver extends Thread {
         return instance = new Webserver(auth);
     }
 
+    public Whitelist getWhitelist() {
+        return whitelist;
+    }
+
     public AuthMethod getAuth() {
         return auth;
     }
@@ -78,11 +81,11 @@ public class Webserver extends Thread {
 
     @Override
     public void run() {
+        Spark.staticFiles.location("/public");
+        before(new AuthFilter());
+//        Spark.get("/", "text/html", (req, res) -> KnightzAPI.renderFile("public/index.html"));
+//        WebModule.getAllModules().forEach(WebModule::exec);
         Spark.init();
-        Spark.before(new AuthFilter());
-        Spark.get("/", new MainRoute());
-        Spark.post("/", new MainRoute());
-        WebModule.getAllModules().forEach(WebModule::exec);
     }
 
     public void registerModule(WebModule module) {
