@@ -22,7 +22,7 @@ import java.util.*;
 public class ItemBuilder {
     private String name = null;
     private Material type = Material.AIR;
-    private List<ItemFlag> flags = new ArrayList<>();
+    private Set<ItemFlag> flags = new HashSet<>();
     private List<String> lore = new ArrayList<>();
     private int amount = 1;
     private short data = 0;
@@ -35,6 +35,41 @@ public class ItemBuilder {
 
     public ItemBuilder() {
 
+    }
+
+    public ItemBuilder(Map<String, Object> fromConfig) {
+        setType(Material.valueOf(String.valueOf(fromConfig.getOrDefault("type", Material.AIR))));
+        setAmount((Integer) fromConfig.getOrDefault("amount", 1));
+        setName(Chat.color(String.valueOf(fromConfig.getOrDefault("name", null))));
+        for (String v : (List<String>) fromConfig.getOrDefault("itemflags", new ArrayList<>())) {
+            addFlag(ItemFlag.valueOf(v));
+        }
+        setLore(Chat.color((List<String>) fromConfig.getOrDefault("lore", new ArrayList<>())));
+        setData(Short.parseShort(String.valueOf(fromConfig.getOrDefault("data", "0"))));
+        Map<Enchantment, Integer> enchants = (Map<Enchantment, Integer>) fromConfig.getOrDefault("enchantments", new HashMap<>());
+        setEnchantments(enchants);
+    }
+
+    public ItemBuilder(ItemStack root) {
+        setType(root.getType());
+        setAmount(root.getAmount());
+        setName(root.getItemMeta().getDisplayName());
+        flags = root.getItemMeta().getItemFlags();
+        setLore(root.getItemMeta().getLore());
+        setData(root.getDurability());
+        setEnchantments(root.getEnchantments());
+    }
+
+    public Map<String, Object> serialize() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", name);
+        values.put("type", type);
+        values.put("itemflags", flags);
+        values.put("lore", lore);
+        values.put("amount", amount);
+        values.put("data", data);
+        values.put("enchantments", enchantments);
+        return values;
     }
 
     public ItemBuilder setPotionType(PotionType potionType) {

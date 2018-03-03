@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import spark.Spark;
 import uk.knightz.knightzapi.commands.CommTestCommand;
 import uk.knightz.knightzapi.communication.server.ServerManager;
-import uk.knightz.knightzapi.communication.server.SimpleServer;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisaton.AuthMethod;
 import uk.knightz.knightzapi.communicationapi.authorisation.NotAuthorisedException;
@@ -50,7 +49,7 @@ public class KnightzAPI extends JavaPlugin {
     private static final ServerFactory factory = new ServerFactory() {
         @Override
         public Server getServer(InetSocketAddress address) throws NotAuthorisedException {
-            return new SimpleServer(address);
+            return null;
         }
     };
     private static FileConfiguration config;

@@ -11,6 +11,7 @@ import uk.knightz.knightzapi.communication.server.authorisaton.AuthMethod;
 import uk.knightz.knightzapi.communication.server.authorisaton.Whitelist;
 import uk.knightz.knightzapi.communication.server.defaultmodules.ValidateModule;
 import uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel.LoginModule;
+import uk.knightz.knightzapi.lang.Log;
 
 import java.io.File;
 import java.security.KeyPair;
@@ -83,9 +84,9 @@ public class Webserver extends Thread {
     public void run() {
         Spark.staticFiles.location("/public");
         before(new AuthFilter());
-//        Spark.get("/", "text/html", (req, res) -> KnightzAPI.renderFile("public/index.html"));
-//        WebModule.getAllModules().forEach(WebModule::exec);
+        WebModule.getAllModules().forEach(WebModule::exec);
         Spark.init();
+        Log.normal("[KnightzAPI] Webserver successfully started up!");
     }
 
     public void registerModule(WebModule module) {

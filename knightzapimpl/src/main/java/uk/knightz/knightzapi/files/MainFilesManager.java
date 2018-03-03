@@ -21,16 +21,16 @@ public class MainFilesManager implements FilesManager {
 
     @Override
     public PluginFile createPluginFile(String fileName) {
-        return new PluginFile(api.getP(), fileName);
+        return new PluginFile(KnightzAPI.getP(), fileName);
     }
 
     @Override
     public PluginFile createPluginFile(String fileName, String defaultsName) {
-        return new PluginFile(api.getP(), fileName, defaultsName);
+        return new PluginFile(KnightzAPI.getP(), fileName, defaultsName);
     }
 
     @Override
     public PluginFile createPluginFile(String fileName, String defaultsName, String directory) {
-        return new PluginFile(api.getP(), fileName, defaultsName, directory);
+        return new PluginFile(KnightzAPI.getP(), fileName, defaultsName, directory);
     }
 }
