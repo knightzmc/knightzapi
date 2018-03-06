@@ -82,6 +82,9 @@ public class Webserver extends Thread {
 
     @Override
     public void run() {
+        //Allow Spark to load static files from Bukkit
+        Thread.currentThread().setContextClassLoader(KnightzAPI.class.getClassLoader());
+
         Spark.staticFiles.location("/public");
         before(new AuthFilter());
         WebModule.getAllModules().forEach(WebModule::exec);

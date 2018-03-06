@@ -1,0 +1,20 @@
+package uk.knightz.knightzapi.lang;
+
+/**
+ * This class was created by AlexL (Knightz) on 05/03/2018 at 19:24.
+ * Copyright Knightz 2018
+ * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+ **/
+public abstract class Placeholder {
+    private final String placeholder;
+
+    public Placeholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public abstract String replace(String value);
+}

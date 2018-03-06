@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import spark.Spark;
 import uk.knightz.knightzapi.commands.CommTestCommand;
 import uk.knightz.knightzapi.communication.server.ServerManager;
+import uk.knightz.knightzapi.communication.server.SimpleServer;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisaton.AuthMethod;
 import uk.knightz.knightzapi.communicationapi.authorisation.NotAuthorisedException;
-import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
 import uk.knightz.knightzapi.communicationapi.server.Server;
 import uk.knightz.knightzapi.communicationapi.server.ServerFactory;
 import uk.knightz.knightzapi.files.FilesManager;
@@ -27,15 +27,9 @@ import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.user.User;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +43,7 @@ public class KnightzAPI extends JavaPlugin {
     private static final ServerFactory factory = new ServerFactory() {
         @Override
         public Server getServer(InetSocketAddress address) throws NotAuthorisedException {
-            return null;
+            return new SimpleServer(address);
         }
     };
     private static FileConfiguration config;
@@ -84,23 +78,6 @@ public class KnightzAPI extends JavaPlugin {
 
     public static PluginFile getWebserverFile() {
         return webserverFile;
-    }
-
-    public static String renderFile(String fileName) {
-        try {
-            URL url = KnightzAPI.class.getResource(fileName);
-            String answer = new String
-                    (Files.readAllBytes
-                            (Paths.get(
-                                    url
-                                            .toURI())),
-                            Charset.defaultCharset());
-            System.out.println(answer);
-            return answer;
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
-        }
-        return new JSONMessage(403, "Internal Error Occured").toJson();
     }
 
     @Override
