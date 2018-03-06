@@ -1,6 +1,6 @@
 package uk.knightz.knightzapi.communication.server;
 
-import uk.knightz.knightzapi.communication.server.authorisaton.AuthMethod;
+import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
 
 /**
  * This class was created by AlexL (Knightz) on 14/02/2018 at 11:32.

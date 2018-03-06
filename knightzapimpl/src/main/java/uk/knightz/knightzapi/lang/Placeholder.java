@@ -16,5 +16,16 @@ public abstract class Placeholder {
         return placeholder;
     }
 
-    public abstract String replace(String value);
+    public abstract String getReplacement();
+
+
+    /**
+     * Apply the placeholders to the given String
+     *
+     * @param toReplace
+     * @return
+     */
+    public String replace(String toReplace) {
+        return toReplace.replace(getPlaceholder(), getReplacement());
+    }
 }

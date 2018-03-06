@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.communication.server.authorisaton;
+package uk.knightz.knightzapi.communication.server.authorisation;
 
 import com.google.gson.Gson;
 import spark.Request;

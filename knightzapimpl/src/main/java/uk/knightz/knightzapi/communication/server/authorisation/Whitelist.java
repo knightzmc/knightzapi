@@ -1,5 +1,6 @@
-package uk.knightz.knightzapi.communication.server.authorisaton;
+package uk.knightz.knightzapi.communication.server.authorisation;
 
+import co.aikar.commands.annotation.HelpCommand;
 import com.google.common.net.InetAddresses;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.jetbrains.annotations.NotNull;
