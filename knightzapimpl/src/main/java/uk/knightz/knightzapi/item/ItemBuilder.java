@@ -11,6 +11,7 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 import uk.knightz.knightzapi.lang.Chat;
+import uk.knightz.knightzapi.lang.Placeholder;
 
 import java.util.*;
 
@@ -32,6 +33,7 @@ public class ItemBuilder {
     private List<PotionEffect> effects = new ArrayList<>();
     private Color potionColor = Color.LIME;
     private PotionType potionType = PotionType.INSTANT_HEAL;
+    private List<Placeholder> placeholders = new ArrayList<>();
 
     public ItemBuilder() {
 
@@ -58,6 +60,11 @@ public class ItemBuilder {
         setLore(root.getItemMeta().getLore());
         setData(root.getDurability());
         setEnchantments(root.getEnchantments());
+    }
+
+    public ItemBuilder withPlaceholder(Placeholder... p) {
+        placeholders.addAll(Arrays.asList(p));
+        return this;
     }
 
     public Map<String, Object> serialize() {
@@ -142,6 +149,8 @@ public class ItemBuilder {
             meta.setBasePotionData(new PotionData(potionType));
         }
         tempMeta.setDisplayName(Chat.color(name));
+        placeholders.forEach(p -> tempMeta.setDisplayName(p.replace(tempMeta.getDisplayName())));
+        placeholders.forEach(p -> lore.replaceAll(p::replace));
         tempMeta.setLore(Chat.color(lore));
         if (unbreakable) {
             tempMeta.setUnbreakable(true);

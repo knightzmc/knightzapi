@@ -9,6 +9,9 @@ public abstract class Placeholder {
     private final String placeholder;
 
     public Placeholder(String placeholder) {
+        if (placeholder == null) {
+            throw new IllegalArgumentException("Placeholder cannot be null!");
+        }
         this.placeholder = placeholder;
     }
 
@@ -26,6 +29,12 @@ public abstract class Placeholder {
      * @return
      */
     public String replace(String toReplace) {
-        return toReplace.replace(getPlaceholder(), getReplacement());
+        if (toReplace == null) {
+            return null;
+        }
+        return
+                toReplace
+                        .replace
+                                (getPlaceholder(), getReplacement());
     }
 }

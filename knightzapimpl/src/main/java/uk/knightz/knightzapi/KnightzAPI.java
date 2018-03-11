@@ -11,13 +11,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import spark.Spark;
 import uk.knightz.knightzapi.commands.CommTestCommand;
 import uk.knightz.knightzapi.communication.server.ServerManager;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
-import uk.knightz.knightzapi.communicationapi.authorisation.NotAuthorisedException;
 import uk.knightz.knightzapi.communicationapi.server.Server;
 import uk.knightz.knightzapi.communicationapi.server.ServerFactory;
 import uk.knightz.knightzapi.files.FilesManager;
@@ -26,8 +24,6 @@ import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.user.User;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +37,7 @@ public class KnightzAPI extends JavaPlugin {
     private static final Set<JavaPlugin> dependent = new HashSet<>();
     private static final ServerFactory factory = new ServerFactory() {
         @Override
-        public Server getServer(InetSocketAddress address) throws NotAuthorisedException {
+        public Server getServer(InetSocketAddress address) {
             return null;
 //                    new SimpleServer(address);
         }
@@ -180,42 +176,4 @@ public class KnightzAPI extends JavaPlugin {
         return permission != null;
     }
 
-    private static class TestPrintStream extends PrintStream {
-
-        public TestPrintStream(@NotNull OutputStream out) {
-            super(out);
-        }
-
-        @Override
-        public void println(Object o) {
-            String s = String.valueOf(o);
-            synchronized (this) {
-                if (o instanceof Exception) {
-                    boolean us = false;
-                    for (StackTraceElement stackTraceElement : ((Throwable) o).getStackTrace()) {
-                        if (stackTraceElement.getClassName().contains("knightzapi")) {
-                            us = true;
-                            break;
-                        }
-                    }
-                    if (us) {
-                        Sentry.capture((Throwable) o);
-                        System.out.println("An error has occurred within KnightzAPI! It has been automatically logged!");
-                    }
-                    Log.debug(((Throwable) o).getStackTrace());
-                }
-                if (o instanceof StackTraceElement) {
-                    System.out.println(o);
-                }
-            }
-        }
-
-        @Override
-        public void println(String o) {
-            String s = String.valueOf(o);
-            synchronized (this) {
-                System.out.println(o);
-            }
-        }
-    }
 }
