@@ -13,10 +13,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
 import uk.knightz.knightzapi.commands.CommTestCommand;
+import uk.knightz.knightzapi.communication.module.ModuleManager;
 import uk.knightz.knightzapi.communication.server.ServerManager;
+import uk.knightz.knightzapi.communication.server.SimpleServer;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
-import uk.knightz.knightzapi.communicationapi.server.Server;
 import uk.knightz.knightzapi.communicationapi.server.ServerFactory;
 import uk.knightz.knightzapi.files.FilesManager;
 import uk.knightz.knightzapi.files.MainFilesManager;
@@ -24,7 +25,6 @@ import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.user.User;
 
-import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,13 +35,7 @@ import java.util.Set;
  **/
 public class KnightzAPI extends JavaPlugin {
     private static final Set<JavaPlugin> dependent = new HashSet<>();
-    private static final ServerFactory factory = new ServerFactory() {
-        @Override
-        public Server getServer(InetSocketAddress address) {
-            return null;
-//                    new SimpleServer(address);
-        }
-    };
+    private static final ServerFactory factory = SimpleServer::new;
     private static FileConfiguration config;
     private static KnightzAPI p;
     private static Webserver server;
@@ -109,6 +103,7 @@ public class KnightzAPI extends JavaPlugin {
 //            System.setErr(ps);
 //        }
         if (config.getBoolean("communication")) {
+            ModuleManager.init(this);
             webserverFile = new PluginFile(this, "webserver.yml", "webserver.yml");
             manager = ServerManager.getInstance();
             server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));

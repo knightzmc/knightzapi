@@ -1,9 +1,9 @@
 package uk.knightz.knightzapi.communication.server.authorisation;
 
 import com.google.gson.Gson;
-import spark.Request;
 import spark.Response;
 import spark.Spark;
+import uk.knightz.knightzapi.communication.server.Request;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
 
@@ -23,8 +23,7 @@ public enum AuthMethod {
      */
     NONE {
         @Override
-        boolean validate(Request request, Response response) {
-            return true;
+        void validate(Request request, Response response) {
         }
     },
     /**
@@ -32,8 +31,7 @@ public enum AuthMethod {
      */
     AUTH {
         @Override
-        boolean validate(Request request, Response response) {
-            return false;
+        void validate(Request request, Response response) {
         }
     },
 
@@ -42,17 +40,14 @@ public enum AuthMethod {
      */
     WHITELIST {
         @Override
-        boolean validate(Request request, Response response) {
+        void validate(Request request, Response response) {
             try {
-                if (Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
-                    return true;
-                } else {
+                if (!Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
                     Spark.halt(401, new Gson().toJson(new JSONMessage(401, "Your IP is not whitelisted!")));
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
-            return false;
         }
     },
 
@@ -61,10 +56,9 @@ public enum AuthMethod {
      */
     WHITEAUTH {
         @Override
-        boolean validate(Request request, Response response) {
-            return false;
+        void validate(Request request, Response response) {
         }
     };
 
-    abstract boolean validate(Request request, Response response);
+    abstract void validate(Request request, Response response);
 }
