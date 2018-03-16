@@ -1,8 +1,4 @@
-package uk.knightz.knightzapi.communication.module;/**
- * This class was created by AlexL (Knightz) on 14/03/2018 at 22:11.
- * Copyright Knightz 2018
- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
- **/
+package uk.knightz.knightzapi.communication.module;
 
 import uk.knightz.knightzapi.KnightzAPI;
 
@@ -10,8 +6,10 @@ import java.util.Set;
 
 /**
  * This class was created by AlexL (Knightz) on 14/03/2018 at 22:11.
- * Copyright Knightz 2018 #else2018-2018 For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+ * Copyright Knightz 2018
+ * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
+
 public class ModuleManager {
     private static ModuleManager manager;
 
@@ -25,10 +23,26 @@ public class ModuleManager {
         allModules = loader.loadModules();
     }
 
+    public static ModuleManager getManager() {
+        return manager;
+    }
+
     public static ModuleManager init(KnightzAPI main) {
         if (manager == null) {
             return manager = new ModuleManager(main);
         }
         return manager;
+    }
+
+    public Set<Module> getAllModules() {
+        return allModules;
+    }
+
+    public ModuleLoader getLoader() {
+        return loader;
+    }
+
+    public void addModule(Module m) {
+        allModules.add(m);
     }
 }

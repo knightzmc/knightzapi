@@ -21,11 +21,8 @@ public class MainRoute implements Route {
     public Object handle(Request request, Response response) {
         if (request.requestMethod().equals("POST")) {
             try {
-                String message =
-                        new String(
-                                (RSA.decrypt(Base64.getDecoder().decode(request.queryParams("data").getBytes()),
-                                        Base64.getDecoder().decode(request.queryParams("aes").getBytes()), Webserver.getInstance().getPair().getPrivate())));
-                System.out.println("Message= " + message);
+                String message = new String((RSA.decrypt(Base64.getDecoder().decode(request.queryParams("data").getBytes()), Base64.getDecoder().decode(request.queryParams("aes").getBytes()), Webserver.getInstance().getPair().getPrivate())));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

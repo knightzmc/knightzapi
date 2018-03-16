@@ -1,5 +1,6 @@
 package uk.knightz.knightzapi.communication.module;
 
+import com.google.common.collect.Sets;
 import org.xeustechnologies.jcl.JarClassLoader;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.lang.Log;
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -31,12 +31,7 @@ class ModuleLoader extends Thread {
     private final ModuleManager manager;
     private final KnightzAPI knightzAPI;
     private final JarClassLoader jcl;
-    IOException e
     private Set<Module> all;
-
-    {
-        e.printStackTrace();
-    }
 
     private ModuleLoader(ModuleManager manager, KnightzAPI m) {
         this.manager = manager;
@@ -56,12 +51,16 @@ class ModuleLoader extends Thread {
         loadModules();
     }
 
+    @SuppressWarnings("ConstantConditions")
     public synchronized Set<Module> loadModules() {
         File modulesDir = new File(knightzAPI.getDataFolder(), "/modules");
+        if (modulesDir.listFiles() == null || modulesDir.listFiles().length == 0) {
+            return Sets.newHashSet();
+        }
         all = new HashSet<>();
         Arrays.stream(modulesDir.listFiles()).forEach(this::load);
         return all;
-    } catch(
+    }
 
     private List<String> getClassesInJar(File f) {
         try {
@@ -81,13 +80,16 @@ class ModuleLoader extends Thread {
         }
 
         return null;
-    })
+    }
 
     private synchronized Module load(File f) {
         try {
             jcl.add(new FileInputStream(f));
             List<String> classes = getClassesInJar(f);
             List<Class> clazzes = new ArrayList<>();
+            if (classes == null) {
+                return null;
+            }
             classes.forEach(n -> {
                 try {
                     clazzes.add(jcl.loadClass(n));
@@ -96,30 +98,33 @@ class ModuleLoader extends Thread {
                 }
             });
             clazzes.sort(((o1, o2) -> Module.class.isAssignableFrom(o1) && o1 != Module.class ? -1 : 1));
-            Module module = null;
+            boolean contains = false;
+            Module module;
             for (Class clazz : clazzes) {
                 if (clazz == null) {
-                    Log.severe("Module Class " + clazz.getName() + " failed to be loaded into the server! Please contact @Knightz#0986 on discord for assistance!");
+                    Log.severe("Module " + f.getName() + " failed to be loaded into the server! Please contact @Knightz#0986 on discord for assistance!");
                     continue;
                 }
                 if (Module.class.isAssignableFrom(clazz)) {
+                    if (contains) {
+                        throw new ModuleException("Only one class should extend Module in module " + f.getName());
+                    }
                     Class<? extends Module> modClazz = (Class<? extends Module>) clazz;
                     if (modClazz.equals(Module.class)) {
                         continue;
                     }
-                    Constructor constructor = modClazz.getDeclaredConstructor(JarFile.class);
+                    Constructor constructor = modClazz.getDeclaredConstructor();
                     constructor.setAccessible(true);
-                    module = (Module) constructor.newInstance(new JarFile(f));
-                    module.onEnable();
+                    module = (Module) constructor.newInstance();
                     System.out.println("Module " + module.getName() + " sucessfully loaded!");
-                    ModuleManager.allModules.add(module);
+                    ModuleManager.getManager().addModule(module);
+                    contains = true;
                 }
-                module.addClass(clazz);
             }
         } catch (IOException | IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
+        return null;
     }
-        return null
 }
-}
+

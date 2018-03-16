@@ -43,6 +43,7 @@ public enum AuthMethod {
         void validate(Request request, Response response) {
             try {
                 if (!Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
+                    //noinspection ThrowableNotThrown
                     Spark.halt(401, new Gson().toJson(new JSONMessage(401, "Your IP is not whitelisted!")));
                 }
             } catch (UnknownHostException e) {

@@ -4,6 +4,7 @@ import org.apache.commons.lang.Validate;
 import spark.Spark;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.communication.WebModule;
+import uk.knightz.knightzapi.communication.module.Module;
 import uk.knightz.knightzapi.communication.rsa.RSAIO;
 import uk.knightz.knightzapi.communication.rsa.RSAKeyGen;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthFilter;
@@ -15,6 +16,8 @@ import uk.knightz.knightzapi.lang.Log;
 
 import java.io.File;
 import java.security.KeyPair;
+import java.util.HashSet;
+import java.util.Set;
 
 import static spark.Spark.before;
 
@@ -23,16 +26,16 @@ import static spark.Spark.before;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * This class hosts the core functionality asyncronously. It runs the Spark webserver
+ * This class hosts the core functionality asynchronously. It runs the Spark webserver
  * manages modules, and loads RSA certificate information.
  **/
 public class Webserver extends Thread {
     private static Webserver instance;
-    private static boolean isInitalised = instance != null;
+    private static boolean isInitalised = false;
+    private final Set<Module> modules;
     private final KeyPair pair;
     private final AuthMethod auth;
     private Whitelist whitelist;
-
     private Webserver(AuthMethod auth) {
         this.auth = auth;
         KeyPair pair = null;
@@ -56,6 +59,7 @@ public class Webserver extends Thread {
             whitelist = Whitelist.deserialize(KnightzAPI.getWebserverFile().getConfigurationSection("auth").getValues(true));
         }
         this.start();
+        modules = new HashSet<>();
     }
 
     public static Webserver getInstance() {
@@ -66,6 +70,10 @@ public class Webserver extends Thread {
         if (isInitalised) return instance;
         isInitalised = true;
         return instance = new Webserver(auth);
+    }
+
+    public Set<Module> getModules() {
+        return modules;
     }
 
     public Whitelist getWhitelist() {
@@ -90,6 +98,10 @@ public class Webserver extends Thread {
         WebModule.getAllModules().forEach(WebModule::exec);
         Spark.init();
         Log.normal("[KnightzAPI] Webserver successfully started up!");
+    }
+
+    public void registerModule(Module listener) {
+        modules.add(listener);
     }
 
     public void registerModule(WebModule module) {

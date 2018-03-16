@@ -2,6 +2,3 @@ name: KnightzAPI
 version: 1.0
 main: uk.knightz.knightzapi.KnightzAPI
 depend: [Vault]
-commands:
-  test:
-    description: test

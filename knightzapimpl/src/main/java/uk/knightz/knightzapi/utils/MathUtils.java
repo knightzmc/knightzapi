@@ -9,7 +9,15 @@ public final class MathUtils {
     private MathUtils() {
     }
 
-    public static double truncuateDouble(double d) {
+
+    /**
+     * Truncate a double to 2 decimal places.
+     * Used for formatting long decimals.
+     *
+     * @param d The double to truncate
+     * @return The truncated double
+     */
+    public static double truncateDouble(double d) {
         return Math.floor(d * 100) / 100;
     }
 

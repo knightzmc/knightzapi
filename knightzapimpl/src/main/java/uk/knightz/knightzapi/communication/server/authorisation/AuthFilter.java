@@ -14,7 +14,7 @@ public class AuthFilter implements Filter {
     @Override
     public void handle(Request request, Response response) {
         try {
-            Webserver.getInstance().getAuth().validate(request, response);
+            Webserver.getInstance().getAuth().validate((uk.knightz.knightzapi.communication.server.Request) request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }

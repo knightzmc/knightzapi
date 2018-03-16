@@ -12,13 +12,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
-import uk.knightz.knightzapi.commands.CommTestCommand;
 import uk.knightz.knightzapi.communication.module.ModuleManager;
 import uk.knightz.knightzapi.communication.server.ServerManager;
-import uk.knightz.knightzapi.communication.server.SimpleServer;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
-import uk.knightz.knightzapi.communicationapi.server.ServerFactory;
 import uk.knightz.knightzapi.files.FilesManager;
 import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
@@ -34,21 +31,44 @@ import java.util.Set;
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
 public class KnightzAPI extends JavaPlugin {
+    /**
+     * Any plugins dependent on KnightzAPI - not completely accurate as goes by plugin.yml dependencies
+     */
     private static final Set<JavaPlugin> dependent = new HashSet<>();
-    private static final ServerFactory factory = SimpleServer::new;
+    //    private static final ServerFactory factory = SimpleServer::new;
     private static FileConfiguration config;
     private static KnightzAPI p;
+
+    //Web Server
+
+    /**
+     * An instance of WebServer, running the main Spark server.
+     *
+     * @see Webserver
+     * @see Spark
+     */
     private static Webserver server;
+    /**
+     * Instance of ServerManager used for managing the WebServer
+     *
+     * @see ServerManager
+     */
     private static ServerManager manager;
+
+    /**
+     * The YAML file containing all configuration for the local web server
+     */
     private static PluginFile webserverFile;
+
+    //    public static ServerFactory getServerFactory() {
+//        return factory;
+//    }
     private FilesManager filesManager;
+
+    //Vault
     private Economy economy;
     private Chat chat;
     private Permission permission;
-
-    public static ServerFactory getServerFactory() {
-        return factory;
-    }
 
     public static FileConfiguration getConfigFile() {
         return config;
@@ -56,10 +76,6 @@ public class KnightzAPI extends JavaPlugin {
 
     public static KnightzAPI getP() {
         return p;
-    }
-
-    public static ServerFactory getFactory() {
-        return factory;
     }
 
     public static Webserver getWebServer() {
@@ -108,7 +124,6 @@ public class KnightzAPI extends JavaPlugin {
             manager = ServerManager.getInstance();
             server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));
         }
-        getCommand("test").setExecutor(new CommTestCommand());
     }
 
     @Override
