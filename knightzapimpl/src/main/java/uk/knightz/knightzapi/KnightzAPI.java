@@ -14,8 +14,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
 import uk.knightz.knightzapi.communication.module.ModuleManager;
 import uk.knightz.knightzapi.communication.server.ServerManager;
+import uk.knightz.knightzapi.communication.server.SimpleServer;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
+import uk.knightz.knightzapi.communicationapi.server.ServerFactory;
 import uk.knightz.knightzapi.files.FilesManager;
 import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
@@ -35,7 +37,6 @@ public class KnightzAPI extends JavaPlugin {
      * Any plugins dependent on KnightzAPI - not completely accurate as goes by plugin.yml dependencies
      */
     private static final Set<JavaPlugin> dependent = new HashSet<>();
-    //    private static final ServerFactory factory = SimpleServer::new;
     private static FileConfiguration config;
     private static KnightzAPI p;
 
@@ -59,12 +60,7 @@ public class KnightzAPI extends JavaPlugin {
      * The YAML file containing all configuration for the local web server
      */
     private static PluginFile webserverFile;
-
-    //    public static ServerFactory getServerFactory() {
-//        return factory;
-//    }
     private FilesManager filesManager;
-
     //Vault
     private Economy economy;
     private Chat chat;
@@ -123,6 +119,9 @@ public class KnightzAPI extends JavaPlugin {
             webserverFile = new PluginFile(this, "webserver.yml", "webserver.yml");
             manager = ServerManager.getInstance();
             server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));
+
+            //Initialise ServerFactory with its implementation
+            ServerFactory.FactoryStorage.setInstance(SimpleServer::new);
         }
     }
 

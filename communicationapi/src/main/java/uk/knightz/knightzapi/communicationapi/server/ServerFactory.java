@@ -12,6 +12,25 @@ import java.net.InetSocketAddress;
  * Creates a Server object. To avoid cyclic-dependencies, the only (current) implementation of this class is initialised in the KnightzAPI main class.
  **/
 public interface ServerFactory {
+    static ServerFactory getInstance() {
+        return FactoryStorage.getInstance();
+    }
 
     Server getServer(InetSocketAddress address) throws NotAuthorisedException;
+
+
+    /**
+     * Stores the current ServerFactory instance
+     */
+    class FactoryStorage {
+        private static ServerFactory instance;
+
+        public static ServerFactory getInstance() {
+            return instance;
+        }
+
+        public static void setInstance(ServerFactory factory) {
+            instance = factory;
+        }
+    }
 }
