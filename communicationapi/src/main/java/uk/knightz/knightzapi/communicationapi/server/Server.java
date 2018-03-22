@@ -1,5 +1,7 @@
 package uk.knightz.knightzapi.communicationapi.server;
 
+import uk.knightz.knightzapi.communicationapi.module.Module;
+
 import java.net.InetSocketAddress;
 
 /**
@@ -24,10 +26,23 @@ public interface Server {
      */
     void sendData(String data);
 
+
+    /**
+     * Execute a module on this server.
+     * If the server does not have the module installed, one of two things will occur
+     * NOT YET IMPLEMENTED 1) If the server has auto-download set in their config the module will be downloaded and run (potentially dangerous!).
+     * 2) Otherwise, nothing
+     *
+     * @param m The module to call
+     * @see Module#forName(String)
+     */
+    void callModule(Module m);
+
     /**
      * Get the public RSA used for this Server to encrypt data.
      *
      * @return The public key in plain text format
      */
     String getPubKey();
+
 }

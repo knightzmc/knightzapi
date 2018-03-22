@@ -1,6 +1,7 @@
 package uk.knightz.knightzapi.communication.module;
 
 import uk.knightz.knightzapi.KnightzAPI;
+import uk.knightz.knightzapi.communicationapi.module.Module;
 
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class ModuleManager {
     private final ModuleLoader loader;
     private final Set<Module> allModules;
 
-    public ModuleManager(KnightzAPI api) {
+    private ModuleManager(KnightzAPI api) {
         this.api = api;
         loader = ModuleLoader.initLoader(this, api);
         allModules = loader.loadModules();
@@ -32,6 +33,14 @@ public class ModuleManager {
             return manager = new ModuleManager(main);
         }
         return manager;
+    }
+
+    public static Module forName(String name) {
+        if (name == null) return null;
+        ModuleManager inst =
+                getManager();
+        if (inst == null) return null;
+        return inst.allModules.stream().filter(m -> m.getName().equals(name)).findFirst().orElse(null);
     }
 
     public Set<Module> getAllModules() {

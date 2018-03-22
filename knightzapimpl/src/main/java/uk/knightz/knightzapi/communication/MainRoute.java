@@ -6,6 +6,7 @@ import spark.Response;
 import spark.Route;
 import uk.knightz.knightzapi.communication.rsa.RSA;
 import uk.knightz.knightzapi.communication.server.Webserver;
+import uk.knightz.knightzapi.communicationapi.module.IncomingRequest;
 
 import java.util.Base64;
 
@@ -22,7 +23,9 @@ public class MainRoute implements Route {
         if (request.requestMethod().equals("POST")) {
             try {
                 String message = new String((RSA.decrypt(Base64.getDecoder().decode(request.queryParams("data").getBytes()), Base64.getDecoder().decode(request.queryParams("aes").getBytes()), Webserver.getInstance().getPair().getPrivate())));
-
+                if (request.queryParams("module") != null) {
+                    Webserver.getInstance().callRequest(new IncomingRequest(message, request.queryParams("module")));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

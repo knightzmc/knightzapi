@@ -1,6 +1,9 @@
 package uk.knightz.knightzapi.utils;
 
+import org.bukkit.event.server.PluginEnableEvent;
+
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 /**
@@ -45,6 +48,8 @@ public class CollectionUtils {
             collection.forEach(t -> set.add(toExec.apply(t)));
             return set;
         }
+        //NOT UNNECESSARY - REQUIRED TO ENSURE THE ORIGINAL COLLECTION IS NOT CLEARED
+        //noinspection UnnecessaryLocalVariable
         Collection temp = collection;
         temp.clear();
         collection.forEach(t -> temp.add(toExec.apply(t)));
@@ -86,5 +91,28 @@ public class CollectionUtils {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+
+    /**
+     * Get a random element in the given collection
+     *
+     * @param toRandom The collection to get a random element from
+     * @param <T>      Default type parameter of the given collection
+     * @return A random element from the given collection
+     */
+    public static <T> T getRandom(Collection<T> toRandom) {
+        if (toRandom.size() <= 0) {
+            return null;
+        }
+        int i = ThreadLocalRandom.current().nextInt(toRandom.size());
+        T temp;
+        Iterator<T> iterator = toRandom.iterator();
+        int x = 0;
+        do {
+            temp = iterator.next();
+        }
+        while (x++ < i);
+        return temp;
     }
 }

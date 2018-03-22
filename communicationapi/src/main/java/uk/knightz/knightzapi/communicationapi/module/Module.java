@@ -1,7 +1,8 @@
-package uk.knightz.knightzapi.communication.module;
+package uk.knightz.knightzapi.communicationapi.module;
 
-import uk.knightz.knightzapi.communication.server.IncomingRequestListener;
-import uk.knightz.knightzapi.communication.server.Webserver;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * This class was created by AlexL (Knightz) on 14/03/2018 at 22:01.
@@ -24,12 +25,36 @@ public abstract class Module implements IncomingRequestListener {
 
     private String name = "Default Module Name";
 
+    {
+        //Using reflection to avoid cyclic-dependencies
+        try {
+            Class<?> webClass = Class.forName("uk.knightz.knightzapi.communication.server.Webserver");
+            Method getInstance = webClass.getMethod("getInstance");
+            Object webserver = getInstance.invoke(null);
+            Method register = webClass.getMethod("registerModule", Module.class);
+            register.invoke(webserver, this);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new ModuleException(e);
+        }
+    }
+
     /**
      * Override requestID in this to your desired ID
      */
-    public Module() {
+    public Module() throws ModuleException {
         requestID = null;
-        Webserver.getInstance().registerModule(this);
+    }
+
+
+    public static Module forName(String name) {
+        try {
+            Class manager = Class.forName("uk.knightz.knightzapi.communication.module.ModuleManager");
+            Method forName = manager.getMethod("forName", String.class);
+            return (Module) forName.invoke(null, name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getRequestID() {

@@ -4,7 +4,6 @@ import org.apache.commons.lang.Validate;
 import spark.Spark;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.communication.WebModule;
-import uk.knightz.knightzapi.communication.module.Module;
 import uk.knightz.knightzapi.communication.rsa.RSAIO;
 import uk.knightz.knightzapi.communication.rsa.RSAKeyGen;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthFilter;
@@ -12,6 +11,8 @@ import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
 import uk.knightz.knightzapi.communication.server.authorisation.Whitelist;
 import uk.knightz.knightzapi.communication.server.defaultmodules.ValidateModule;
 import uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel.LoginModule;
+import uk.knightz.knightzapi.communicationapi.module.IncomingRequest;
+import uk.knightz.knightzapi.communicationapi.module.Module;
 import uk.knightz.knightzapi.lang.Log;
 
 import java.io.File;
@@ -36,6 +37,7 @@ public class Webserver extends Thread {
     private final KeyPair pair;
     private final AuthMethod auth;
     private Whitelist whitelist;
+
     private Webserver(AuthMethod auth) {
         this.auth = auth;
         KeyPair pair = null;
@@ -107,5 +109,20 @@ public class Webserver extends Thread {
     public void registerModule(WebModule module) {
         Validate.notNull(module);
         module.exec();
+    }
+
+    public void callRequest(IncomingRequest request) {
+        if (request == null) {
+            return;
+        }
+        if (modules.stream().map(Module::getRequestID).anyMatch(i -> request.getId().equals(i))) {
+            for (Module m : modules) {
+                String id = m.getRequestID();
+                if (request.getId().equals(id)) {
+                    m.onIncomingRequest(request);
+                    return;
+                }
+            }
+        }
     }
 }

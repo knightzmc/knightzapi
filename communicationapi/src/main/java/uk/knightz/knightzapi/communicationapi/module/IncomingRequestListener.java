@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.communication.server;
+package uk.knightz.knightzapi.communicationapi.module;
 
 /**
  * This class was created by AlexL (Knightz) on 31/01/2018 at 21:04.

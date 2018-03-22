@@ -3,6 +3,8 @@ package uk.knightz.knightzapi.communication.module;
 import com.google.common.collect.Sets;
 import org.xeustechnologies.jcl.JarClassLoader;
 import uk.knightz.knightzapi.KnightzAPI;
+import uk.knightz.knightzapi.communicationapi.module.Module;
+import uk.knightz.knightzapi.communicationapi.module.ModuleException;
 import uk.knightz.knightzapi.lang.Log;
 
 import java.io.File;

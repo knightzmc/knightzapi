@@ -5,21 +5,24 @@ package uk.knightz.knightzapi.lang;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
-public abstract class Placeholder {
+public class Placeholder {
     private final String placeholder;
 
-    public Placeholder(String placeholder) {
-        if (placeholder == null) {
-            throw new IllegalArgumentException("Placeholder cannot be null!");
-        }
+    private Replacement replacement;
+
+    public Placeholder(String placeholder, Replacement replacement) {
         this.placeholder = placeholder;
+        this.replacement = replacement;
     }
 
     public String getPlaceholder() {
         return placeholder;
     }
 
-    public abstract String getReplacement();
+
+    public Replacement replacement() {
+        return replacement;
+    }
 
 
     /**
@@ -32,9 +35,14 @@ public abstract class Placeholder {
         if (toReplace == null) {
             return null;
         }
+        //noinspection deprecation
         return
                 toReplace
                         .replace
-                                (getPlaceholder(), getReplacement());
+                                (getPlaceholder(), replacement.getReplacement());
+    }
+
+    public interface Replacement {
+        String getReplacement();
     }
 }

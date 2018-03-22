@@ -30,18 +30,15 @@ public class RSA {
      * @throws Exception If an error occurs
      */
     public static Holder encrypt(String data, PublicKey key) throws Exception {
-        //Generate AES Key
         KeyGenerator generator = KeyGenerator.getInstance("AES");
-        generator.init(128); // The AES key size in number of bits
+        generator.init(128);
         SecretKey secKey = generator.generateKey();
-        //Encrypt plain text with AES
         Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
         aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
         byte[] byteCipherText = aesCipher.doFinal(data.getBytes());
-        //Encrypt encryped data with RSA
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.PUBLIC_KEY, key);
-        return new Holder(byteCipherText, cipher.doFinal(secKey.getEncoded())); //ECNRYPT AES KEY WITH RSA PUBLIC KEY
+        return new Holder(byteCipherText, cipher.doFinal(secKey.getEncoded()));
     }
 
     /**

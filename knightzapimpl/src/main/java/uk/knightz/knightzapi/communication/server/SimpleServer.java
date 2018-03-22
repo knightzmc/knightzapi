@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
 import uk.knightz.knightzapi.communication.rsa.RSA;
 import uk.knightz.knightzapi.communicationapi.authorisation.NotAuthorisedException;
 import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
+import uk.knightz.knightzapi.communicationapi.module.Module;
 import uk.knightz.knightzapi.communicationapi.server.Server;
 
 import java.io.BufferedReader;
@@ -88,14 +89,21 @@ public class SimpleServer implements Server {
 
     @Override
     public void sendData(String data) {
+        sendData(data, null);
+    }
+
+    private void sendData(String data, Module module) {
         new Thread(() -> {
             HttpPost post = new HttpPost("http://" + address.toString());
             try {
                 PublicKey key = RSA.loadPublicKey((pubKey));
                 RSA.Holder bytedata = (RSA.encrypt(data, key));
                 post.setEntity(new UrlEncodedFormEntity(new ArrayList<NameValuePair>() {{
-                    add(new BasicNameValuePair("data", new String(Base64.getEncoder().encode(bytedata.getByteCipherText()))));
-                    add(new BasicNameValuePair("aes", new String(Base64.getEncoder().encode(bytedata.getEncrypedKey()))));
+                    if (module != null) add(new BasicNameValuePair("module", module.getRequestID()));
+                    else {
+                        add(new BasicNameValuePair("data", new String(Base64.getEncoder().encode(bytedata.getByteCipherText()))));
+                        add(new BasicNameValuePair("aes", new String(Base64.getEncoder().encode(bytedata.getEncrypedKey()))));
+                    }
                     if (credentials != null) {
                         add(new BasicNameValuePair("username", new String(Base64.getEncoder().encode(credentials.getUserName().getBytes()))));
                         add(new BasicNameValuePair("password", new String(Base64.getEncoder().encode(credentials.getPassword().getBytes()))));
@@ -106,6 +114,11 @@ public class SimpleServer implements Server {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    @Override
+    public void callModule(Module m) {
+        sendData(m.getName(), m);
     }
 
 
