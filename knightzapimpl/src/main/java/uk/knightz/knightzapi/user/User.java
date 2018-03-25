@@ -17,6 +17,7 @@ import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.kits.Kit;
 import uk.knightz.knightzapi.kits.PurchasableKit;
 import uk.knightz.knightzapi.utils.CollectionUtils;
+import uk.knightz.knightzapi.utils.Listeners;
 
 import java.io.File;
 import java.util.*;
@@ -30,7 +31,6 @@ import java.util.*;
 public class User implements Listener {
     private static final Map<OfflinePlayer, User> users = new HashMap<>();
     private static final Map<User, PluginFile> userFiles = new HashMap<>();
-    private static boolean registered = false;
     /**
      * Non-Persistent data that will be erased after a reload. Good for temporary data.
      */
@@ -58,10 +58,7 @@ public class User implements Listener {
         data.put("falldamage", true);
         data.put("scoreboard", true);
         data.put("canequip", true);
-        if (!registered) {
-            Bukkit.getPluginManager().registerEvents(this, KnightzAPI.getP());
-            registered = true;
-        }
+        Listeners.registerOnce(this, KnightzAPI.getP());
     }
 
     public static void saveData() {
