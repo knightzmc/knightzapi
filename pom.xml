@@ -69,6 +69,14 @@
     </modules>
     <repositories>
         <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/repositories/aikar-release/</url>
+        </repository>
+        <repository>
+            <id>aikar-snapshot</id>
+            <url>https://repo.aikar.co/content/repositories/aikar-snapshots/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>

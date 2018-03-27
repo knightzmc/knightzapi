@@ -1,7 +1,10 @@
 package uk.knightz.knightzapi.utils;
 
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -25,13 +28,43 @@ public class InventoryUtils {
      * @return if the two Inventory objects are equal
      */
     public static boolean equals(Inventory inv1, Inventory inv2) {
-        return
-                Arrays.equals(inv1.getContents(), inv2.getContents())
-                        && inv1.getName().equals(inv2.getName())
-                        && inv1.getTitle().equals(inv2.getTitle())
-                        && inv1.getType().equals(inv2.getType())
-                        && (inv1.getLocation() == null
+        return inv1 != null && inv2 != null
+                && Arrays.equals
+                (inv1.getContents(), inv2.getContents())
+                && inv1.getName().equals(inv2.getName())
+                && inv1.getTitle().equals(inv2.getTitle()) &&
+                inv1.getType().equals(inv2.getType()) &&
+                (inv1.getLocation() == null
                         || (inv2.getLocation() == null
                         || inv1.getLocation().equals(inv2.getLocation())));
+    }
+
+
+    /**
+     * Get the central slot in an inventory
+     *
+     * @param inv
+     * @return the central slot id in the Inventory
+     */
+    public static int getCenter(Inventory inv) {
+        return (inv.getSize() / 2) - 1;
+    }
+
+
+    /**
+     * Get the first slot containing the given ItemStack in an inventory, ignoring item quantity
+     *
+     * @param inv The Inventory to get the item from
+     * @param it  The ItemStack to find
+     * @return The first slot containing the given ItemStack, or -1 if it doesn't exist or an exception occurs in Reflection(unlikely)
+     */
+    public static int firstIgnoreAmount(Inventory inv, ItemStack it) {
+        try {
+            Method firstIgnore = inv.getClass().getDeclaredMethod("first", ItemStack.class, boolean.class);
+            return (int) firstIgnore.invoke(inv, it, true);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }
