@@ -1,0 +1,1526 @@
+diff -Naur knightzapimpl/pom.xml knightzapimplnowebserver/pom.xml
+--- knightzapimpl/pom.xml	2018-03-28 20:52:34.319441600 +0100
++++ knightzapimplnowebserver/pom.xml	2018-03-28 21:31:47.568096900 +0100
+@@ -10,31 +10,4 @@
+     <modelVersion>4.0.0</modelVersion>
+ 
+     <artifactId>knightzapimpl</artifactId>
+-    <repositories>
+-        <repository>
+-            <id>knightz-central</id>
+-            <url>http://repo.knightz.uk:8081/repository/maven-releases/</url>
+-        </repository>
+-    </repositories>
+-    <dependencies>
+-        <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jcl-core -->
+-        <dependency>
+-            <groupId>org.xeustechnologies</groupId>
+-            <artifactId>jcl-core</artifactId>
+-            <version>2.8</version>
+-        </dependency>
+-
+-        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+-        <dependency>
+-            <groupId>org.apache.httpcomponents</groupId>
+-            <artifactId>httpclient</artifactId>
+-            <version>4.5.5</version>
+-        </dependency>
+-        <dependency>
+-            <groupId>org.apache.httpcomponents</groupId>
+-            <artifactId>httpcore</artifactId>
+-            <version>4.4.9</version>
+-        </dependency>
+-
+-    </dependencies>
+ </project>
+\ No newline at end of file
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java	2018-03-28 20:50:14.396316200 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,27 +0,0 @@
+-package uk.knightz.knightzapi.communication.authorisation;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 17/02/2018 at 15:11.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class NotAuthorisedException extends Exception {
+-    public NotAuthorisedException() {
+-    }
+-
+-    public NotAuthorisedException(String message) {
+-        super(message);
+-    }
+-
+-    public NotAuthorisedException(String message, Throwable cause) {
+-        super(message, cause);
+-    }
+-
+-    public NotAuthorisedException(Throwable cause) {
+-        super(cause);
+-    }
+-
+-    public NotAuthorisedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+-        super(message, cause, enableSuppression, writableStackTrace);
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java	2018-03-28 20:50:14.923882200 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,30 +0,0 @@
+-package uk.knightz.knightzapi.communication.json;
+-
+-import com.google.gson.Gson;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:48.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class JSONMessage {
+-    private final int code;
+-    private final String message;
+-
+-    public int getCode() {
+-        return code;
+-    }
+-
+-    public String getMessage() {
+-        return message;
+-    }
+-
+-    public JSONMessage(int code, String message) {
+-        this.code = code;
+-        this.message = message;
+-    }
+-
+-    public String toJson() {
+-        return new Gson().toJson(this);
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java	2018-03-28 20:50:15.083402600 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,35 +0,0 @@
+-package uk.knightz.knightzapi.communication;
+-
+-import com.google.gson.Gson;
+-import spark.Request;
+-import spark.Response;
+-import spark.Route;
+-import uk.knightz.knightzapi.communication.rsa.RSA;
+-import uk.knightz.knightzapi.communication.server.Webserver;
+-import uk.knightz.knightzapi.module.IncomingRequest;
+-
+-import java.util.Base64;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:13.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class MainRoute implements Route {
+-    private static final Gson gson = new Gson();
+-
+-    @Override
+-    public Object handle(Request request, Response response) {
+-        if (request.requestMethod().equals("POST")) {
+-            try {
+-                String message = new String((RSA.decrypt(Base64.getDecoder().decode(request.queryParams("data").getBytes()), Base64.getDecoder().decode(request.queryParams("aes").getBytes()), Webserver.getInstance().getPair().getPrivate())));
+-                if (request.queryParams("module") != null) {
+-                    Webserver.getInstance().callRequest(new IncomingRequest(message, request.queryParams("module")));
+-                }
+-            } catch (Exception e) {
+-                e.printStackTrace();
+-            }
+-        }
+-        return null;
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java	2018-03-28 20:50:14.329308200 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,132 +0,0 @@
+-package uk.knightz.knightzapi.communication.module;
+-
+-import com.google.common.collect.Sets;
+-import org.xeustechnologies.jcl.JarClassLoader;
+-import uk.knightz.knightzapi.KnightzAPI;
+-import uk.knightz.knightzapi.module.Module;
+-import uk.knightz.knightzapi.module.ModuleException;
+-import uk.knightz.knightzapi.lang.Log;
+-
+-import java.io.File;
+-import java.io.FileInputStream;
+-import java.io.IOException;
+-import java.lang.reflect.Constructor;
+-import java.lang.reflect.InvocationTargetException;
+-import java.util.*;
+-import java.util.zip.ZipEntry;
+-import java.util.zip.ZipInputStream;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/03/2018 at 22:02.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * Resonsible for loading in all modules on server load (or when manually queried)
+- **/
+-class ModuleLoader extends Thread {
+-
+-
+-    /**
+-     * Initialised by ModuleManager;
+-     */
+-    private static ModuleLoader loader;
+-    private final ModuleManager manager;
+-    private final KnightzAPI knightzAPI;
+-    private final JarClassLoader jcl;
+-    private Set<Module> all;
+-
+-    private ModuleLoader(ModuleManager manager, KnightzAPI m) {
+-        this.manager = manager;
+-        knightzAPI = m;
+-        jcl = new JarClassLoader();
+-        start();
+-    }
+-
+-    static ModuleLoader initLoader(ModuleManager manager, KnightzAPI main) {
+-        if (loader == null) {
+-            return loader = new ModuleLoader(manager, main);
+-        }
+-        return loader;
+-    }
+-
+-    public void run() {
+-        loadModules();
+-    }
+-
+-    @SuppressWarnings("ConstantConditions")
+-    public synchronized Set<Module> loadModules() {
+-        File modulesDir = new File(knightzAPI.getDataFolder(), "/modules");
+-        if (modulesDir.listFiles() == null || modulesDir.listFiles().length == 0) {
+-            return Sets.newHashSet();
+-        }
+-        all = new HashSet<>();
+-        Arrays.stream(modulesDir.listFiles()).forEach(this::load);
+-        return all;
+-    }
+-
+-    private List<String> getClassesInJar(File f) {
+-        try {
+-            List<String> classNames = new ArrayList<>();
+-            ZipInputStream zip = new ZipInputStream(new FileInputStream(f.getName()));
+-            ZipEntry entry = zip.getNextEntry();
+-            while (entry != null) {
+-                if (!entry.isDirectory() && entry.getName().endsWith(".class")) {
+-                    String className = entry.getName().replace('/', '.');
+-                    classNames.add(className.substring(0, className.length() - ".class".length()));
+-                }
+-                entry = zip.getNextEntry();
+-            }
+-            return classNames;
+-        } catch (IOException e) {
+-            e.printStackTrace();
+-        }
+-
+-        return null;
+-    }
+-
+-    private synchronized Module load(File f) {
+-        try {
+-            jcl.add(new FileInputStream(f));
+-            List<String> classes = getClassesInJar(f);
+-            List<Class> clazzes = new ArrayList<>();
+-            if (classes == null) {
+-                return null;
+-            }
+-            classes.forEach(n -> {
+-                try {
+-                    clazzes.add(jcl.loadClass(n));
+-                } catch (ClassNotFoundException e) {
+-                    e.printStackTrace();
+-                }
+-            });
+-            clazzes.sort(((o1, o2) -> Module.class.isAssignableFrom(o1) && o1 != Module.class ? -1 : 1));
+-            boolean contains = false;
+-            Module module;
+-            for (Class clazz : clazzes) {
+-                if (clazz == null) {
+-                    Log.severe("Module " + f.getName() + " failed to be loaded into the server! Please contact @Knightz#0986 on discord for assistance!");
+-                    continue;
+-                }
+-                if (Module.class.isAssignableFrom(clazz)) {
+-                    if (contains) {
+-                        throw new ModuleException("Only one class should extend Module in module " + f.getName());
+-                    }
+-                    Class<? extends Module> modClazz = (Class<? extends Module>) clazz;
+-                    if (modClazz.equals(Module.class)) {
+-                        continue;
+-                    }
+-                    Constructor constructor = modClazz.getDeclaredConstructor();
+-                    constructor.setAccessible(true);
+-                    module = (Module) constructor.newInstance();
+-                    System.out.println("Module " + module.getName() + " sucessfully loaded!");
+-                    ModuleManager.getManager().addModule(module);
+-                    contains = true;
+-                }
+-            }
+-        } catch (IOException | IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {
+-            e.printStackTrace();
+-        }
+-        return null;
+-    }
+-}
+-
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java	2018-03-28 20:50:14.717356500 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,57 +0,0 @@
+-package uk.knightz.knightzapi.communication.module;
+-
+-import uk.knightz.knightzapi.KnightzAPI;
+-import uk.knightz.knightzapi.module.Module;
+-
+-import java.util.Set;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/03/2018 at 22:11.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-
+-public class ModuleManager {
+-    private static ModuleManager manager;
+-
+-    private final KnightzAPI api;
+-    private final ModuleLoader loader;
+-    private final Set<Module> allModules;
+-
+-    private ModuleManager(KnightzAPI api) {
+-        this.api = api;
+-        loader = ModuleLoader.initLoader(this, api);
+-        allModules = loader.loadModules();
+-    }
+-
+-    public static ModuleManager getManager() {
+-        return manager;
+-    }
+-
+-    public static ModuleManager init(KnightzAPI main) {
+-        if (manager == null) {
+-            return manager = new ModuleManager(main);
+-        }
+-        return manager;
+-    }
+-
+-    public static Module forName(String name) {
+-        if (name == null) return null;
+-        ModuleManager inst =
+-                getManager();
+-        if (inst == null) return null;
+-        return inst.allModules.stream().filter(m -> m.getName().equals(name)).findFirst().orElse(null);
+-    }
+-
+-    public Set<Module> getAllModules() {
+-        return allModules;
+-    }
+-
+-    public ModuleLoader getLoader() {
+-        return loader;
+-    }
+-
+-    public void addModule(Module m) {
+-        allModules.add(m);
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/request/Request.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/request/Request.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/request/Request.java	2018-03-28 20:50:15.124408700 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/request/Request.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,10 +0,0 @@
+-package uk.knightz.knightzapi.communication.request;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:29.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class Request {
+-
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java	2018-03-18 17:03:56.060553100 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,116 +0,0 @@
+-package uk.knightz.knightzapi.communication.rsa;
+-
+-import javax.crypto.Cipher;
+-import javax.crypto.KeyGenerator;
+-import javax.crypto.SecretKey;
+-import javax.crypto.spec.SecretKeySpec;
+-import java.security.GeneralSecurityException;
+-import java.security.KeyFactory;
+-import java.security.PrivateKey;
+-import java.security.PublicKey;
+-import java.security.spec.PKCS8EncodedKeySpec;
+-import java.security.spec.X509EncodedKeySpec;
+-import java.util.Arrays;
+-import java.util.Base64;
+-
+-/**
+- * Static RSA utility methods for encrypting and decrypting blocks of
+- * information.
+- *
+- * @author Blake Beaupain
+- */
+-public class RSA {
+-
+-    /**
+-     * Encrypts a block of data.
+-     *
+-     * @param data The data to encrypt
+-     * @param key  The key to encrypt with
+-     * @return The encrypted data
+-     * @throws Exception If an error occurs
+-     */
+-    public static Holder encrypt(String data, PublicKey key) throws Exception {
+-        KeyGenerator generator = KeyGenerator.getInstance("AES");
+-        generator.init(128);
+-        SecretKey secKey = generator.generateKey();
+-        Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+-        aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
+-        byte[] byteCipherText = aesCipher.doFinal(data.getBytes());
+-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+-        cipher.init(Cipher.PUBLIC_KEY, key);
+-        return new Holder(byteCipherText, cipher.doFinal(secKey.getEncoded()));
+-    }
+-
+-    /**
+-     * Decrypts a block of data.
+-     *
+-     * @param byteCipherText The data to be sent
+-     * @param encryptedKey   The encrypted AES key used
+-     * @param key            The key to decrypt with
+-     * @return The decrypted data
+-     * @throws Exception If an error occurs
+-     */
+-    public static byte[] decrypt(byte[] byteCipherText, byte[] encryptedKey, PrivateKey key) throws Exception {
+-        //Decrypt RSA encrypted AES data
+-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+-        cipher.init(Cipher.PRIVATE_KEY, key);
+-        byte[] decryptedKey = cipher.doFinal(encryptedKey);
+-        SecretKey originalKey = new SecretKeySpec(decryptedKey, 0, decryptedKey.length, "AES");
+-        Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+-        aesCipher.init(Cipher.DECRYPT_MODE, originalKey);
+-        return (aesCipher.doFinal((byteCipherText)));
+-    }
+-
+-    public static PrivateKey loadPrivateKey(String key64) throws GeneralSecurityException {
+-        String clear = new String(Base64.getDecoder().decode(key64));
+-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(clear.getBytes());
+-        KeyFactory fact = KeyFactory.getInstance("DSA");
+-        PrivateKey priv = fact.generatePrivate(keySpec);
+-        Arrays.fill(clear.getBytes(), (byte) 0);
+-        return priv;
+-    }
+-
+-    public static PublicKey loadPublicKey(String stored) throws GeneralSecurityException {
+-        byte[] data = Base64.getDecoder().decode(stored);
+-        X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
+-        KeyFactory fact = KeyFactory.getInstance("RSA");
+-        return fact.generatePublic(spec);
+-    }
+-
+-    public static String savePrivateKey(PrivateKey priv) throws GeneralSecurityException {
+-        KeyFactory fact = KeyFactory.getInstance("DSA");
+-        PKCS8EncodedKeySpec spec = fact.getKeySpec(priv,
+-                PKCS8EncodedKeySpec.class);
+-        byte[] packed = spec.getEncoded();
+-        String key64 = new String(Base64.getEncoder().encode(packed));
+-        Arrays.fill(packed, (byte) 0);
+-        return key64;
+-    }
+-
+-    public static String savePublicKey(PublicKey publ) throws GeneralSecurityException {
+-        KeyFactory fact = KeyFactory.getInstance("RSA");
+-        X509EncodedKeySpec spec = fact.getKeySpec(publ,
+-                X509EncodedKeySpec.class);
+-        return new String(Base64.getEncoder().encode(spec.getEncoded()));
+-    }
+-
+-    public static class Holder {
+-        private final byte[] byteCipherText;
+-        private final byte[] encrypedKey;
+-
+-        public Holder(byte[] byteCipherText, byte[] aesKey) {
+-            this.byteCipherText = byteCipherText;
+-            this.encrypedKey = aesKey;
+-
+-        }
+-
+-        public byte[] getByteCipherText() {
+-            return byteCipherText;
+-        }
+-
+-        public byte[] getEncrypedKey() {
+-            return encrypedKey;
+-        }
+-    }
+-
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java	2018-03-02 21:23:20.769151300 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,87 +0,0 @@
+-package uk.knightz.knightzapi.communication.rsa;
+-
+-import javax.xml.bind.DatatypeConverter;
+-import java.io.File;
+-import java.io.FileInputStream;
+-import java.io.FileOutputStream;
+-import java.security.KeyFactory;
+-import java.security.KeyPair;
+-import java.security.PrivateKey;
+-import java.security.PublicKey;
+-import java.security.spec.PKCS8EncodedKeySpec;
+-import java.security.spec.X509EncodedKeySpec;
+-
+-/**
+- * Stolen from Votifier :)
+- * @author Blake Beaupain
+- **/
+-public class RSAIO {
+-    /**
+-     * Saves the key pair to the disk.
+-     *
+-     * @param directory
+-     *            The directory to save to
+-     * @param keyPair
+-     *            The key pair to save
+-     * @throws Exception
+-     *             If an error occurs
+-     */
+-    public static void save(File directory, KeyPair keyPair) throws Exception {
+-        PrivateKey privateKey = keyPair.getPrivate();
+-        PublicKey publicKey = keyPair.getPublic();
+-        // Store the public key.
+-        X509EncodedKeySpec publicSpec = new X509EncodedKeySpec(
+-                publicKey.getEncoded());
+-        FileOutputStream out = new FileOutputStream(directory + "/public.key");
+-        out.write(DatatypeConverter.printBase64Binary(publicSpec.getEncoded())
+-                .getBytes());
+-        out.close();
+-
+-        // Store the private key.
+-        PKCS8EncodedKeySpec privateSpec = new PKCS8EncodedKeySpec(
+-                privateKey.getEncoded());
+-        out = new FileOutputStream(directory + "/private.key");
+-        out.write(DatatypeConverter.printBase64Binary(privateSpec.getEncoded())
+-                .getBytes());
+-        out.close();
+-    }
+-    /**
+-     * Loads an RSA key pair from a directory. The directory must have the files
+-     * "public.key" and "private.key".
+-     *
+-     * @param directory
+-     *            The directory to load from
+-     * @return The key pair
+-     * @throws Exception
+-     *             If an error occurs
+-     */
+-    public static KeyPair load(File directory) throws Exception {
+-        // Read the public key file.
+-        File publicKeyFile = new File(directory + "/public.key");
+-        FileInputStream in = new FileInputStream(directory + "/public.key");
+-        byte[] encodedPublicKey = new byte[(int) publicKeyFile.length()];
+-        in.read(encodedPublicKey);
+-        encodedPublicKey = DatatypeConverter.parseBase64Binary(new String(
+-                encodedPublicKey));
+-        in.close();
+-
+-        // Read the private key file.
+-        File privateKeyFile = new File(directory + "/private.key");
+-        in = new FileInputStream(directory + "/private.key");
+-        byte[] encodedPrivateKey = new byte[(int) privateKeyFile.length()];
+-        in.read(encodedPrivateKey);
+-        encodedPrivateKey = DatatypeConverter.parseBase64Binary(new String(
+-                encodedPrivateKey));
+-        in.close();
+-
+-        // Instantiate and return the key pair.
+-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+-        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(
+-                encodedPublicKey);
+-        PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+-        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(
+-                encodedPrivateKey);
+-        PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+-        return new KeyPair(publicKey, privateKey);
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java	2018-03-02 21:23:20.773151500 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,18 +0,0 @@
+-package uk.knightz.knightzapi.communication.rsa;
+-
+-import java.security.KeyPair;
+-import java.security.KeyPairGenerator;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 15/02/2018 at 20:10.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class RSAKeyGen {
+-
+-    public static KeyPair generate(int bits) throws Exception {
+-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+-        generator.initialize(bits);
+-        return generator.generateKeyPair();
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java	2018-03-15 19:34:33.875040900 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,22 +0,0 @@
+-package uk.knightz.knightzapi.communication.server.authorisation;
+-
+-import spark.Filter;
+-import spark.Request;
+-import spark.Response;
+-import uk.knightz.knightzapi.communication.server.Webserver;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 16/02/2018 at 17:11.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class AuthFilter implements Filter {
+-    @Override
+-    public void handle(Request request, Response response) {
+-        try {
+-            Webserver.getInstance().getAuth().validate((uk.knightz.knightzapi.communication.server.Request) request, response);
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java	2018-03-28 20:50:15.215418700 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,65 +0,0 @@
+-package uk.knightz.knightzapi.communication.server.authorisation;
+-
+-import com.google.gson.Gson;
+-import spark.Response;
+-import spark.Spark;
+-import uk.knightz.knightzapi.communication.server.Request;
+-import uk.knightz.knightzapi.communication.server.Webserver;
+-import uk.knightz.knightzapi.communication.json.JSONMessage;
+-
+-import java.net.InetAddress;
+-import java.net.UnknownHostException;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 16/02/2018 at 13:42.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * Represents different methods of authentication that a webserver should use.
+- **/
+-public enum AuthMethod {
+-    /**
+-     * Least secure, anyone can send a request
+-     */
+-    NONE {
+-        @Override
+-        void validate(Request request, Response response) {
+-        }
+-    },
+-    /**
+-     * Username and Password Authentication
+-     */
+-    AUTH {
+-        @Override
+-        void validate(Request request, Response response) {
+-        }
+-    },
+-
+-    /**
+-     * A whitelist of IP addresses that are allowed to send requests to this server
+-     */
+-    WHITELIST {
+-        @Override
+-        void validate(Request request, Response response) {
+-            try {
+-                if (!Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
+-                    //noinspection ThrowableNotThrown
+-                    Spark.halt(401, new Gson().toJson(new JSONMessage(401, "Your IP is not whitelisted!")));
+-                }
+-            } catch (UnknownHostException e) {
+-                e.printStackTrace();
+-            }
+-        }
+-    },
+-
+-    /**
+-     * Username and Password, but also with a Whitelist that doesn't require login details
+-     */
+-    WHITEAUTH {
+-        @Override
+-        void validate(Request request, Response response) {
+-        }
+-    };
+-
+-    abstract void validate(Request request, Response response);
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java	2018-03-06 19:30:10.492614700 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,74 +0,0 @@
+-package uk.knightz.knightzapi.communication.server.authorisation;
+-
+-import co.aikar.commands.annotation.HelpCommand;
+-import com.google.common.net.InetAddresses;
+-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+-import org.jetbrains.annotations.NotNull;
+-import uk.knightz.knightzapi.utils.CollectionUtils;
+-
+-import java.net.InetAddress;
+-import java.util.*;
+-import java.util.function.Consumer;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 16/02/2018 at 13:49.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class Whitelist implements Iterable<InetAddress>, ConfigurationSerializable {
+-
+-    private final List<InetAddress> whitelisted;
+-
+-    private Whitelist() {
+-        whitelisted = new ArrayList<>();
+-    }
+-
+-    private Whitelist(List<InetAddress> whitelisted) {
+-        this.whitelisted = whitelisted;
+-    }
+-
+-    public static Whitelist deserialize(Map<String, Object> map) {
+-        if (!map.containsKey("whitelist")) {
+-            return new Whitelist();
+-        }
+-        List<String> list = (List<String>) map.get("whitelist");
+-        List<InetAddress> result = new ArrayList<>(CollectionUtils.changeListType(list, InetAddresses::forString));
+-        return new Whitelist(result);
+-    }
+-
+-    public void add(InetAddress address) {
+-        whitelisted.add(address);
+-    }
+-
+-    public void remove(InetAddress address) {
+-        whitelisted.remove(address);
+-
+-    }
+-
+-    public boolean contains(InetAddress address) {
+-        return whitelisted.contains(address);
+-    }
+-
+-    @NotNull
+-    @Override
+-    public Iterator<InetAddress> iterator() {
+-        return whitelisted.iterator();
+-    }
+-
+-    @Override
+-    public void forEach(Consumer<? super InetAddress> action) {
+-        whitelisted.forEach(action);
+-    }
+-
+-    @Override
+-    public Spliterator<InetAddress> spliterator() {
+-        return whitelisted.spliterator();
+-    }
+-
+-    @Override
+-    public Map<String, Object> serialize() {
+-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+-        map.put("whitelist", CollectionUtils.changeListType(whitelisted, InetAddress::getHostAddress));
+-        return map;
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java	2018-03-02 21:23:20.813157600 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,21 +0,0 @@
+-package uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel;
+-
+-import spark.Request;
+-import spark.Response;
+-import uk.knightz.knightzapi.communication.WebModule;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 22/02/2018 at 21:52.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class LoginModule extends WebModule {
+-    public LoginModule() {
+-        super("login", "cp/login", Verb.GET);
+-    }
+-
+-    @Override
+-    public Object handle(Request request, Response response) {
+-        return "Hi!";
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java	2018-03-28 20:50:14.672850900 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,39 +0,0 @@
+-package uk.knightz.knightzapi.communication.server.defaultmodules;
+-
+-import com.google.gson.Gson;
+-import spark.Request;
+-import spark.Response;
+-import uk.knightz.knightzapi.communication.WebModule;
+-import uk.knightz.knightzapi.communication.rsa.RSA;
+-import uk.knightz.knightzapi.communication.server.Webserver;
+-import uk.knightz.knightzapi.communication.json.JSONMessage;
+-
+-import java.security.GeneralSecurityException;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:44.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * Provides a client with the Public RSA key of this server, in order to sucessfully encrypt messages
+- **/
+-public class ValidateModule extends WebModule {
+-
+-
+-    public ValidateModule() {
+-        super("Validate", "/validate", Verb.GET);
+-    }
+-
+-    @Override
+-    public Object handle(Request request, Response response) {
+-        if (response.status() == 401) {
+-            return null;
+-        }
+-        try {
+-            return new Gson().toJson(new JSONMessage(200, RSA.savePublicKey(Webserver.getInstance().getPair().getPublic())));
+-        } catch (GeneralSecurityException e) {
+-            e.printStackTrace();
+-        }
+-        return "Exception in decoding public key!";
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Request.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Request.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Request.java	2018-03-15 17:57:04.104587000 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Request.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,20 +0,0 @@
+-package uk.knightz.knightzapi.communication.server;
+-
+-import java.util.Base64;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/03/2018 at 21:50.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * Custom implementation of <code>spark.Request</code> that automatically decrypts any recieved data.
+- *
+- * @see spark.Request
+- */
+-public class Request extends spark.Request {
+-
+-    @Override
+-    public String queryParams(String message) {
+-        return new String((Base64.getDecoder().decode(super.queryParams(message).getBytes())));
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Server.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Server.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Server.java	2018-03-28 20:50:15.049398100 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Server.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,48 +0,0 @@
+-package uk.knightz.knightzapi.communication.server;
+-
+-import uk.knightz.knightzapi.module.Module;
+-
+-import java.net.InetSocketAddress;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:29.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public interface Server {
+-
+-    /**
+-     * Get the IP address of this server.
+-     *
+-     * @return The IP address of this server
+-     * @apiNote Will possibly return null in future updates if server aliases are added
+-     */
+-    InetSocketAddress getAddress();
+-
+-    /**
+-     * Send data to this server. It will be automatically encrypted, and any neccessary authorisation will also be done
+-     *
+-     * @param data The data to send
+-     */
+-    void sendData(String data);
+-
+-
+-    /**
+-     * Execute a module on this server.
+-     * If the server does not have the module installed, one of two things will occur
+-     * NOT YET IMPLEMENTED 1) If the server has auto-download set in their config the module will be downloaded and run (potentially dangerous!).
+-     * 2) Otherwise, nothing
+-     *
+-     * @param m The module to call
+-     * @see Module#forName(String)
+-     */
+-    void callModule(Module m);
+-
+-    /**
+-     * Get the public RSA used for this Server to encrypt data.
+-     *
+-     * @return The public key in plain text format
+-     */
+-    String getPubKey();
+-
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java	2018-03-28 20:50:14.888378100 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,36 +0,0 @@
+-package uk.knightz.knightzapi.communication.server;
+-
+-import uk.knightz.knightzapi.communication.authorisation.NotAuthorisedException;
+-
+-import java.net.InetSocketAddress;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:30.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * Creates a Server object. To avoid cyclic-dependencies, the only (current) implementation of this class is initialised in the KnightzAPI main class.
+- **/
+-public interface ServerFactory {
+-    static ServerFactory getInstance() {
+-        return FactoryStorage.getInstance();
+-    }
+-
+-    Server getServer(InetSocketAddress address) throws NotAuthorisedException;
+-
+-
+-    /**
+-     * Stores the current ServerFactory instance
+-     */
+-    class FactoryStorage {
+-        private static ServerFactory instance;
+-
+-        public static ServerFactory getInstance() {
+-            return instance;
+-        }
+-
+-        public static void setInstance(ServerFactory factory) {
+-            instance = factory;
+-        }
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java	2018-03-06 19:16:38.433584500 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,33 +0,0 @@
+-package uk.knightz.knightzapi.communication.server;
+-
+-import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 11:32.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class ServerManager {
+-
+-    private static ServerManager instance;
+-    private static Webserver webserver;
+-
+-    private ServerManager() {
+-    }
+-
+-    public static ServerManager getInstance() {
+-        if (instance == null) init();
+-        return instance;
+-    }
+-
+-    public static ServerManager init() {
+-        return instance = new ServerManager();
+-    }
+-
+-    public Webserver initServer(AuthMethod method) {
+-        if (webserver != null) {
+-            return webserver;
+-        }
+-        return Webserver.init(method);
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java	2018-03-28 20:53:27.474765300 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,138 +0,0 @@
+-package uk.knightz.knightzapi.communication.server;
+-
+-import com.google.gson.Gson;
+-import com.google.gson.JsonSyntaxException;
+-import org.apache.http.HttpResponse;
+-import org.apache.http.NameValuePair;
+-import org.apache.http.auth.UsernamePasswordCredentials;
+-import org.apache.http.client.HttpClient;
+-import org.apache.http.client.entity.UrlEncodedFormEntity;
+-import org.apache.http.client.methods.HttpGet;
+-import org.apache.http.client.methods.HttpPost;
+-import org.apache.http.impl.client.HttpClientBuilder;
+-import org.apache.http.message.BasicNameValuePair;
+-import uk.knightz.knightzapi.communication.authorisation.NotAuthorisedException;
+-import uk.knightz.knightzapi.communication.json.JSONMessage;
+-import uk.knightz.knightzapi.communication.rsa.RSA;
+-import uk.knightz.knightzapi.module.Module;
+-
+-import java.io.BufferedReader;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.io.InputStreamReader;
+-import java.net.InetSocketAddress;
+-import java.security.PublicKey;
+-import java.util.ArrayList;
+-import java.util.Base64;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:33.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class SimpleServer implements Server {
+-    private final InetSocketAddress address;
+-    private final HttpClient client;
+-    private final String pubKey;
+-    private UsernamePasswordCredentials credentials;
+-
+-    public SimpleServer(InetSocketAddress address) throws NotAuthorisedException {
+-        synchronized (this) {
+-            HttpClient client1;
+-            String pubKey1;
+-            try {
+-                client1 = HttpClientBuilder.create().build();
+-                HttpGet get = new HttpGet("http://" + address.toString() + "/validate");
+-                HttpResponse response = client1.execute(get);
+-                JSONMessage message = null;
+-                try {
+-                    message = new Gson().fromJson(read(response.getEntity().getContent()), JSONMessage.class);
+-                    if (response.getStatusLine().getStatusCode() == 401) {
+-                        throw new NotAuthorisedException(message.getMessage());
+-                    }
+-                } catch (JsonSyntaxException e) {
+-                    e.printStackTrace();
+-                }
+-                pubKey1 = message == null ? null : message.getMessage();
+-            } catch (IOException e) {
+-                client1 = null;
+-                pubKey1 = null;
+-                e.printStackTrace();
+-            }
+-            client = client1;
+-            this.pubKey = pubKey1;
+-            this.address = address;
+-        }
+-    }
+-
+-    private static String read(InputStream stream) {
+-        try {
+-            BufferedReader rd = new BufferedReader(new InputStreamReader(stream));
+-            StringBuilder result = new StringBuilder();
+-            String line;
+-            while ((line = rd.readLine()) != null) {
+-                result.append(line);
+-            }
+-            return result.toString();
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-        return null;
+-    }
+-
+-    @Override
+-    public InetSocketAddress getAddress() {
+-        return address;
+-    }
+-
+-
+-    @Override
+-    public void sendData(String data) {
+-        sendData(data, null);
+-    }
+-
+-    private void sendData(String data, Module module) {
+-        new Thread(() -> {
+-            HttpPost post = new HttpPost("http://" + address.toString());
+-            try {
+-                PublicKey key = RSA.loadPublicKey((pubKey));
+-                RSA.Holder bytedata = (RSA.encrypt(data, key));
+-                post.setEntity(new UrlEncodedFormEntity(new ArrayList<NameValuePair>() {{
+-                    if (module != null) add(new BasicNameValuePair("module", module.getRequestID()));
+-                    else {
+-                        add(new BasicNameValuePair("data", new String(Base64.getEncoder().encode(bytedata.getByteCipherText()))));
+-                        add(new BasicNameValuePair("aes", new String(Base64.getEncoder().encode(bytedata.getEncrypedKey()))));
+-                    }
+-                    if (credentials != null) {
+-                        add(new BasicNameValuePair("username", new String(Base64.getEncoder().encode(credentials.getUserName().getBytes()))));
+-                        add(new BasicNameValuePair("password", new String(Base64.getEncoder().encode(credentials.getPassword().getBytes()))));
+-                    }
+-                }}));
+-                HttpResponse response = client.execute(post);
+-            } catch (Exception e) {
+-                e.printStackTrace();
+-            }
+-        }).start();
+-    }
+-
+-    @Override
+-    public void callModule(Module m) {
+-        sendData(m.getName(), m);
+-    }
+-
+-
+-    @Override
+-    public String getPubKey() {
+-        return pubKey;
+-    }
+-
+-    /**
+-     * Register credentials to use when sending data to this server
+-     * TODO: Possible multiple credential support for users?
+-     *
+-     * @param e The credentials to use
+-     */
+-    public void addCredentials(UsernamePasswordCredentials e) {
+-        this.credentials = e;
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java	2018-03-28 20:50:14.468825300 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,128 +0,0 @@
+-package uk.knightz.knightzapi.communication.server;
+-
+-import org.apache.commons.lang.Validate;
+-import spark.Spark;
+-import uk.knightz.knightzapi.KnightzAPI;
+-import uk.knightz.knightzapi.communication.WebModule;
+-import uk.knightz.knightzapi.communication.rsa.RSAIO;
+-import uk.knightz.knightzapi.communication.rsa.RSAKeyGen;
+-import uk.knightz.knightzapi.communication.server.authorisation.AuthFilter;
+-import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
+-import uk.knightz.knightzapi.communication.server.authorisation.Whitelist;
+-import uk.knightz.knightzapi.communication.server.defaultmodules.ValidateModule;
+-import uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel.LoginModule;
+-import uk.knightz.knightzapi.module.IncomingRequest;
+-import uk.knightz.knightzapi.module.Module;
+-import uk.knightz.knightzapi.lang.Log;
+-
+-import java.io.File;
+-import java.security.KeyPair;
+-import java.util.HashSet;
+-import java.util.Set;
+-
+-import static spark.Spark.before;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 12:59.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * This class hosts the core functionality asynchronously. It runs the Spark webserver
+- * manages modules, and loads RSA certificate information.
+- **/
+-public class Webserver extends Thread {
+-    private static Webserver instance;
+-    private static boolean isInitalised = false;
+-    private final Set<Module> modules;
+-    private final KeyPair pair;
+-    private final AuthMethod auth;
+-    private Whitelist whitelist;
+-
+-    private Webserver(AuthMethod auth) {
+-        this.auth = auth;
+-        KeyPair pair = null;
+-        try {
+-            File rsaDir = new File(KnightzAPI.getP().getDataFolder(), "/rsa");
+-            if (!rsaDir.exists()) {
+-                rsaDir.mkdir();
+-                pair = RSAKeyGen.generate(2048);
+-                RSAIO.save(rsaDir, pair);
+-
+-            } else {
+-                pair = RSAIO.load(rsaDir);
+-            }
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-        this.pair = pair;
+-        new ValidateModule();
+-        new LoginModule();
+-        if (auth.equals(AuthMethod.WHITELIST) || auth.equals(AuthMethod.WHITEAUTH)) {
+-            whitelist = Whitelist.deserialize(KnightzAPI.getWebserverFile().getConfigurationSection("auth").getValues(true));
+-        }
+-        this.start();
+-        modules = new HashSet<>();
+-    }
+-
+-    public static Webserver getInstance() {
+-        return instance;
+-    }
+-
+-    static Webserver init(AuthMethod auth) {
+-        if (isInitalised) return instance;
+-        isInitalised = true;
+-        return instance = new Webserver(auth);
+-    }
+-
+-    public Set<Module> getModules() {
+-        return modules;
+-    }
+-
+-    public Whitelist getWhitelist() {
+-        return whitelist;
+-    }
+-
+-    public AuthMethod getAuth() {
+-        return auth;
+-    }
+-
+-    public KeyPair getPair() {
+-        return pair;
+-    }
+-
+-    @Override
+-    public void run() {
+-        //Allow Spark to load static files from Bukkit
+-        Thread.currentThread().setContextClassLoader(KnightzAPI.class.getClassLoader());
+-
+-        Spark.staticFiles.location("/public");
+-        before(new AuthFilter());
+-        WebModule.getAllModules().forEach(WebModule::exec);
+-        Spark.init();
+-        Log.normal("[KnightzAPI] Webserver successfully started up!");
+-    }
+-
+-    public void registerModule(Module listener) {
+-        modules.add(listener);
+-    }
+-
+-    public void registerModule(WebModule module) {
+-        Validate.notNull(module);
+-        module.exec();
+-    }
+-
+-    public void callRequest(IncomingRequest request) {
+-        if (request == null) {
+-            return;
+-        }
+-        if (modules.stream().map(Module::getRequestID).anyMatch(i -> request.getId().equals(i))) {
+-            for (Module m : modules) {
+-                String id = m.getRequestID();
+-                if (request.getId().equals(id)) {
+-                    m.onIncomingRequest(request);
+-                    return;
+-                }
+-            }
+-        }
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebModule.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/WebModule.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebModule.java	2018-03-02 21:23:20.747147500 +0000
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/WebModule.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,53 +0,0 @@
+-package uk.knightz.knightzapi.communication;
+-
+-import spark.Route;
+-import spark.Spark;
+-
+-import java.util.HashSet;
+-import java.util.Set;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/02/2018 at 14:14.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public abstract class WebModule implements Route {
+-    private static final Set<WebModule> allModules = new HashSet<>();
+-    private final String name;
+-    private final String path;
+-
+-    private final Verb verb;
+-
+-    public WebModule(String name, String path, Verb verb) {
+-        this.name = name;
+-        this.path = path;
+-        this.verb = verb;
+-        allModules.add(this);
+-    }
+-
+-    public static Set<WebModule> getAllModules() {
+-        return allModules;
+-    }
+-
+-    public void exec() {
+-        if (verb.equals(Verb.GET)) {
+-            Spark.get(path, this);
+-        } else {
+-            if (verb.equals(Verb.POST)) {
+-                Spark.post(path, this);
+-            }
+-        }
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public String getPath() {
+-        return path;
+-    }
+-
+-    public enum Verb {
+-        GET, POST
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/KnightzAPI.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java	2018-03-28 20:53:39.267323900 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/KnightzAPI.java	2018-03-28 21:32:33.510977000 +0100
+@@ -38,27 +38,6 @@
+     private static final Set<JavaPlugin> dependent = new HashSet<>();
+     private static FileConfiguration config;
+     private static KnightzAPI p;
+-
+-    //Web Server
+-
+-    /**
+-     * An instance of WebServer, running the main Spark server.
+-     *
+-     * @see Webserver
+-     * @see Spark
+-     */
+-    private static Webserver server;
+-    /**
+-     * Instance of ServerManager used for managing the WebServer
+-     *
+-     * @see ServerManager
+-     */
+-    private static ServerManager manager;
+-
+-    /**
+-     * The YAML file containing all configuration for the local web server
+-     */
+-    private static PluginFile webserverFile;
+     private FilesManager filesManager;
+     //Vault
+     private Economy economy;
+@@ -73,13 +52,6 @@
+         return p;
+     }
+ 
+-    public static Webserver getWebServer() {
+-        return server;
+-    }
+-
+-    public static PluginFile getWebserverFile() {
+-        return webserverFile;
+-    }
+ 
+     @Override
+     public void onEnable() {
+@@ -106,21 +78,10 @@
+                 Bukkit.getPluginManager().disablePlugin(javaPlugin);
+             }
+         }
+-        if (config.getBoolean("communication")) {
+-            ModuleManager.init(this);
+-            webserverFile = new PluginFile(this, "webserver.yml", "webserver.yml");
+-            manager = ServerManager.getInstance();
+-            server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));
+-            //Initialise ServerFactory with its implementation
+-            ServerFactory.FactoryStorage.setInstance(SimpleServer::new);
+-        }
+     }
+ 
+     @Override
+     public void onDisable() {
+-        if (config.getBoolean("communication")) {
+-            Spark.stop();
+-        }
+         User.saveData();
+     }
+ 
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java	2018-03-28 20:50:14.758361700 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,24 +0,0 @@
+-package uk.knightz.knightzapi.module;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 31/01/2018 at 21:04.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public final class IncomingRequest {
+-    public String getData() {
+-        return data;
+-    }
+-
+-    public String getId() {
+-        return id;
+-    }
+-
+-    private final String data;
+-    private final String id;
+-
+-    public IncomingRequest(String data, String id) {
+-        this.data = data;
+-        this.id = id;
+-    }
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java	2018-03-28 20:50:15.250923800 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,11 +0,0 @@
+-package uk.knightz.knightzapi.module;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 31/01/2018 at 21:04.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public interface IncomingRequestListener {
+-
+-    void onIncomingRequest(IncomingRequest incomingRequest);
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/Module.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java	2018-03-28 20:50:14.637346800 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/Module.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,72 +0,0 @@
+-package uk.knightz.knightzapi.module;
+-
+-
+-import java.lang.reflect.InvocationTargetException;
+-import java.lang.reflect.Method;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 14/03/2018 at 22:01.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- * <p>
+- * Represents a Module, designed to add extra functionality to Request objects.
+- * These are able to be installed from a central database, and made yourself.
+- * NOTE THAT MODULES ARE NOT BUKKIT PLUGINS!! The Bukkit API will be available, but you should not be making a plugin.yml, extending JavaPlugin, etc
+- * <p>
+- * TODO: Wiki page on creating modules
+- **/
+-public abstract class Module implements IncomingRequestListener {
+-
+-    /**
+-     * The id that a request should send in order for it to be interpreted by this module.
+-     * It should be overridden in an implementation of the constructor, as it is null by default, causing the module to never be called
+-     */
+-    private final String requestID;
+-
+-    private String name = "Default Module Name";
+-
+-    {
+-        //Using reflection to avoid cyclic-dependencies
+-        try {
+-            Class<?> webClass = Class.forName("uk.knightz.knightzapi.communication.server.Webserver");
+-            Method getInstance = webClass.getMethod("getInstance");
+-            Object webserver = getInstance.invoke(null);
+-            Method register = webClass.getMethod("registerModule", Module.class);
+-            register.invoke(webserver, this);
+-        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+-            throw new ModuleException(e);
+-        }
+-    }
+-
+-    /**
+-     * Override requestID in this to your desired ID
+-     */
+-    public Module() throws ModuleException {
+-        requestID = null;
+-    }
+-
+-
+-    public static Module forName(String name) {
+-        try {
+-            Class manager = Class.forName("uk.knightz.knightzapi.communication.module.ModuleManager");
+-            Method forName = manager.getMethod("forName", String.class);
+-            return (Module) forName.invoke(null, name);
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-        return null;
+-    }
+-
+-    public String getRequestID() {
+-        return requestID;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    protected void setName(String s) {
+-        this.name = s;
+-    }
+-
+-}
+diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/ModuleException.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/ModuleException.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/ModuleException.java	2018-03-28 20:50:14.512830700 +0100
++++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/ModuleException.java	1970-01-01 00:00:00.000000000 +0000
+@@ -1,27 +0,0 @@
+-package uk.knightz.knightzapi.module;
+-
+-/**
+- * This class was created by AlexL (Knightz) on 31/01/2018 at 21:04.
+- * Copyright Knightz 2018
+- * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
+- **/
+-public class ModuleException extends RuntimeException {
+-    public ModuleException() {
+-    }
+-
+-    public ModuleException(String message) {
+-        super(message);
+-    }
+-
+-    public ModuleException(String message, Throwable cause) {
+-        super(message, cause);
+-    }
+-
+-    public ModuleException(Throwable cause) {
+-        super(cause);
+-    }
+-
+-    public ModuleException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+-        super(message, cause, enableSuppression, writableStackTrace);
+-    }
+-}
