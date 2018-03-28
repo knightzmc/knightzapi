@@ -1,6 +1,6 @@
-package uk.knightz.knightzapi.communicationapi.server;
+package uk.knightz.knightzapi.communication.server;
 
-import uk.knightz.knightzapi.communicationapi.module.Module;
+import uk.knightz.knightzapi.module.Module;
 
 import java.net.InetSocketAddress;
 

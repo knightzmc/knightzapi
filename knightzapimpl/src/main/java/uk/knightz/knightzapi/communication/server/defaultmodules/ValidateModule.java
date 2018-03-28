@@ -6,7 +6,7 @@ import spark.Response;
 import uk.knightz.knightzapi.communication.WebModule;
 import uk.knightz.knightzapi.communication.rsa.RSA;
 import uk.knightz.knightzapi.communication.server.Webserver;
-import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
+import uk.knightz.knightzapi.communication.json.JSONMessage;
 
 import java.security.GeneralSecurityException;
 

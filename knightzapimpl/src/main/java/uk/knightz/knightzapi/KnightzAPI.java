@@ -1,9 +1,7 @@
 package uk.knightz.knightzapi;
 
-import io.sentry.Sentry;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.item.ItemInfo;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,11 +12,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
 import uk.knightz.knightzapi.communication.module.ModuleManager;
+import uk.knightz.knightzapi.communication.server.ServerFactory;
 import uk.knightz.knightzapi.communication.server.ServerManager;
 import uk.knightz.knightzapi.communication.server.SimpleServer;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
-import uk.knightz.knightzapi.communicationapi.server.ServerFactory;
 import uk.knightz.knightzapi.files.FilesManager;
 import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
@@ -108,19 +106,11 @@ public class KnightzAPI extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(javaPlugin);
             }
         }
-//        if (config.getBoolean("report")) {
-//            Sentry.init("https://e09a0fbf45294cc0bde0d5d337f4477b:45ddd955e60b4a7b895aa8c23ac31f55@sentry.io/288131");
-//            Thread.setDefaultUncaughtExceptionHandler((t, e) -> Sentry.capture(e));
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            TestPrintStream ps = new TestPrintStream(baos);
-//            System.setErr(ps);
-//        }
         if (config.getBoolean("communication")) {
             ModuleManager.init(this);
             webserverFile = new PluginFile(this, "webserver.yml", "webserver.yml");
             manager = ServerManager.getInstance();
             server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));
-
             //Initialise ServerFactory with its implementation
             ServerFactory.FactoryStorage.setInstance(SimpleServer::new);
         }
@@ -128,9 +118,6 @@ public class KnightzAPI extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (config.getBoolean("report")) {
-            Sentry.close();
-        }
         if (config.getBoolean("communication")) {
             Spark.stop();
         }

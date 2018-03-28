@@ -1,7 +1,7 @@
 package uk.knightz.knightzapi.communication.module;
 
 import uk.knightz.knightzapi.KnightzAPI;
-import uk.knightz.knightzapi.communicationapi.module.Module;
+import uk.knightz.knightzapi.module.Module;
 
 import java.util.Set;
 

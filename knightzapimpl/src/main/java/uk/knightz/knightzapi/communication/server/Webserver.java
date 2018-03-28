@@ -11,8 +11,8 @@ import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
 import uk.knightz.knightzapi.communication.server.authorisation.Whitelist;
 import uk.knightz.knightzapi.communication.server.defaultmodules.ValidateModule;
 import uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel.LoginModule;
-import uk.knightz.knightzapi.communicationapi.module.IncomingRequest;
-import uk.knightz.knightzapi.communicationapi.module.Module;
+import uk.knightz.knightzapi.module.IncomingRequest;
+import uk.knightz.knightzapi.module.Module;
 import uk.knightz.knightzapi.lang.Log;
 
 import java.io.File;

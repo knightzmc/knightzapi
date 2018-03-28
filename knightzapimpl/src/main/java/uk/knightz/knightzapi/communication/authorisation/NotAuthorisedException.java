@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.communicationapi.authorisation;
+package uk.knightz.knightzapi.communication.authorisation;
 
 /**
  * This class was created by AlexL (Knightz) on 17/02/2018 at 15:11.

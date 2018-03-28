@@ -1,6 +1,6 @@
-package uk.knightz.knightzapi.communicationapi.server;
+package uk.knightz.knightzapi.communication.server;
 
-import uk.knightz.knightzapi.communicationapi.authorisation.NotAuthorisedException;
+import uk.knightz.knightzapi.communication.authorisation.NotAuthorisedException;
 
 import java.net.InetSocketAddress;
 

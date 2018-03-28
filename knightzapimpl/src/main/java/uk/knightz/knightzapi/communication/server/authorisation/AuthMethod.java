@@ -5,7 +5,7 @@ import spark.Response;
 import spark.Spark;
 import uk.knightz.knightzapi.communication.server.Request;
 import uk.knightz.knightzapi.communication.server.Webserver;
-import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
+import uk.knightz.knightzapi.communication.json.JSONMessage;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.communicationapi.json;
+package uk.knightz.knightzapi.communication.json;
 
 import com.google.gson.Gson;
 

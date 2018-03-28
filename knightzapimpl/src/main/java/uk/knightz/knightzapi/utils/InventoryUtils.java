@@ -31,8 +31,7 @@ public class InventoryUtils {
         return inv1 != null && inv2 != null
                 && Arrays.equals
                 (inv1.getContents(), inv2.getContents())
-                && inv1.getName().equals(inv2.getName())
-                && inv1.getTitle().equals(inv2.getTitle()) &&
+                && inv1.getTitle().equalsIgnoreCase(inv2.getTitle()) &&
                 inv1.getType().equals(inv2.getType()) &&
                 (inv1.getLocation() == null
                         || (inv2.getLocation() == null

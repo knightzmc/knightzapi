@@ -1,6 +1,9 @@
 #Enable debug messages
 debug: false
-#Enable cross-server communication (recommended)
-communication: true
-#Enable automatic bug reporting (highly recommended)
-report: true
+
+#THESE FEATURES ARE IN BETA AND DISABLED BY DEFAULT.
+#Enable cross-server communication
+communication: false
+#Currently disabled
+#Enable automatic bug reporting
+report: false

@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.communicationapi.module;
+package uk.knightz.knightzapi.module;
 
 
 import java.lang.reflect.InvocationTargetException;

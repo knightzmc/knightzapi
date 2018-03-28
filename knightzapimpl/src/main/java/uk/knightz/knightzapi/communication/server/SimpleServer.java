@@ -11,11 +11,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import uk.knightz.knightzapi.communication.authorisation.NotAuthorisedException;
+import uk.knightz.knightzapi.communication.json.JSONMessage;
 import uk.knightz.knightzapi.communication.rsa.RSA;
-import uk.knightz.knightzapi.communicationapi.authorisation.NotAuthorisedException;
-import uk.knightz.knightzapi.communicationapi.json.JSONMessage;
-import uk.knightz.knightzapi.communicationapi.module.Module;
-import uk.knightz.knightzapi.communicationapi.server.Server;
+import uk.knightz.knightzapi.module.Module;
 
 import java.io.BufferedReader;
 import java.io.IOException;

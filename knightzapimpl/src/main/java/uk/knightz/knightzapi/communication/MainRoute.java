@@ -6,7 +6,7 @@ import spark.Response;
 import spark.Route;
 import uk.knightz.knightzapi.communication.rsa.RSA;
 import uk.knightz.knightzapi.communication.server.Webserver;
-import uk.knightz.knightzapi.communicationapi.module.IncomingRequest;
+import uk.knightz.knightzapi.module.IncomingRequest;
 
 import java.util.Base64;
 
