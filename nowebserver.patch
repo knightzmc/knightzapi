@@ -1,42 +1,128 @@
-diff -Naur knightzapimpl/pom.xml knightzapimplnowebserver/pom.xml
---- knightzapimpl/pom.xml	2018-03-28 20:52:34.319441600 +0100
-+++ knightzapimplnowebserver/pom.xml	2018-03-28 21:31:47.568096900 +0100
-@@ -10,31 +10,4 @@
+diff -ruN knightzapimpl/knightzapimpl.iml knightzapimplnoweb/knightzapimpl.iml
+--- knightzapimpl/knightzapimpl.iml	2018-03-29 19:38:11.572503200 +0100
++++ knightzapimplnoweb/knightzapimpl.iml	2018-03-25 00:33:22.751970800 +0000
+@@ -13,21 +13,28 @@
+     <orderEntry type="sourceFolder" forTests="false" />
+     <orderEntry type="library" name="knightzapimpl-1.0.6-SNAPSHOT" level="project" />
+     <orderEntry type="module" module-name="communicationapi" />
++    <orderEntry type="library" name="Maven: com.mashape.unirest:unirest-java:1.4.9" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpasyncclient:4.1.1" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore-nio:4.4.4" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpmime:4.5.2" level="project" />
++    <orderEntry type="library" name="Maven: org.json:json:20160212" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.5" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.9" level="project" />
++    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
++    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
++    <orderEntry type="library" name="Maven: org.reflections:reflections:0.9.11" level="project" />
++    <orderEntry type="library" name="Maven: com.google.guava:guava:20.0" level="project" />
++    <orderEntry type="library" name="Maven: org.javassist:javassist:3.21.0-GA" level="project" />
+     <orderEntry type="library" name="Maven: org.xeustechnologies:jcl-core:2.8" level="project" />
+     <orderEntry type="library" name="Maven: org.objenesis:objenesis:2.1" level="project" />
+     <orderEntry type="library" name="Maven: cglib:cglib-nodep:2.2" level="project" />
+     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
+     <orderEntry type="library" name="Maven: org.kamranzafar.commons:object-cloner:0.1" level="project" />
+-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.5" level="project" />
+-    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
+-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
+-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.9" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: junit:junit:4.10" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:21.0" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.19" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
+@@ -57,5 +64,7 @@
+     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-client:9.4.6.v20170531" level="project" />
+     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.4.6.v20170531" level="project" />
+     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: io.sentry:sentry:1.6.8" level="project" />
++    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.7" level="project" />
+   </component>
+ </module>
+\ No newline at end of file
+diff -ruN knightzapimpl/knightzapimplnoweb.iml knightzapimplnoweb/knightzapimplnoweb.iml
+--- knightzapimpl/knightzapimplnoweb.iml	1970-01-01 00:00:00.000000000 +0000
++++ knightzapimplnoweb/knightzapimplnoweb.iml	2018-03-29 19:40:01.164523000 +0100
+@@ -0,0 +1,59 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
++  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
++    <output url="file://$MODULE_DIR$/target/classes" />
++    <output-test url="file://$MODULE_DIR$/target/test-classes" />
++    <content url="file://$MODULE_DIR$">
++      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
++      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
++      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
++      <excludeFolder url="file://$MODULE_DIR$/target" />
++    </content>
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++    <orderEntry type="library" name="Maven: org.xeustechnologies:jcl-core:2.8" level="project" />
++    <orderEntry type="library" name="Maven: org.objenesis:objenesis:2.1" level="project" />
++    <orderEntry type="library" name="Maven: cglib:cglib-nodep:2.2" level="project" />
++    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
++    <orderEntry type="library" name="Maven: org.kamranzafar.commons:object-cloner:0.1" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.5" level="project" />
++    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
++    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
++    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.9" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: junit:junit:4.10" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:21.0" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.19" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.12-SNAPSHOT" level="project" />
++    <orderEntry type="library" name="Maven: co.aikar:acf-bukkit:0.5.0-SNAPSHOT" level="project" />
++    <orderEntry type="library" name="Maven: co.aikar:minecraft-timings:1.0.4" level="project" />
++    <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
++    <orderEntry type="library" name="Maven: co.aikar:acf-core:0.5.0-SNAPSHOT" level="project" />
++    <orderEntry type="library" name="Maven: co.aikar:locales:1.0-SNAPSHOT" level="project" />
++    <orderEntry type="library" name="Maven: net.jodah:expiringmap:0.5.8" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl.vault:VaultAPI:1.6" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.9-R0.1-SNAPSHOT" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: org.avaje:ebean:2.8.1" level="project" />
++    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
++    <orderEntry type="library" name="Maven: com.sparkjava:spark-core:2.7.1" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-webapp:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-server:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-client:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.4.6.v20170531" level="project" />
++    <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-api:9.4.6.v20170531" level="project" />
++  </component>
++</module>
+\ No newline at end of file
+diff -ruN knightzapimpl/pom.xml knightzapimplnoweb/pom.xml
+--- knightzapimpl/pom.xml	2018-03-29 18:56:56.129783000 +0100
++++ knightzapimplnoweb/pom.xml	2018-03-29 19:38:40.357519700 +0100
+@@ -9,7 +9,7 @@
+     </parent>
      <modelVersion>4.0.0</modelVersion>
  
-     <artifactId>knightzapimpl</artifactId>
--    <repositories>
--        <repository>
--            <id>knightz-central</id>
--            <url>http://repo.knightz.uk:8081/repository/maven-releases/</url>
--        </repository>
--    </repositories>
--    <dependencies>
--        <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jcl-core -->
--        <dependency>
--            <groupId>org.xeustechnologies</groupId>
--            <artifactId>jcl-core</artifactId>
--            <version>2.8</version>
--        </dependency>
--
--        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
--        <dependency>
--            <groupId>org.apache.httpcomponents</groupId>
--            <artifactId>httpclient</artifactId>
--            <version>4.5.5</version>
--        </dependency>
--        <dependency>
--            <groupId>org.apache.httpcomponents</groupId>
--            <artifactId>httpcore</artifactId>
--            <version>4.4.9</version>
--        </dependency>
--
--    </dependencies>
- </project>
-\ No newline at end of file
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java	2018-03-28 20:50:14.396316200 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java	1970-01-01 00:00:00.000000000 +0000
+-    <artifactId>knightzapimpl</artifactId>
++    <artifactId>knightzapimplnoweb</artifactId>
+     <repositories>
+         <repository>
+             <id>knightz-central</id>
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java	2018-03-29 18:56:56.161366300 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/authorisation/NotAuthorisedException.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,27 +0,0 @@
 -package uk.knightz.knightzapi.communication.authorisation;
 -
@@ -65,9 +151,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/autho
 -        super(message, cause, enableSuppression, writableStackTrace);
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java	2018-03-28 20:50:14.923882200 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java	2018-03-29 18:56:56.164375200 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/json/JSONMessage.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,30 +0,0 @@
 -package uk.knightz.knightzapi.communication.json;
 -
@@ -99,9 +185,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/json/
 -        return new Gson().toJson(this);
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java	2018-03-28 20:50:15.083402600 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java	2018-03-29 18:56:56.157355900 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/MainRoute.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,35 +0,0 @@
 -package uk.knightz.knightzapi.communication;
 -
@@ -138,9 +224,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/MainR
 -        return null;
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java	2018-03-28 20:50:14.329308200 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java	2018-03-29 18:56:56.184930100 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/module/ModuleLoader.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,132 +0,0 @@
 -package uk.knightz.knightzapi.communication.module;
 -
@@ -274,9 +360,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/modul
 -    }
 -}
 -
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java	2018-03-28 20:50:14.717356500 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java	2018-03-29 18:56:56.187937200 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/module/ModuleManager.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,57 +0,0 @@
 -package uk.knightz.knightzapi.communication.module;
 -
@@ -335,9 +421,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/modul
 -        allModules.add(m);
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/request/Request.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/request/Request.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/request/Request.java	2018-03-28 20:50:15.124408700 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/request/Request.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/request/Request.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/request/Request.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/request/Request.java	2018-03-29 18:56:56.189441300 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/request/Request.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,10 +0,0 @@
 -package uk.knightz.knightzapi.communication.request;
 -
@@ -349,9 +435,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/reque
 -public class Request {
 -
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java	2018-03-18 17:03:56.060553100 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java	2018-03-22 19:59:37.895845100 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/rsa/RSA.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,116 +0,0 @@
 -package uk.knightz.knightzapi.communication.rsa;
 -
@@ -469,9 +555,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/R
 -    }
 -
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java	2018-03-02 21:23:20.769151300 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java	2018-02-15 23:24:46.576560300 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAIO.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,87 +0,0 @@
 -package uk.knightz.knightzapi.communication.rsa;
 -
@@ -560,9 +646,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/R
 -        return new KeyPair(publicKey, privateKey);
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java	2018-03-02 21:23:20.773151500 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java	2018-02-16 11:37:45.017038000 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/rsa/RSAKeyGen.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,18 +0,0 @@
 -package uk.knightz.knightzapi.communication.rsa;
 -
@@ -582,9 +668,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/rsa/R
 -        return generator.generateKeyPair();
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java	2018-03-15 19:34:33.875040900 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java	2018-03-17 11:33:29.775543800 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthFilter.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,22 +0,0 @@
 -package uk.knightz.knightzapi.communication.server.authorisation;
 -
@@ -608,9 +694,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        }
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java	2018-03-28 20:50:15.215418700 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java	2018-03-29 18:56:56.225537400 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/AuthMethod.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,65 +0,0 @@
 -package uk.knightz.knightzapi.communication.server.authorisation;
 -
@@ -677,9 +763,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -
 -    abstract void validate(Request request, Response response);
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java	2018-03-06 19:30:10.492614700 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java	2018-03-07 17:10:50.182491700 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/authorisation/Whitelist.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,74 +0,0 @@
 -package uk.knightz.knightzapi.communication.server.authorisation;
 -
@@ -755,9 +841,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        return map;
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java	2018-03-02 21:23:20.813157600 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java	2018-02-23 22:51:22.340572900 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/controlpanel/LoginModule.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,21 +0,0 @@
 -package uk.knightz.knightzapi.communication.server.defaultmodules.controlpanel;
 -
@@ -780,9 +866,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        return "Hi!";
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java	2018-03-28 20:50:14.672850900 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java	2018-03-29 18:56:56.228545400 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/defaultmodules/ValidateModule.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,39 +0,0 @@
 -package uk.knightz.knightzapi.communication.server.defaultmodules;
 -
@@ -823,9 +909,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        return "Exception in decoding public key!";
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Request.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Request.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Request.java	2018-03-15 17:57:04.104587000 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Request.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Request.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/Request.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Request.java	2018-03-14 21:55:07.416783300 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/Request.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,20 +0,0 @@
 -package uk.knightz.knightzapi.communication.server;
 -
@@ -847,9 +933,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        return new String((Base64.getDecoder().decode(super.queryParams(message).getBytes())));
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Server.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Server.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Server.java	2018-03-28 20:50:15.049398100 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Server.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Server.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/Server.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Server.java	2018-03-29 18:56:56.190945500 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/Server.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,48 +0,0 @@
 -package uk.knightz.knightzapi.communication.server;
 -
@@ -899,9 +985,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -    String getPubKey();
 -
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java	2018-03-28 20:50:14.888378100 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java	2018-03-29 18:56:56.192449600 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/ServerFactory.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,36 +0,0 @@
 -package uk.knightz.knightzapi.communication.server;
 -
@@ -939,9 +1025,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        }
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java	2018-03-06 19:16:38.433584500 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java	2018-03-07 17:10:50.170460600 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/ServerManager.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,33 +0,0 @@
 -package uk.knightz.knightzapi.communication.server;
 -
@@ -976,9 +1062,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        return Webserver.init(method);
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java	2018-03-28 20:53:27.474765300 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java	2018-03-29 18:56:56.212502700 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/SimpleServer.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,138 +0,0 @@
 -package uk.knightz.knightzapi.communication.server;
 -
@@ -1118,9 +1204,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        this.credentials = e;
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java	2018-03-28 20:50:14.468825300 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java	2018-03-29 18:56:56.220022800 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/server/Webserver.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,128 +0,0 @@
 -package uk.knightz.knightzapi.communication.server;
 -
@@ -1250,9 +1336,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/serve
 -        }
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebModule.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/WebModule.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebModule.java	2018-03-02 21:23:20.747147500 +0000
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/communication/WebModule.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebModule.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/WebModule.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebModule.java	2018-02-17 14:52:58.302194100 +0000
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/communication/WebModule.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,53 +0,0 @@
 -package uk.knightz.knightzapi.communication;
 -
@@ -1307,15 +1393,13 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/communication/WebMo
 -        GET, POST
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/KnightzAPI.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java	2018-03-28 20:53:39.267323900 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/KnightzAPI.java	2018-03-28 21:32:33.510977000 +0100
-@@ -38,27 +38,6 @@
-     private static final Set<JavaPlugin> dependent = new HashSet<>();
-     private static FileConfiguration config;
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/KnightzAPI.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java	2018-03-29 18:56:56.152844100 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/KnightzAPI.java	2018-03-29 19:40:00.947946400 +0100
+@@ -40,25 +40,6 @@
      private static KnightzAPI p;
--
--    //Web Server
+ 
+     //Web Server
 -
 -    /**
 -     * An instance of WebServer, running the main Spark server.
@@ -1338,7 +1422,7 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java kni
      private FilesManager filesManager;
      //Vault
      private Economy economy;
-@@ -73,13 +52,6 @@
+@@ -73,14 +54,6 @@
          return p;
      }
  
@@ -1349,10 +1433,11 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java kni
 -    public static PluginFile getWebserverFile() {
 -        return webserverFile;
 -    }
- 
+-
      @Override
      public void onEnable() {
-@@ -106,21 +78,10 @@
+         p = this;
+@@ -106,21 +79,10 @@
                  Bukkit.getPluginManager().disablePlugin(javaPlugin);
              }
          }
@@ -1374,9 +1459,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/KnightzAPI.java kni
          User.saveData();
      }
  
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java	2018-03-28 20:50:14.758361700 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java	2018-03-29 18:56:56.231052500 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/IncomingRequest.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,24 +0,0 @@
 -package uk.knightz.knightzapi.module;
 -
@@ -1402,9 +1487,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequ
 -        this.id = id;
 -    }
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java	2018-03-28 20:50:15.250923800 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java	2018-03-29 18:56:56.234561700 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/IncomingRequestListener.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,11 +0,0 @@
 -package uk.knightz.knightzapi.module;
 -
@@ -1417,9 +1502,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/IncomingRequ
 -
 -    void onIncomingRequest(IncomingRequest incomingRequest);
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/Module.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java	2018-03-28 20:50:14.637346800 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/Module.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/Module.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java	2018-03-29 18:56:56.238572700 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/Module.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,72 +0,0 @@
 -package uk.knightz.knightzapi.module;
 -
@@ -1493,9 +1578,9 @@ diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/Module.java 
 -    }
 -
 -}
-diff -Naur knightzapimpl/src/main/java/uk/knightz/knightzapi/module/ModuleException.java knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/ModuleException.java
---- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/ModuleException.java	2018-03-28 20:50:14.512830700 +0100
-+++ knightzapimplnowebserver/src/main/java/uk/knightz/knightzapi/module/ModuleException.java	1970-01-01 00:00:00.000000000 +0000
+diff -ruN knightzapimpl/src/main/java/uk/knightz/knightzapi/module/ModuleException.java knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/ModuleException.java
+--- knightzapimpl/src/main/java/uk/knightz/knightzapi/module/ModuleException.java	2018-03-29 18:56:56.241079500 +0100
++++ knightzapimplnoweb/src/main/java/uk/knightz/knightzapi/module/ModuleException.java	1970-01-01 00:00:00.000000000 +0000
 @@ -1,27 +0,0 @@
 -package uk.knightz.knightzapi.module;
 -

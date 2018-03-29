@@ -57,6 +57,7 @@
     </build>
     <modules>
         <module>knightzapimpl</module>
+        <module>knightzapimplnoweb</module>
     </modules>
     <repositories>
         <repository>
