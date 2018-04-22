@@ -1,9 +1,0 @@
-#Enable debug messages
-debug: false
-
-#THESE FEATURES ARE IN BETA AND DISABLED BY DEFAULT.
-#Enable cross-server communication
-communication: false
-#Currently disabled
-#Enable automatic bug reporting
-report: false
