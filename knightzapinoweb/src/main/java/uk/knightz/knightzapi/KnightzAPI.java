@@ -20,6 +20,7 @@ import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.HelpBuilder;
 import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.user.User;
+import uk.knightz.knightzapi.utils.VersionUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,6 +63,7 @@ public class KnightzAPI extends JavaPlugin {
 
 	public void onEnable() {
 		p = this;
+		VersionUtil.checkVersion();
 		initManagers();
 		config = new PluginFile(p);
 		PlayerBlockMoveEvent.init();
