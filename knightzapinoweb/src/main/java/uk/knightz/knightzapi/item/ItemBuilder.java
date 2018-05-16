@@ -71,7 +71,7 @@ public class ItemBuilder {
 	public Map<String, Object> serialize() {
 		Map<String, Object> values = new HashMap<>();
 		values.put("name", name);
-		values.put("type", type);
+		values.put("type", type.name());
 		values.put("itemflags", flags);
 		values.put("lore", lore);
 		values.put("amount", amount);

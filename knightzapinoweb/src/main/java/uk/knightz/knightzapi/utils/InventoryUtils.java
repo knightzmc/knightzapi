@@ -35,6 +35,11 @@ public class InventoryUtils {
 				inv1.getType().equals(inv2.getType());
 	}
 
+	public static boolean equalsNoContents(Inventory inv1, Inventory inv2) {
+		return inv1 != null && inv2 != null
+				&& inv1.getTitle().equalsIgnoreCase(inv2.getTitle()) &&
+				inv1.getType().equals(inv2.getType());
+	}
 
 	/**
 	 * Get the central slot in an inventory
