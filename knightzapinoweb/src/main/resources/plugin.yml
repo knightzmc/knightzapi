@@ -2,3 +2,5 @@ name: KnightzAPI
 version: 1.0
 main: uk.knightz.knightzapi.KnightzAPI
 depend: [Vault]
+softdepend: [zdwdqdw]
+#Cheeky little Bukkit Explot ;)

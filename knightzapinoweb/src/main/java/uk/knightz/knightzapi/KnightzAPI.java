@@ -92,10 +92,19 @@ public class KnightzAPI extends JavaPlugin {
 		try {
 			try {
 				setupEconomy();
+			} catch (NullPointerException e) {
+				Log.warn("No Vault Economy plugin was found! This will likely cause problems with dependent plugins, so installing an economy plugin (such as Essentials) is highly recommended.");
+			}
+			try {
 				setupChat();
+			} catch (NullPointerException e) {
+				Log.warn("No Vault Chat plugin was found! This will likely cause problems with dependent plugins, so installing an chat plugin (such as EssentialsChat) is highly recommended.");
+			}
+
+			try {
 				setupPermissions();
 			} catch (NullPointerException e) {
-				Log.warn("No Vault depending plugins (eg Chat, Economy) were found! This will likely cause problems, so installing an economy, chat, and permissions plugin is HIGHLY recommended!");
+				Log.warn("No Vault Permissions plugin was found! This will likely cause problems with dependent plugins, so installing an Permissions plugin (such as LuckPerms) is highly recommended.");
 			}
 		} catch (NoClassDefFoundError e) {
 			Log.severe("Vault was not found! This will affect any plugins depending on it, so they have been disabled");
