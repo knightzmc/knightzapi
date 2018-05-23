@@ -1,5 +1,7 @@
 package uk.knightz.knightzapi.utils;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,6 +43,25 @@ public class InventoryUtils {
 				inv1.getType().equals(inv2.getType());
 	}
 
+	public static void removeItemFromPlayer(Player p, ItemStack item, int quantity) {
+		if (p.getInventory().containsAtLeast(item, quantity)) {
+			int n = 0;
+			for (ItemStack i : p.getInventory()) {
+				if (i != null) {
+					if (i
+							.isSimilar(item)) {
+						if (n + i.getAmount() > quantity || n > quantity) {
+							i.setAmount(quantity - n);
+							return;
+						}
+						n += i.getAmount();
+						i.setType(Material.AIR);
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Get the central slot in an inventory
 	 *
@@ -61,7 +82,12 @@ public class InventoryUtils {
 	 */
 	public static int firstIgnoreAmount(Inventory inv, ItemStack it) {
 		try {
-			Method firstIgnore = inv.getClass().getDeclaredMethod("first", ItemStack.class, boolean.class);
+			Method firstIgnore;
+			try {
+				firstIgnore = inv.getClass().getDeclaredMethod("first", ItemStack.class, boolean.class);
+			} catch (NoSuchMethodException e) {
+				firstIgnore = inv.getClass().getSuperclass().getDeclaredMethod("first", ItemStack.class, boolean.class);
+			}
 			return (int) firstIgnore.invoke(inv, it, true);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();

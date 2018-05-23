@@ -8,6 +8,7 @@ import com.google.gson.Gson;
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
 public class JSONMessage {
+    private static final Gson gson = new Gson();
     private final int code;
     private final String message;
 
@@ -25,6 +26,6 @@ public class JSONMessage {
     }
 
     public String toJson() {
-        return new Gson().toJson(this);
+        return gson.toJson(this);
     }
 }

@@ -1,5 +1,6 @@
 package uk.knightz.knightzapi.communication.server;
 
+import lombok.Data;
 import org.apache.commons.lang.Validate;
 import spark.Spark;
 import uk.knightz.knightzapi.KnightzAPI;
@@ -35,114 +36,112 @@ import static spark.Spark.*;
  * This class hosts the core functionality on its own thread. It runs the Spark webserver
  * manages modules, and loads RSA certificate information.
  **/
+@Data
 public class Webserver extends Thread {
-    private static Webserver instance;
-    private static boolean isInitialised = false;
-    private final Set<Module> modules;
-    private final KeyPair pair;
-    private final AuthMethod auth;
-    private Whitelist whitelist;
+	private static Webserver instance;
+	private static boolean isInitialised = false;
+	private final Set<Module> modules;
+	private final KeyPair pair;
+	private final AuthMethod auth;
+	private Whitelist whitelist;
 
 
-    private Webserver(AuthMethod auth) {
-        this.auth = auth;
-        //RSA Keys
-        {
-            KeyPair pair = null;
-            try {
-                File rsaDir = new File(KnightzAPI.getP().getDataFolder(), "/rsa");
-                if (!rsaDir.exists() || Objects.requireNonNull(rsaDir.listFiles()).length == 0) {
-                    rsaDir.mkdir();
-                    pair = RSAKeyGen.generate(2048);
-                    RSAIO.save(rsaDir, pair);
-                    new File(rsaDir, "README.txt").createNewFile();
-                    Files.write(Paths.get(new File(rsaDir, "README.txt").toURI()),
-                            Arrays.asList("This folder contains your public and private keys for encrypting and decrypting data",
-                                    "as said in the name, the private key SHOULD BE KEPT PRIVATE AT ALL TIMES!",
-                                    "exposing it in ANY way will pose a security risk as any data sent to your server can be easily decrypted and read as plain text."
-                                    , "If you have lost yours or suspect it has been discovered, immediately delete public.key and private.key, and restart your server"));
-                } else {
-                    pair = RSAIO.load(rsaDir);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            this.pair = pair;
-        }
+	private Webserver(AuthMethod auth) {
+		this.setName("KnightzAPI Webserver");
+		this.auth = auth;
+		//RSA Keys
+		{
+			KeyPair pair = null;
+			try {
+				File rsaDir = new File(KnightzAPI.getP().getDataFolder(), "/rsa");
+				if (!rsaDir.exists() || Objects.requireNonNull(rsaDir.listFiles()).length == 0) {
+					rsaDir.mkdir();
+					pair = RSAKeyGen.generate(2048);
+					RSAIO.save(rsaDir, pair);
+					new File(rsaDir, "README.txt").createNewFile();
+					Files.write(Paths.get(new File(rsaDir, "README.txt").toURI()),
+							Arrays.asList("This folder contains your public and private keys for encrypting and decrypting data",
+									"as said in the name, the private key SHOULD BE KEPT PRIVATE AT ALL TIMES!",
+									"exposing it in ANY way will pose a security risk as any data sent to your server can be easily decrypted and read as plain text."
+									, "If you have lost yours or suspect it has been discovered, immediately delete public.key and private.key, and restart your server"));
+				} else {
+					pair = RSAIO.load(rsaDir);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.pair = pair;
+		}
 
 
-        new ValidateModule();
-        if (auth.equals(AuthMethod.WHITELIST) || auth.equals(AuthMethod.WHITEAUTH)) {
-            whitelist = Whitelist.deserialize(KnightzWebAPI.getWebserverFile().getConfigurationSection("auth").getValues(true));
-        }
-        this.start();
-        modules = ModuleManager.getManager().getAllModules();
-    }
+		new ValidateModule();
+		if (auth.equals(AuthMethod.WHITELIST) || auth.equals(AuthMethod.WHITEAUTH)) {
+			whitelist = Whitelist.deserialize(KnightzWebAPI.getWebserverFile().getConfigurationSection("auth").getValues(true));
+		}
+		this.start();
+		modules = ModuleManager.getManager().getAllModules();
+	}
 
-    public static Webserver getInstance() {
-        return instance;
-    }
+	public static Webserver getInstance() {
+		return instance;
+	}
 
-    static Webserver init(AuthMethod auth) {
-        if (isInitialised) return instance;
-        isInitialised = true;
-        return instance = new Webserver(auth);
-    }
+	static Webserver init(AuthMethod auth) {
+		if (isInitialised) return instance;
+		isInitialised = true;
+		return instance = new Webserver(auth);
+	}
 
-    public void shutdown() {
-        instance = null;
-        Spark.stop();
-    }
+	public void shutdown() {
+		instance = null;
+		Spark.stop();
+	}
 
-    public Set<Module> getModules() {
-        return modules;
-    }
+	public Set<Module> getModules() {
+		return modules;
+	}
 
-    public Whitelist getWhitelist() {
-        return whitelist;
-    }
+	public Whitelist getWhitelist() {
+		return whitelist;
+	}
 
-    public AuthMethod getAuth() {
-        return auth;
-    }
+	public AuthMethod getAuth() {
+		return auth;
+	}
 
-    public KeyPair getPair() {
-        return pair;
-    }
+	public KeyPair getPair() {
+		return pair;
+	}
 
-    @Override
-    public void run() {
-        //Allow Spark to load static files from Bukkit
-        setContextClassLoader(KnightzWebAPI.class.getClassLoader());
-        staticFiles.location("/public");
-        post("/", new MainRoute());
-        before(new AuthFilter());
-        WebModule.getAllModules().forEach(WebModule::exec);
-        Spark.init();
-        System.out.println(port());
-        Log.normal("[KnightzWebAPI] Webserver successfully started up!");
-    }
+	@Override
+	public void run() {
+		//Allow Spark to load static files from Bukkit
+		setContextClassLoader(KnightzWebAPI.class.getClassLoader());
+		staticFiles.location("/public");
+		post("/requests", new MainRoute());
+		before(new AuthFilter());
+		WebModule.getAllModules().forEach(WebModule::exec);
+		Spark.init();
+		System.out.println(port());
+		Log.normal("[KnightzWebAPI] Webserver successfully started up!");
+	}
 
-    public void registerModule(WebModule module) {
-        Validate.notNull(module);
-        module.exec();
-    }
+	public void registerModule(WebModule module) {
+		Validate.notNull(module);
+		module.exec();
+	}
 
-    public void callRequest(IncomingRequest request) {
-        if (request == null) {
-            return;
-        }
-        System.out.println(request.getId());
-        modules.stream().map(Module::getRequestID).forEach(System.out::println);
-        if (modules.stream().map(Module::getRequestID).anyMatch(i -> request.getId().equals(i))) {
-            for (Module m : modules) {
-                String id = m.getRequestID();
-                if (request.getId().equals(id)) {
-                    m.onIncomingRequest(request);
-                    return;
-                }
-            }
-        }
-    }
+	public void callRequest(IncomingRequest request) {
+		if (request == null) {
+			return;
+		}
+		for (Module m : modules) {
+			String id = m.getRequestID();
+			if (request.getId().equals(id)) {
+				m.onIncomingRequest(request);
+				return;
+			}
+		}
+	}
 
 }
