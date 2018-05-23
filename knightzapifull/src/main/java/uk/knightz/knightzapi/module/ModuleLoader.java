@@ -4,12 +4,14 @@ import com.google.common.collect.Sets;
 import org.xeustechnologies.jcl.JarClassLoader;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.KnightzWebAPI;
+import uk.knightz.knightzapi.communication.WebModule;
 import uk.knightz.knightzapi.lang.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,7 @@ import java.util.zip.ZipInputStream;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * Resonsible for loading in all modules on server load (or when manually queried)
+ * Responsible for loading in all modules on server load (or when manually queried)
  **/
 class ModuleLoader extends Thread {
 
@@ -56,13 +58,18 @@ class ModuleLoader extends Thread {
 		loadModules();
 	}
 
-	@SuppressWarnings ("ConstantConditions")
-	public synchronized Set<Module> loadModules() {
+	@SuppressWarnings("ConstantConditions")
+	synchronized Set<Module> loadModules() {
 		File modulesDir = new File(KnightzAPI.getP().getDataFolder(), "/modules");
 		if (!modulesDir.exists()) modulesDir.mkdir();
 		all = Sets.newHashSet();
 		if (modulesDir.listFiles().length == 0) {
 			return all;
+		}
+		try {
+			load(new File(KnightzWebAPI.class.getProtectionDomain().getCodeSource().getLocation().getFile()));
+		} catch (ModuleException e) {
+			e.printStackTrace();
 		}
 		for (File file : modulesDir.listFiles()) {
 			try {
@@ -125,14 +132,14 @@ class ModuleLoader extends Thread {
 	}
 
 
-	private synchronized Module load(File f) throws ModuleException {
+	private synchronized void load(File f) throws ModuleException {
 		try {
 			JarFile jf = new JarFile(f);
 			jcl.add(new FileInputStream(f));
 			List<String> classes = getClassesInJar(f);
 			List<Class> clazzes = new ArrayList<>();
 			if (classes == null) {
-				return null;
+				return;
 			}
 			classes.forEach(n -> {
 				try {
@@ -141,9 +148,12 @@ class ModuleLoader extends Thread {
 					e.printStackTrace();
 				}
 			});
-			clazzes.sort(((o1, o2) -> Module.class.isAssignableFrom(o1) && o1 != Module.class ? -1 : 1));
-			boolean contains = false;
-			Module module;
+			clazzes.sort(((o1, o2) -> {
+				if (o1.equals(o2)) {
+					return 0;
+				}
+				return Module.class.isAssignableFrom(o1) && o1 != Module.class ? -1 : 1;
+			}));
 			for (Class clazz : clazzes) {
 				if (clazz == null) {
 					Log.severe("Module " + f.getName() + " failed to be loaded into the server! Please contact @Knightz#0986 on Discord for assistance!");
@@ -164,13 +174,25 @@ class ModuleLoader extends Thread {
 						System.out.println("Module with class name " + modClazz.getName() + " could not be loaded! Enable debug mode in KnightzAPI config to view stack-trace.");
 					}
 				}
+				if (WebModule.class.isAssignableFrom(clazz)) {
+					if (!(clazz).equals(WebModule.class)) {
+						try {
+							Constructor<? extends WebModule> c = ((Class<? extends WebModule>) clazz).getDeclaredConstructor();
+							WebModule webModule = c.newInstance();
+						} catch (NoSuchMethodException e) {
+							Log.severe("Unable to load in WebModule " + clazz.getSimpleName() + " from Module " + f.getName() +
+									" as it lacks a no-argument constructor. Contact its developer");
+						} catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 			}
 		} catch (IOException e) {
-			System.out.println("An error occured loading in the a module from " + f.getName() + "Enable debug mode in KnightzAPI to view stacktrace.");
+			Log.severe("An error occured loading in the a module from " + f.getName() + "Enable debug mode in KnightzAPI to view stacktrace.");
 			if (Log.debug())
 				e.printStackTrace();
 		}
-		return null;
 	}
 }
 

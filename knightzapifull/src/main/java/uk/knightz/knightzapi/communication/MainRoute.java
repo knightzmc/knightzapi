@@ -13,18 +13,16 @@ import uk.knightz.knightzapi.module.IncomingRequest;
  **/
 public class MainRoute implements Route {
 
-    @Override
-    public Object handle(Request request, Response response) {
-        if (request.requestMethod().equals("POST")) {
-            try {
-                IncomingRequest ir = new IncomingRequest(request, response);
-                System.out.println(ir.getId());
-                Webserver.getInstance().callRequest(ir);
-                return null;
-            } catch (Exception e) {
-                throw new RuntimeException("Error reading Incoming Request", e);
-            }
-        }
-        return null;
-    }
+	@Override
+	public Object handle(Request request, Response response) {
+		try {
+			IncomingRequest ir = new IncomingRequest(request, response);
+			Webserver.getInstance().callRequest(ir);
+			return "Handled";
+		} catch (Exception e) {
+			e.printStackTrace();
+//			throw new RuntimeException("Error reading Incoming Request", e);
+		}
+		return null;
+	}
 }

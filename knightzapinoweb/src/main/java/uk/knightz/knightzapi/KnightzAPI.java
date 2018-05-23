@@ -81,9 +81,13 @@ public class KnightzAPI extends JavaPlugin {
 				Method init = webAPI.getDeclaredMethod("init", boolean.class);
 				System.out.println(webAPIEnabled);
 				init.invoke(null, webAPIEnabled);
-				new BukkitCommandManager(KnightzAPI.getP()).registerCommand((BaseCommand) Class.forName("uk.knightz.knightzapi.Test").getConstructor().newInstance());
+				new BukkitCommandManager(KnightzAPI.getP()).registerCommand((BaseCommand) Class.forName("uk.knightz.knightzapi.FakeRequestCommand").getConstructor().newInstance());
+
 			} catch (ClassNotFoundException e) {
 				Log.severe("You are trying to load in the communication API without the right file! Make sure you're using knightzapifull-*.jar+\n Disabling plugin...");
+				if (Log.debug()) {
+					e.printStackTrace();
+				}
 				Bukkit.getPluginManager().disablePlugin(this);
 			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
 				Log.severe("An error occured loading in the communication API! Enable debug mode in the config to view the stack trace.");

@@ -7,7 +7,7 @@
     <groupId>uk.knightz</groupId>
     <artifactId>knightzapi</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.7-RELEASE</version>
+    <version>1.0.8-RELEASE</version>
     <!--<distributionManagement>-->
     <!--<repository>-->
     <!--<id>knightz-central</id>-->
@@ -97,15 +97,15 @@
         <dependency>
         <groupId>org.spigotmc</groupId>
         <artifactId>spigot-api</artifactId>
-        <version>1.11.2-R0.1-SNAPSHOT</version>
+        <version>1.12.2-R0.1-SNAPSHOT</version>
         <scope>provided</scope>
         </dependency>
-        <dependency>
-        <groupId>org.spigotmc</groupId>
-        <artifactId>spigot-api</artifactId>
-        <version>1.10.2-R0.1-SNAPSHOT</version>
-        <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.spigotmc</groupId>-->
+        <!--<artifactId>spigot-api</artifactId>-->
+        <!--<version>1.10.2-R0.1-SNAPSHOT</version>-->
+        <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
