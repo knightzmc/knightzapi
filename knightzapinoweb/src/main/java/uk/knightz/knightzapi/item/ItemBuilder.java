@@ -47,6 +47,9 @@ public class ItemBuilder {
 		for (String v : (List<String>) fromConfig.getOrDefault("itemflags", new ArrayList<>())) {
 			addFlag(ItemFlag.valueOf(v));
 		}
+		if (fromConfig.containsKey("unbreakable")) {
+			unbreakable = (boolean) fromConfig.get("unbreakable");
+		}
 		setLore(Chat.color((List<String>) fromConfig.getOrDefault("lore", new ArrayList<>())));
 		setData(Short.parseShort(String.valueOf(fromConfig.getOrDefault("data", "0"))));
 		Map<Enchantment, Integer> enchants = (Map<Enchantment, Integer>) fromConfig.getOrDefault("enchantments", new HashMap<>());
@@ -76,6 +79,7 @@ public class ItemBuilder {
 		values.put("lore", lore);
 		values.put("amount", amount);
 		values.put("data", data);
+		values.put("unbreakable", unbreakable);
 		values.put("enchantments", enchantments);
 		return values;
 	}
