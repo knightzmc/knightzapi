@@ -29,8 +29,7 @@ public class PlayerBlockMoveEvent extends PlayerMoveEvent {
 	private static class MoveListener implements Listener {
 		@EventHandler (priority = EventPriority.MONITOR)
 		public void onMove(PlayerMoveEvent ex) {
-			if (ex
-					instanceof PlayerBlockMoveEvent) {
+			if (ex instanceof PlayerBlockMoveEvent) {
 				return;
 			}
 			Location f = ex.getFrom();
