@@ -28,7 +28,7 @@ public class HelpBuilder implements ConfigurationSerializable {
 		this.messages.addAll(messages);
 	}
 
-	public static Class<? extends HelpMessage> getHelpBuilderClass() {
+	public static Class<? extends HelpMessage> getHelpMessageClass() {
 		return HelpMessage.class;
 	}
 

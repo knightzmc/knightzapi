@@ -2,8 +2,8 @@ package uk.knightz.knightzapi.menu.item;
 
 import lombok.Data;
 import lombok.NonNull;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import java.util.function.Consumer;
 
@@ -13,14 +13,20 @@ import java.util.function.Consumer;
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
 @Data
-public final class MenuItem {
+public class MenuButton {
 	@NonNull
 	private final ItemStack itemStack;
 	@NonNull
-	private final Consumer<InventoryClickEvent> onClick;
+	private final Consumer<MenuClickEvent> onClick;
 
-	public MenuItem(ItemStack itemStack, Consumer<InventoryClickEvent> onClick) {
+	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
 		this.itemStack = itemStack;
 		this.onClick = onClick;
+	}
+
+
+	public void onClick(MenuClickEvent e) {
+		if (e == null) return;
+		onClick.accept(e);
 	}
 }

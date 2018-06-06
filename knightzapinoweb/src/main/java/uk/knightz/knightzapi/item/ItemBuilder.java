@@ -63,6 +63,9 @@ public class ItemBuilder {
 		flags = root.getItemMeta().getItemFlags();
 		setLore(root.getItemMeta().getLore());
 		setData(root.getDurability());
+		if(root.getItemMeta().isUnbreakable()) {
+			setUnbreakable(true);
+		}
 		setEnchantments(root.getEnchantments());
 	}
 

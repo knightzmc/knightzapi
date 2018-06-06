@@ -9,7 +9,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +22,7 @@ import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.HelpBuilder;
 import uk.knightz.knightzapi.lang.Log;
+import uk.knightz.knightzapi.menu.ExampleMenu;
 import uk.knightz.knightzapi.user.User;
 import uk.knightz.knightzapi.utils.VersionUtil;
 
@@ -32,13 +36,12 @@ import java.util.Set;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
-public class KnightzAPI extends JavaPlugin {
+public class KnightzAPI extends JavaPlugin implements Listener {
 	/**
 	 * Any plugins dependent on KnightzAPI - not completely accurate as goes by plugin.yml dependencies
 	 */
 	private static final Set<JavaPlugin> dependent = new HashSet<>();
 	private static FileConfiguration config;
-	private static KnightzAPI p;
 	private boolean webAPIEnabled;
 	private FilesManager filesManager;
 	//Vault
@@ -46,29 +49,25 @@ public class KnightzAPI extends JavaPlugin {
 	private Chat chat;
 	private Permission permission;
 
-	public KnightzAPI() {
-		super();
-	}
-
 
 	public static FileConfiguration getConfigFile() {
 		return config;
 	}
 
 	public static KnightzAPI getP() {
-		return p;
+		return getPlugin(KnightzAPI.class);
 	}
 
 	@Override
 
 	public void onEnable() {
-		p = this;
 		VersionUtil.checkVersion();
 		initManagers();
-		config = new PluginFile(p);
+		config = new PluginFile(this);
 		PlayerBlockMoveEvent.init();
+		Bukkit.getPluginManager().registerEvents(this, this);
 		ConfigurationSerialization.registerClass(HelpBuilder.class);
-		ConfigurationSerialization.registerClass(HelpBuilder.getHelpBuilderClass());
+		ConfigurationSerialization.registerClass(HelpBuilder.getHelpMessageClass());
 		webAPIEnabled = config.getBoolean("communication");
 		for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
 			if (plugin.getDescription().getDepend().contains("KnightzAPI") || plugin.getDescription().getSoftDepend().contains("KnightzAPI")) {
@@ -157,8 +156,9 @@ public class KnightzAPI extends JavaPlugin {
 		filesManager = new MainFilesManager(this);
 	}
 
+
 	private boolean setupEconomy() {
-		if (p.getServer().getPluginManager().getPlugin("Vault") == null) {
+		if (getServer().getPluginManager().getPlugin("Vault") == null) {
 			return false;
 		}
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
@@ -181,4 +181,12 @@ public class KnightzAPI extends JavaPlugin {
 		return permission != null;
 	}
 
+
+	//TODO DEBUG
+
+	@EventHandler
+	public void onJoin(PlayerInteractEvent e) {
+		if (e.getHand() == EquipmentSlot.HAND)
+			ExampleMenu.forPlayer(e.getPlayer());
+	}
 }
