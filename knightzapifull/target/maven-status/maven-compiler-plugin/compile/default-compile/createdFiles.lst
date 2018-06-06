@@ -9,13 +9,13 @@ uk\knightz\knightzapi\communication\server\authorisation\NotAuthorisedException.
 uk\knightz\knightzapi\communication\rsa\RSAKeyGen.class
 uk\knightz\knightzapi\module\Module.class
 uk\knightz\knightzapi\module\ModuleLoader.class
+uk\knightz\knightzapi\module\defaultmodules\ModuleByName.class
 uk\knightz\knightzapi\communication\server\ServerFactory.class
 uk\knightz\knightzapi\module\IncomingRequestListener.class
 uk\knightz\knightzapi\module\ModuleManager.class
 uk\knightz\knightzapi\communication\server\authorisation\AuthMethod$1.class
 uk\knightz\knightzapi\communication\server\authorisation\AuthMethod$4.class
 uk\knightz\knightzapi\communication\server\ServerManager.class
-uk\knightz\knightzapi\Test.class
 uk\knightz\knightzapi\communication\server\authorisation\AuthMethod$2.class
 uk\knightz\knightzapi\communication\json\JSONMessage.class
 uk\knightz\knightzapi\communication\server\Server.class
@@ -23,6 +23,7 @@ uk\knightz\knightzapi\communication\server\Webserver.class
 uk\knightz\knightzapi\communication\server\authorisation\ValidateModule.class
 uk\knightz\knightzapi\communication\server\ServerFactory$FactoryStorage.class
 uk\knightz\knightzapi\KnightzWebAPI.class
+uk\knightz\knightzapi\FakeRequestCommand.class
 uk\knightz\knightzapi\communication\server\SimpleServer$1.class
 uk\knightz\knightzapi\communication\rsa\RSA.class
 uk\knightz\knightzapi\communication\MainRoute.class

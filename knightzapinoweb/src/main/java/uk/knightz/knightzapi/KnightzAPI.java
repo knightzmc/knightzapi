@@ -10,9 +10,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,7 +20,6 @@ import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.HelpBuilder;
 import uk.knightz.knightzapi.lang.Log;
-import uk.knightz.knightzapi.menu.ExampleMenu;
 import uk.knightz.knightzapi.user.User;
 import uk.knightz.knightzapi.utils.VersionUtil;
 
@@ -183,10 +180,10 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 
 
 	//TODO DEBUG
-
-	@EventHandler
-	public void onJoin(PlayerInteractEvent e) {
-		if (e.getHand() == EquipmentSlot.HAND)
-			ExampleMenu.forPlayer(e.getPlayer());
-	}
+//
+//	@EventHandler
+//	public void onJoin(PlayerInteractEvent e) {
+//		if (e.getHand() == EquipmentSlot.HAND)
+//			ExampleMenu.forPlayer(e.getPlayer());
+//	}
 }
