@@ -6,6 +6,7 @@ import org.bukkit.block.BlockState;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.lang.Log;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
