@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import uk.knightz.knightzapi.KnightzAPI;
@@ -35,6 +36,11 @@ import java.util.stream.Collectors;
 public class User implements Listener {
 	private static final Map<OfflinePlayer, User> users = new HashMap<>();
 	private static final Map<User, PluginFile> userFiles = new HashMap<>();
+
+	static {
+		for (Class<? extends PlayerEvent> e:new Reflections("org.bukkit.event"))
+	}
+
 	/**
 	 * Non-Persistent data that will be erased after a reload. Good for temporary data.
 	 */
@@ -47,6 +53,7 @@ public class User implements Listener {
 	private int deaths;
 	private Consumer<Player> onConfirmAction;
 	private Consumer<Player> onDenyAction;
+	private Set<Class<? extends PlayerEvent>> deniedEvents = new HashSet<>();
 
 	/**
 	 * Initialise a new User for the given "root" player
@@ -59,8 +66,7 @@ public class User implements Listener {
 		PluginFile file = new PluginFile(KnightzAPI.getP(), root.getUniqueId());
 		userFiles.put(this, file);
 		List<String> i = userFiles.get(this).getStringList("kits");
-		List<Kit> kits = i.stream().map(Kit::fromName).collect(Collectors.toList());
-		this.ownedKits = kits == null ? new HashSet<>() : new HashSet<>(kits);
+		this.ownedKits = i.stream().map(Kit::fromName).collect(Collectors.toSet());
 		this.equippedKit = file.contains("equippedkit") ? Kit.fromName(file.getString("equippedkit")) : null;
 		this.tokens = file.contains("tokens") ? file.getInt("tokens") : 0;
 		this.kills = file.contains("kills") ? file.getInt("kills") : 0;
@@ -79,10 +85,7 @@ public class User implements Listener {
 	 * @return the corresponding User for the given OfflinePlayer, if none is currently loaded, a new one is loaded
 	 */
 	public static User valueOf(@NotNull OfflinePlayer root) {
-		if (root == null) {
-			throw new IllegalArgumentException("Root cannot be null!");
-		}
-		for (Map.Entry<OfflinePlayer, User> entry : users.entrySet()) {
+		for (Map.Entry<OfflinePlayer, User> entry: users.entrySet()) {
 			if (entry == null) continue;
 			if (entry.getKey().equals(root)) {
 				return entry.getValue();
@@ -114,20 +117,23 @@ public class User implements Listener {
 		File usersDir = new File(KnightzAPI.getP().getDataFolder() + File.separator + "userdata" + File.separator);
 		Set<StatsContainer> temp = new HashSet<>();
 		Set<String> added = new HashSet<>();
-		for (User user : users.values()) {
+		for (User user: users.values()) {
 			temp.add(new StatsContainer(user.getKills(), user.getDeaths(), user.getRoot().getName()));
 			added.add(user.getRoot().getName());
 		}
-		for (File file : usersDir.listFiles()) {
-			YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-			if (added.contains(Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName())) {
-				continue;
+		File[] files = usersDir.listFiles();
+		if (files != null) {
+			for (File file: files) {
+				YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+				if (added.contains(Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName())) {
+					continue;
+				}
+				int kills = yamlConfiguration.getInt("kills");
+				int deaths = yamlConfiguration.getInt("deaths");
+				temp.add(new StatsContainer(kills, deaths, Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName()));
 			}
-			int kills = yamlConfiguration.getInt("kills");
-			int deaths = yamlConfiguration.getInt("deaths");
-			temp.add(new StatsContainer(kills, deaths, Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName()));
-		}
 
+		}
 		return temp;
 	}
 
@@ -198,7 +204,7 @@ public class User implements Listener {
 			p.getInventory().addItem(new ItemBuilder().setType(Material.BOWL).setAmount(32).build());
 			p.getInventory().addItem(new ItemBuilder().setType(Material.BROWN_MUSHROOM).setAmount(32).build());
 			p.getInventory().addItem(new ItemBuilder().setType(Material.RED_MUSHROOM).setAmount(32).build());
-			for (ItemStack i : p.getInventory()) {
+			for (ItemStack i: p.getInventory()) {
 				if (i == null) {
 					p.getInventory().addItem(new ItemBuilder().setType(Material.MUSHROOM_SOUP).build());
 				}
@@ -210,9 +216,7 @@ public class User implements Listener {
 	}
 
 	public void removeData(String key) {
-		if (data.containsKey(key)) {
-			data.remove(key);
-		}
+		data.remove(key);
 	}
 
 	public Optional<Kit> equippedKit() {
@@ -256,5 +260,8 @@ public class User implements Listener {
 
 	public void setTokens(int tokens) {
 		this.tokens = tokens;
+	}
+
+	public void playerAction(PlayerEvent e) {
 	}
 }

@@ -177,13 +177,4 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 		permission = rsp.getProvider();
 		return permission != null;
 	}
-
-
-	//TODO DEBUG
-//
-//	@EventHandler
-//	public void onJoin(PlayerInteractEvent e) {
-//		if (e.getHand() == EquipmentSlot.HAND)
-//			ExampleMenu.forPlayer(e.getPlayer());
-//	}
 }

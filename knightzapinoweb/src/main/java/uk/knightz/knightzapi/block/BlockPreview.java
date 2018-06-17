@@ -6,7 +6,7 @@ import org.bukkit.block.BlockState;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.lang.Log;
 
-import java.util.function.Consumer;
+import java.util.Arrays;
 import java.util.function.Function;
 
 /**
@@ -37,9 +37,10 @@ public class BlockPreview {
 		BlockState[] temp = new BlockState[original.length];
 		int i = 0;
 		for (BlockState b : original) {
-			temp[i] = change.apply(b);
+			temp[i] = change.apply(b.getBlock().getState());
 			i++;
 		}
+		undo();
 		this.changeTo = temp;
 	}
 
@@ -65,6 +66,8 @@ public class BlockPreview {
 					}
 				}
 			});
+		} else {
+			Arrays.stream(change).forEach(aChange -> aChange.update(true));
 		}
 	}
 
