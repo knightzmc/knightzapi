@@ -96,11 +96,11 @@ public class RSA {
 
     public static class Holder {
         private final byte[] byteCipherText;
-        private final byte[] encrypedKey;
+        private final byte[] encryptedKey;
 
         public Holder(byte[] byteCipherText, byte[] aesKey) {
             this.byteCipherText = byteCipherText;
-            this.encrypedKey = aesKey;
+            this.encryptedKey = aesKey;
 
         }
 
@@ -108,8 +108,8 @@ public class RSA {
             return byteCipherText;
         }
 
-        public byte[] getEncrypedKey() {
-            return encrypedKey;
+        public byte[] getEncryptedKey() {
+            return encryptedKey;
         }
     }
 

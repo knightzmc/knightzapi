@@ -37,10 +37,6 @@ public class User implements Listener {
 	private static final Map<OfflinePlayer, User> users = new HashMap<>();
 	private static final Map<User, PluginFile> userFiles = new HashMap<>();
 
-	static {
-		for (Class<? extends PlayerEvent> e:new Reflections("org.bukkit.event"))
-	}
-
 	/**
 	 * Non-Persistent data that will be erased after a reload. Good for temporary data.
 	 */
@@ -85,7 +81,7 @@ public class User implements Listener {
 	 * @return the corresponding User for the given OfflinePlayer, if none is currently loaded, a new one is loaded
 	 */
 	public static User valueOf(@NotNull OfflinePlayer root) {
-		for (Map.Entry<OfflinePlayer, User> entry: users.entrySet()) {
+		for (Map.Entry<OfflinePlayer, User> entry : users.entrySet()) {
 			if (entry == null) continue;
 			if (entry.getKey().equals(root)) {
 				return entry.getValue();
@@ -117,13 +113,13 @@ public class User implements Listener {
 		File usersDir = new File(KnightzAPI.getP().getDataFolder() + File.separator + "userdata" + File.separator);
 		Set<StatsContainer> temp = new HashSet<>();
 		Set<String> added = new HashSet<>();
-		for (User user: users.values()) {
+		for (User user : users.values()) {
 			temp.add(new StatsContainer(user.getKills(), user.getDeaths(), user.getRoot().getName()));
 			added.add(user.getRoot().getName());
 		}
 		File[] files = usersDir.listFiles();
 		if (files != null) {
-			for (File file: files) {
+			for (File file : files) {
 				YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
 				if (added.contains(Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName())) {
 					continue;
@@ -204,7 +200,7 @@ public class User implements Listener {
 			p.getInventory().addItem(new ItemBuilder().setType(Material.BOWL).setAmount(32).build());
 			p.getInventory().addItem(new ItemBuilder().setType(Material.BROWN_MUSHROOM).setAmount(32).build());
 			p.getInventory().addItem(new ItemBuilder().setType(Material.RED_MUSHROOM).setAmount(32).build());
-			for (ItemStack i: p.getInventory()) {
+			for (ItemStack i : p.getInventory()) {
 				if (i == null) {
 					p.getInventory().addItem(new ItemBuilder().setType(Material.MUSHROOM_SOUP).build());
 				}
@@ -262,6 +258,7 @@ public class User implements Listener {
 		this.tokens = tokens;
 	}
 
-	public void playerAction(PlayerEvent e) {
+	public boolean shouldCancel(Class<? extends PlayerEvent> event) {
+		return getDeniedEvents().contains(event);
 	}
 }

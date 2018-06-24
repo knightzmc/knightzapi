@@ -110,7 +110,7 @@ public class SimpleServer implements Server {
 				if (requestID != null) add(new BasicNameValuePair("module", requestID));
 
 				add(new BasicNameValuePair("data", new String(Base64.getEncoder().encode(bytedata.getByteCipherText()))));
-				add(new BasicNameValuePair("aes", new String(Base64.getEncoder().encode(bytedata.getEncrypedKey()))));
+				add(new BasicNameValuePair("aes", new String(Base64.getEncoder().encode(bytedata.getEncryptedKey()))));
 
 				if (credentials != null) {
 					add(new BasicNameValuePair("username", new String(Base64.getEncoder().encode(credentials.getUserName().getBytes()))));

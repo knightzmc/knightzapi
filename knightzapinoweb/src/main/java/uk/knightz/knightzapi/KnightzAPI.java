@@ -2,6 +2,8 @@ package uk.knightz.knightzapi;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.BukkitCommandManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -9,18 +11,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.reflections.Reflections;
 import uk.knightz.knightzapi.event.PlayerBlockMoveEvent;
 import uk.knightz.knightzapi.files.FilesManager;
 import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
+import uk.knightz.knightzapi.item.ItemStackJsonSerializer;
 import uk.knightz.knightzapi.lang.HelpBuilder;
 import uk.knightz.knightzapi.lang.Log;
+import uk.knightz.knightzapi.menu.InventorySerializer;
 import uk.knightz.knightzapi.user.User;
+import uk.knightz.knightzapi.user.UserEventBlocker;
 import uk.knightz.knightzapi.utils.VersionUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -47,6 +58,10 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 	private Permission permission;
 
 
+	public static final Gson gson = new GsonBuilder().disableHtmlEscaping()
+			.setPrettyPrinting().registerTypeAdapter(ItemStack.class, new ItemStackJsonSerializer())
+			.registerTypeAdapter(Inventory.class, new InventorySerializer()).create();
+
 	public static FileConfiguration getConfigFile() {
 		return config;
 	}
@@ -59,6 +74,23 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 
 	public void onEnable() {
 		VersionUtil.checkVersion();
+
+
+		UserEventBlocker userEventBlocker = new UserEventBlocker();
+		EventExecutor ev = (listener, event) -> userEventBlocker.event(event);
+		for (Class<? extends PlayerEvent> e : new Reflections("org.bukkit.event").getSubTypesOf(PlayerEvent.class)) {
+			if (!e.getName().equals(PlayerEvent.class.getName())) {
+				try {
+					Bukkit.getPluginManager().registerEvent(e, userEventBlocker, EventPriority.NORMAL,
+							ev,
+							this, true);
+				} catch (Exception ex) {
+					System.out.println(e.getName());
+				}
+			}
+		}
+
+
 		initManagers();
 		config = new PluginFile(this);
 		PlayerBlockMoveEvent.init();

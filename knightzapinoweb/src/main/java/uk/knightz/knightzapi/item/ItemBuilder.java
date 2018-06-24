@@ -1,7 +1,9 @@
 package uk.knightz.knightzapi.item;
 
+import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +23,8 @@ import java.util.*;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
-public class ItemBuilder {
+@Data
+public class ItemBuilder implements ConfigurationSerializable {
 	private String name = null;
 	private Material type = Material.AIR;
 	private Set<ItemFlag> flags = new HashSet<>();
@@ -63,7 +66,7 @@ public class ItemBuilder {
 		flags = root.getItemMeta().getItemFlags();
 		setLore(root.getItemMeta().getLore());
 		setData(root.getDurability());
-		if(root.getItemMeta().isUnbreakable()) {
+		if (root.getItemMeta().spigot().isUnbreakable()) {
 			setUnbreakable(true);
 		}
 		setEnchantments(root.getEnchantments());

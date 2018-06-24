@@ -31,10 +31,6 @@
           <groupId>com.googlecode.json-simple</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>guava</artifactId>
-          <groupId>com.google.guava</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>gson</artifactId>
           <groupId>com.google.code.gson</groupId>
         </exclusion>
@@ -47,6 +43,12 @@
           <groupId>net.md-5</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot</artifactId>
+      <version>1.12.2-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
