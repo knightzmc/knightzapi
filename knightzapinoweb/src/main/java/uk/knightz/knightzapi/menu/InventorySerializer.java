@@ -21,7 +21,7 @@ public class InventorySerializer extends TypeAdapter<Inventory> {
 		JsonWriter contents = out.name("contents").beginArray();
 		for (ItemStack i : value.getContents()) {
 			if (i != null && i.getType() != AIR) {
-				contents.value(KnightzAPI.gson.getAdapter(ItemStack.class).toJson(i));
+				KnightzAPI.gson.getAdapter(ItemStack.class).write(contents, i);
 			}
 		}
 		contents.endArray();
@@ -43,7 +43,7 @@ public class InventorySerializer extends TypeAdapter<Inventory> {
 				case "contents":
 					in.beginArray();
 					while (in.hasNext()) {
-						contents.add(KnightzAPI.gson.fromJson(in.nextString(), ItemStack.class));
+						contents.add(KnightzAPI.gson.getAdapter(ItemStack.class).read(in));
 					}
 					in.endArray();
 					break;

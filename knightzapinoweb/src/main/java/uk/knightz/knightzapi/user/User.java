@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -260,5 +261,15 @@ public class User implements Listener {
 
 	public boolean shouldCancel(Class<? extends PlayerEvent> event) {
 		return getDeniedEvents().contains(event);
+	}
+
+	public void playerAction(PlayerEvent p) {
+		if (p != null) {
+			if (p instanceof Cancellable) {
+				if (shouldCancel(p.getClass())) {
+					((Cancellable) p).setCancelled(true);
+				}
+			}
+		}
 	}
 }

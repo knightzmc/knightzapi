@@ -73,7 +73,7 @@ public class ItemStackJsonSerializer extends TypeAdapter<ItemStack> {
 		}
 		out.endObject();
 		out.flush();
-		out.close();
+//		out.close();
 	}
 
 	@Override
