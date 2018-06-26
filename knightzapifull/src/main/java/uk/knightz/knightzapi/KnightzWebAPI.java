@@ -52,6 +52,8 @@ public class KnightzWebAPI {
 		ServerFactory.FactoryStorage.setInstance(SimpleServer::new);
 	}
 
+	private KnightzWebAPI() {
+	}
 
 	public static void onDisable() {
 		manager.shutdown();

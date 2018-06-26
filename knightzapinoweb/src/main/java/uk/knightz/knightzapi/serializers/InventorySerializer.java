@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.serializers;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -29,7 +29,6 @@ public class InventorySerializer extends TypeAdapter<Inventory> {
 		out.name("size").value(value.getSize());
 		out.endObject();
 		out.flush();
-		out.close();
 	}
 
 	@Override

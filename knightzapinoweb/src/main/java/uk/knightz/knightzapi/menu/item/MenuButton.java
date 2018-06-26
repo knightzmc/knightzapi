@@ -14,19 +14,20 @@ import java.util.function.Consumer;
  **/
 @Data
 public class MenuButton {
-	@NonNull
-	private final ItemStack itemStack;
-	@NonNull
-	private final Consumer<MenuClickEvent> onClick;
+    @NonNull
+    private final ItemStack itemStack;
+    public String onClickAlias;
+    @NonNull
+    private transient Consumer<MenuClickEvent> onClick;
 
-	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
-		this.itemStack = itemStack;
-		this.onClick = onClick;
-	}
+    public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
+        this.itemStack = itemStack;
+        this.onClick = onClick;
+    }
 
 
-	public void onClick(MenuClickEvent e) {
-		if (e == null) return;
-		onClick.accept(e);
-	}
+    public void onClick(MenuClickEvent e) {
+        if (e == null) return;
+        onClick.accept(e);
+    }
 }
