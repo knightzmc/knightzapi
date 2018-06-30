@@ -62,6 +62,26 @@ public class InventoryUtils {
 		}
 	}
 
+	public static void removeItemFromPlayer(Player p, Material item, int quantity) {
+		p.getInventory().removeItem(new ItemStack(item, quantity));
+		//		if (p.getInventory().contains(item, quantity)) {
+//			int n = 0;
+//			for (ItemStack i : p.getInventory()) {
+//				if (i != null) {
+//					if (i
+//							.getType() == item) {
+//						if (n + i.getAmount() > quantity || n > quantity) {
+//							i.setAmount(quantity - n);
+//							return;
+//						}
+//						n += i.getAmount();
+//						i.setType(Material.AIR);
+//					}
+//				}
+//			}
+//		}
+	}
+
 	/**
 	 * Get the central slot in an inventory
 	 *

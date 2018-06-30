@@ -1,10 +1,12 @@
 package uk.knightz.knightzapi.item;
 
-import lombok.Data;
+import lombok.*;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,10 +15,11 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionType;
 import uk.knightz.knightzapi.lang.Chat;
-import uk.knightz.knightzapi.lang.Placeholder;
+import uk.knightz.knightzapi.lang.placeholder.Placeholder;
 import uk.knightz.knightzapi.utils.VersionUtil;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * This class was created by AlexL (Knightz) on 01/02/2018 at 20:21.
@@ -24,6 +27,7 @@ import java.util.*;
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  **/
 @Data
+@NoArgsConstructor
 public class ItemBuilder implements ConfigurationSerializable {
 	private String name = null;
 	private Material type = Material.AIR;
@@ -39,8 +43,15 @@ public class ItemBuilder implements ConfigurationSerializable {
 	private PotionType potionType = PotionType.INSTANT_HEAL;
 	private List<Placeholder> placeholders = new ArrayList<>();
 
-	public ItemBuilder() {
+	private DyeColor color;
 
+	public DyeColor getColor() {
+		return color;
+	}
+
+	public ItemBuilder setColor(DyeColor color) {
+		this.color = color;
+		return this;
 	}
 
 	public ItemBuilder(Map<String, Object> fromConfig) {
@@ -57,6 +68,24 @@ public class ItemBuilder implements ConfigurationSerializable {
 		setData(Short.parseShort(String.valueOf(fromConfig.getOrDefault("data", "0"))));
 		Map<Enchantment, Integer> enchants = (Map<Enchantment, Integer>) fromConfig.getOrDefault("enchantments", new HashMap<>());
 		setEnchantments(enchants);
+	}
+
+	public ItemBuilder(ItemBuilder previous) {
+		setType(previous.type);
+		setAmount(previous.amount);
+		setName(previous.name);
+		setData(previous.data);
+		setUnbreakable(previous.unbreakable);
+		setColor(previous.color);
+		setEffects(previous.effects);
+		setEnchantments(previous.enchantments);
+		setFlags(previous.flags);
+		setLore(previous.lore);
+		setPlaceholders(previous.placeholders);
+		setPotion(previous.potion);
+		setPotionColor(previous.potionColor);
+		setPotionType(previous.potionType);
+		getPlayerDependentPlaceholders().addAll(previous.playerDependentPlaceholders);
 	}
 
 	public ItemBuilder(ItemStack root) {
@@ -150,8 +179,18 @@ public class ItemBuilder implements ConfigurationSerializable {
 		return this;
 	}
 
+
+	@Getter
+	private final List<ItemBuilderPlayerPlaceholder> playerDependentPlaceholders = new ArrayList<>();
+
+	public void giveToPlayer(Player player) {
+		final val i = build();
+		playerDependentPlaceholders.forEach(p -> p.replacementFromPlayer.accept(player, i));
+		player.getInventory().addItem(i);
+	}
+
 	public ItemStack build() {
-		ItemStack temp = new ItemStack(type, amount, data);
+		ItemStack temp = new ItemStack(type, amount, data, color == null ? null : color.getWoolData());
 		ItemMeta tempMeta = temp.getItemMeta();
 		if (tempMeta == null) return temp;
 		tempMeta
@@ -182,6 +221,40 @@ public class ItemBuilder implements ConfigurationSerializable {
 		temp.setItemMeta(tempMeta);
 		enchantments.forEach(temp::addUnsafeEnchantment);
 		return temp;
+	}
+
+	public static class ItemBuilderPlayerPlaceholder {
+		private final String placeholder;
+		private final BiConsumer<Player, ItemStack> replacementFromPlayer;
+
+		public ItemBuilderPlayerPlaceholder(String placeholder, BiConsumer<Player, ItemStack> getReplacementFromPlayer) {
+			this.replacementFromPlayer = getReplacementFromPlayer;
+			this.placeholder = placeholder;
+		}
+	}
+
+	public static class ItemActions<EXPECTED_TYPE> {
+		public static final ItemActions SET_NAME = new ItemActions<String>((s, i) -> {
+			val m = i.getItemMeta();
+			m.setDisplayName(s);
+			i.setItemMeta(m);
+		});
+		public static final ItemActions SET_TYPE = new ItemActions<Material>((s, i) -> i.setType(s));
+		public static final ItemActions SET_COLOR = new ItemActions<DyeColor>((s, i) -> {
+			val d = i.getData();
+			d.setData(s.getWoolData());
+			i.setData(d);
+		});
+		private final BiConsumer<EXPECTED_TYPE, ItemStack> apply;
+
+		private ItemActions(BiConsumer<EXPECTED_TYPE, ItemStack> apply) {
+			this.apply = apply;
+		}
+
+		@NonNull
+		public void apply(EXPECTED_TYPE type, ItemStack itemStack) {
+			apply.accept(type, itemStack);
+		}
 	}
 
 }

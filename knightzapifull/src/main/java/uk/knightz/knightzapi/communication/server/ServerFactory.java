@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * Creates a Server object. To avoid cyclic-dependencies, the only (current) implementation of this class is initialised in the KnightzWebAPI main class.
+ * Creates a Server object. To avoid cyclic-dependencies, the only (current) implementation ofGlobal this class is initialised in the KnightzWebAPI main class.
  **/
 public interface ServerFactory {
 	static ServerFactory getInstance() {

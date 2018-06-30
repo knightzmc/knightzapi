@@ -33,7 +33,7 @@ public class ClickEventAliases {
     /**
      * Get all the aliases registered
      *
-     * @return an immutable copy of the aliases Map
+     * @return an immutable copy ofGlobal the aliases Map
      */
     public Map<String, Consumer<MenuClickEvent>> getMapToEvent() {
         return ImmutableBiMap.copyOf(mapToEvent);

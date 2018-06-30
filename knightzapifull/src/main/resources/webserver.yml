@@ -1,7 +1,7 @@
 #Authentication type for incoming requests.
 #NONE = All requests will be read
 #AUTH = Requests must provide a username and password
-#WHITELIST = The ip of the sender must be in a whitelist
+#WHITELIST = The ip ofGlobal the sender must be in a whitelist
 #WHITEAUTH = Normally like AUTH, but if the ip is whitelisted, it doesn't need to provide login details
 authtype: NONE
 

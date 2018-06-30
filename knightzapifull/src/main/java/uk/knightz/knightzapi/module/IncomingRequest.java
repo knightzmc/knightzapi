@@ -22,7 +22,7 @@ public final class IncomingRequest {
 	private final Request root;
 	/**
 	 * A {@link Response} Response for the IncomingRequest. This should be edited in {@link Module#onIncomingRequest(IncomingRequest)}
-	 * It will then be returned to the sender of any IncomingRequest.
+	 * It will then be returned to the sender ofGlobal any IncomingRequest.
 	 * Convention is to return JSON plain text, but it's up to you. However,
 	 */
 	private final Response response;
@@ -46,7 +46,7 @@ public final class IncomingRequest {
 			} else {
                 /*
                 Either invalid, or a stock system request.
-                TODO: Add some form of identifier for system requests, rather than just "no module"
+                TODO: Add some form ofGlobal identifier for system requests, rather than just "no module"
                  */
 				this.id = "SYSTEM";
 			}

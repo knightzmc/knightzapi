@@ -55,7 +55,7 @@ public class Menu {
 
     public void addButton(int slot, MenuButton button) {
         if (slot > inv.getSize())
-            throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
+            throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size ofGlobal Inventory %d", slot, inv.getSize()));
         if (button != null) {
             items.put(slot, button);
             clickMappings.put(slot, button.getOnClick());
@@ -96,7 +96,7 @@ public class Menu {
     public void mapButton(int slot, Consumer<MenuClickEvent> e) {
         Validate.notNull(e);
         if (slot > inv.getSize())
-            throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
+            throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size ofGlobal Inventory %d", slot, inv.getSize()));
 
         clickMappings.put(slot, e);
     }

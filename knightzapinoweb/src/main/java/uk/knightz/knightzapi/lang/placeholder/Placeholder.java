@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.lang;
+package uk.knightz.knightzapi.lang.placeholder;
 
 /**
  * This class was created by AlexL (Knightz) on 05/03/2018 at 19:24.
@@ -36,7 +36,7 @@ public class Placeholder {
     /**
      * Apply the placeholders to the given String
      *
-     * @param toReplace The string to replace any instances of Placeholder#getPlaceholder with Placeholder#getReplacement
+     * @param toReplace The string to replace any instances ofGlobal Placeholder#getPlaceholder with Placeholder#getReplacement
      * @return The formatted String
      */
     public String replace(String toReplace) {

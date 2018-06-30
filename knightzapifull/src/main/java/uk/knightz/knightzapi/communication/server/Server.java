@@ -14,9 +14,9 @@ import java.util.concurrent.Future;
 public interface Server {
 
 	/**
-	 * Get the IP address of this server.
+	 * Get the IP address ofGlobal this server.
 	 *
-	 * @return The IP address of this server
+	 * @return The IP address ofGlobal this server
 	 * @apiNote Will possibly return null in future updates if server aliases are added
 	 */
 	InetSocketAddress getAddress();
@@ -31,7 +31,7 @@ public interface Server {
 
 	/**
 	 * Execute a module on this server.
-	 * If the server does not have the module installed, one of two things will occur
+	 * If the server does not have the module installed, one ofGlobal two things will occur
 	 * NOT YET IMPLEMENTED 1) If the server has auto-download set in their config the module will be downloaded and run (potentially dangerous!).
 	 * 2) Otherwise, nothing
 	 *

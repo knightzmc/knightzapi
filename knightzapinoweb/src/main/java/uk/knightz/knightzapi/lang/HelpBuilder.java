@@ -96,7 +96,7 @@ public class HelpBuilder implements ConfigurationSerializable {
 	}
 
 	/**
-	 * Convert the HelpBuilder into an array of strings, that can then be printed.
+	 * Convert the HelpBuilder into an array ofGlobal strings, that can then be printed.
 	 * <p>
 	 * Permission dependent messages are not applied with this
 	 *
@@ -113,7 +113,7 @@ public class HelpBuilder implements ConfigurationSerializable {
 
 
 	/**
-	 * Build this HelpBuilder into an array of Strings, and then send them to the given CommandSenders, applying permission dependent HelpMessages to each
+	 * Build this HelpBuilder into an array ofGlobal Strings, and then send them to the given CommandSenders, applying permission dependent HelpMessages to each
 	 *
 	 * @param toSendTo The senders to send the help message to
 	 */

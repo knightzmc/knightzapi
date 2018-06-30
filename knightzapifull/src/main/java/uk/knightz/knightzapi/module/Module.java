@@ -18,7 +18,7 @@ public abstract class Module implements IncomingRequestListener {
 
     /**
      * The id that a request should send in order for it to be interpreted by this module.
-     * It should be overridden in an implementation of the constructor, as it is null by default, causing the module to never be called
+     * It should be overridden in an implementation ofGlobal the constructor, as it is null by default, causing the module to never be called
      */
     private final String requestID;
     private final String name;

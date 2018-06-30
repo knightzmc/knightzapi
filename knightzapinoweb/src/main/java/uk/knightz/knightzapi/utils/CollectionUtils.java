@@ -102,9 +102,9 @@ public class CollectionUtils {
     }
 
     /**
-     * Get an Iterable of the given Enumeration
+     * Get an Iterable ofGlobal the given Enumeration
      *
-     * @return An Iterable of the given Enumeration
+     * @return An Iterable ofGlobal the given Enumeration
      */
     public static <E> Iterable<E> iterable(final Enumeration<E> enumeration) {
         if (enumeration == null) {
@@ -129,7 +129,7 @@ public class CollectionUtils {
      * Get a random element in the given collection
      *
      * @param toRandom The collection to get a random element from
-     * @param <T>      Default type parameter of the given collection
+     * @param <T>      Default type parameter ofGlobal the given collection
      * @return A random element from the given collection
      */
     public static <T> T getRandom(Collection<T> toRandom) {

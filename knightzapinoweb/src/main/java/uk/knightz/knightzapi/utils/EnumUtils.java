@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * A class consisting of various utility functions for operating on enums
+ * A class consisting ofGlobal various utility functions for operating on enums
  **/
 public class EnumUtils {
 
@@ -35,7 +35,7 @@ public class EnumUtils {
 	 * Get multiple random elements from the given enum, excluding any elements that exclude includes
 	 *
 	 * @param amount How many elements to get. Will be shortened if not enough exist
-	 * @return An array containg the given amount (can be less if not enough exist) of randomly picked elements from the enum
+	 * @return An array containg the given amount (can be less if not enough exist) ofGlobal randomly picked elements from the enum
 	 */
 	@SafeVarargs
 	public static <T extends Enum<T>> Collection<T> getRandom(Class<? extends T> enm, int amount, T... exclude) {

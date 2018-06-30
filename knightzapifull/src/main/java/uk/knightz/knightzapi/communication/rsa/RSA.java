@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Base64;
 
 /**
- * Static RSA utility methods for encrypting and decrypting blocks of
+ * Static RSA utility methods for encrypting and decrypting blocks ofGlobal
  * information.
  *
  * @author Blake Beaupain
@@ -22,7 +22,7 @@ import java.util.Base64;
 public class RSA {
 
     /**
-     * Encrypts a block of data.
+     * Encrypts a block ofGlobal data.
      *
      * @param data The data to encrypt
      * @param key  The key to encrypt with
@@ -42,7 +42,7 @@ public class RSA {
     }
 
     /**
-     * Decrypts a block of data.
+     * Decrypts a block ofGlobal data.
      *
      * @param byteCipherText The data to be sent
      * @param encryptedKey   The encrypted AES key used

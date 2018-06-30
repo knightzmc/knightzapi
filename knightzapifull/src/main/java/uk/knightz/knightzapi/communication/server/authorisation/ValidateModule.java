@@ -15,7 +15,7 @@ import java.security.GeneralSecurityException;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * Provides a client with the Public RSA key of this server, in order to sucessfully encrypt messages
+ * Provides a client with the Public RSA key ofGlobal this server, in order to sucessfully encrypt messages
  **/
 public class ValidateModule extends WebModule {
 

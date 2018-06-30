@@ -45,7 +45,7 @@ public class SimpleServer implements Server {
 
 	public SimpleServer(InetSocketAddress address) throws NotAuthorisedException {
 		synchronized (this) {
-			//Some methods of getting an URL put a slash at the start
+			//Some methods ofGlobal getting an URL put a slash at the start
 			validURL = address.toString().replace("/", "");
 			HttpClient client1;
 			String pubKey1;

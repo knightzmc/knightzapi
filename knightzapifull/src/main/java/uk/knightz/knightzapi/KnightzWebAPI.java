@@ -17,14 +17,14 @@ import uk.knightz.knightzapi.module.ModuleManager;
  **/
 public class KnightzWebAPI {
 	/**
-	 * An instance of WebServer, running the main Spark server.
+	 * An instance ofGlobal WebServer, running the main Spark server.
 	 *
 	 * @see Webserver
 	 * @see Spark
 	 */
 	private static Webserver server;
 	/**
-	 * Instance of ServerManager used for managing the WebServer
+	 * Instance ofGlobal ServerManager used for managing the WebServer
 	 *
 	 * @see ServerManager
 	 */

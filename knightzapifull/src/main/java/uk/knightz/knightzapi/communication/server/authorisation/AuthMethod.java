@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * Represents different methods of authentication that a webserver should use.
+ * Represents different methods ofGlobal authentication that a webserver should use.
  **/
 public enum AuthMethod {
     /**
@@ -36,7 +36,7 @@ public enum AuthMethod {
     },
 
     /**
-     * A whitelist of IP addresses that are allowed to send requests to this server
+     * A whitelist ofGlobal IP addresses that are allowed to send requests to this server
      */
     WHITELIST {
         @Override

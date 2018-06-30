@@ -26,7 +26,7 @@ public class PluginFile extends YamlConfiguration {
      * Creates new PluginFile, without defaults
      *
      * @param plugin   - Your plugin
-     * @param fileName - Name of the file
+     * @param fileName - Name ofGlobal the file
      */
     public PluginFile(JavaPlugin plugin, String fileName) {
         this(plugin, fileName, null);
@@ -36,8 +36,8 @@ public class PluginFile extends YamlConfiguration {
      * Creates new PluginFile, with defaults
      *
      * @param plugin       - Your plugin
-     * @param fileName     - Name of the file
-     * @param defaultsName - Name of the defaults
+     * @param fileName     - Name ofGlobal the file
+     * @param defaultsName - Name ofGlobal the defaults
      */
     public PluginFile(JavaPlugin plugin, String fileName, String defaultsName) {
         this.plugin = plugin;
@@ -50,8 +50,8 @@ public class PluginFile extends YamlConfiguration {
      * Creates a new PluginFile in a directory
      *
      * @param plugin       - Your plugin
-     * @param fileName     - Name of the file
-     * @param defaultsName - Name of the defaults
+     * @param fileName     - Name ofGlobal the file
+     * @param defaultsName - Name ofGlobal the defaults
      * @param directory    - Directory name
      */
     public PluginFile(JavaPlugin plugin, String fileName, String defaultsName, String directory) {

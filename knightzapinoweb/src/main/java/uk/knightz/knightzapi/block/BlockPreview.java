@@ -14,7 +14,7 @@ import java.util.function.Function;
  * Copyright Knightz 2018
  * For assistance using this class, or for permission to use it in any way, contact @Knightz#0986 on Discord.
  * <p>
- * Represents an undoable action of changing one or many blocks. Typically it is used for small amounts of blocks, but a task splitting
+ * Represents an undoable action ofGlobal changing one or many blocks. Typically it is used for small amounts ofGlobal blocks, but a task splitting
  * place is in system if not
  **/
 public class BlockPreview {
@@ -26,7 +26,7 @@ public class BlockPreview {
 	public BlockPreview(BlockState[] original, BlockState[] changeTo) {
 		if (original.length != changeTo.length) {
 			Log.warn("BlockPreview original and updated BlockState arrays are different sizes. This may be intentional" +
-					", but somewhat defeats the point of BlockPreview(s)");
+					", but somewhat defeats the point ofGlobal BlockPreview(s)");
 		}
 		this.original = original;
 		this.changeTo = changeTo;
