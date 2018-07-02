@@ -57,8 +57,6 @@ class ModuleLoader extends Thread {
 	public void run() {
 		loadModules();
 	}
-
-	@SuppressWarnings("ConstantConditions")
 	synchronized Set<Module> loadModules() {
 		File modulesDir = new File(KnightzAPI.getP().getDataFolder(), "/modules");
 		if (!modulesDir.exists()) modulesDir.mkdir();
@@ -118,7 +116,7 @@ class ModuleLoader extends Thread {
 				}
 				module = (Module) constructor.newInstance(annotation.requestID(), annotation.name(), f, annotation);
 				all.add(module);
-				Log.normal("Module " + module.getName() + " sucessfully loaded!");
+				Log.normal("Module " + module.getName() + " successfully loaded!");
 			} else {
 				throw new ModuleException(modClazz.getName() + " does not have a ModuleInfo annotation!");
 			}
@@ -189,7 +187,7 @@ class ModuleLoader extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			Log.severe("An error occured loading in the a module from " + f.getName() + "Enable debug mode in KnightzAPI to view stacktrace.");
+			Log.severe("An error occurred loading in the a module from " + f.getName() + "Enable debug mode in KnightzAPI to view stacktrace.");
 			if (Log.debug())
 				e.printStackTrace();
 		}
