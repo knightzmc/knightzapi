@@ -5,19 +5,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 @Getter
-public class MenuClickEvent extends InventoryClickEvent {
+public class MenuClickEvent extends InventoryClickEvent implements MenuEvent {
 
-    private final Menu clicked;
-    private final boolean subMenu;
+	private final Menu menu;
+	private final boolean subMenu;
 
-    public MenuClickEvent(InventoryClickEvent e, Menu clicked) {
-        super(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction());
-        this.clicked = clicked;
-        subMenu = this.clicked instanceof SubMenu;
-    }
+	public MenuClickEvent(InventoryClickEvent e, Menu clicked) {
+		super(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction());
+		this.menu = clicked;
+		subMenu = this.menu instanceof SubMenu;
+	}
 
-    @Override
-    public Player getWhoClicked() {
-        return (Player) super.getWhoClicked();
-    }
+	@Override
+	public Player getWhoClicked() {
+		return (Player) super.getWhoClicked();
+	}
 }

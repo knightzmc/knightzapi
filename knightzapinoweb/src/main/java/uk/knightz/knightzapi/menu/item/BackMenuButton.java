@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 public class BackMenuButton extends MenuButton {
 	private static final Consumer<MenuClickEvent> onClick = e -> {
 		if (e.isSubMenu()) {
-			e.getWhoClicked().openInventory(((SubMenu) e.getClicked()).getParent().getInv());
+			e.getWhoClicked().openInventory(((SubMenu) e.getMenu()).getParent().getInv());
 		}
 	};
 
