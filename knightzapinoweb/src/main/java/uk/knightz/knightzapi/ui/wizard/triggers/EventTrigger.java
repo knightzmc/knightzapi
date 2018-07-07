@@ -2,6 +2,8 @@ package uk.knightz.knightzapi.ui.wizard.triggers;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import uk.knightz.knightzapi.ui.wizard.Step;
 
@@ -18,6 +20,8 @@ public class EventTrigger<T extends Event> extends AbstractTrigger<T> {
 	private static final Map<Class<? extends Event>, List<EventTrigger>> allFromClass = new ConcurrentHashMap<>();
 	private final Class<? extends Event> triggerEvent;
 	private Function<T, Object> executeFromEvent;
+	@Accessors(chain = true)
+	private boolean cancel;
 	public EventTrigger(Class<? extends T> triggerEvent, Function<T, Object> executeFromEvent, boolean putInMap) {
 		super(triggerEvent);
 		EventTriggerListener.addCustomEvent(triggerEvent);
@@ -48,6 +52,9 @@ public class EventTrigger<T extends Event> extends AbstractTrigger<T> {
 	}
 	@Override
 	protected void execute(T t, Step step) {
+		if(cancel && t instanceof Cancellable) {
+			((Cancellable) t).setCancelled(true);
+		}
 		step.complete(executeFromEvent.apply(t));
 	}
 	public EventTrigger<T> addCondition(Function<T, Boolean> condition) {

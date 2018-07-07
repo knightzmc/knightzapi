@@ -14,6 +14,7 @@ import uk.knightz.knightzapi.menu.SubMenu;
 import uk.knightz.knightzapi.menu.item.MenuButton;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
