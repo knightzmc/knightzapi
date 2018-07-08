@@ -8,7 +8,8 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 /**
- * @author kNoAPP - Nice one!
+ * A simple Scoreboard class that won't flicker
+ * @author kNoAPP
  */
 public class FlickerlessScoreboard {
 

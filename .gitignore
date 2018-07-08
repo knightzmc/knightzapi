@@ -5,6 +5,12 @@
 # Compiled class file
 *.class
 
+#full
+knightzapifull/target
+knightzapifull/knightzapifull.iml
+#noweb
+knightzapinoweb/target
+knightzapinoweb/knightzapinoweb.iml
 # Log file
 *.log
 

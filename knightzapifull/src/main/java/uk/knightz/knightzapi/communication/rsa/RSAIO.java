@@ -1,3 +1,4 @@
+
 package uk.knightz.knightzapi.communication.rsa;
 
 import javax.xml.bind.DatatypeConverter;
@@ -12,19 +13,19 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
- * Stolen from Votifier :)
+ *
  * @author Blake Beaupain
  **/
 public class RSAIO {
     /**
-     * Saves the key pair to the disk.
+     * Saves the key pair to disk.
      *
      * @param directory
      *            The directory to save to
      * @param keyPair
      *            The key pair to save
      * @throws Exception
-     *             If an error occurs
+     *             If an error occurs saving the key pair
      */
     public static void save(File directory, KeyPair keyPair) throws Exception {
         PrivateKey privateKey = keyPair.getPrivate();
@@ -46,14 +47,13 @@ public class RSAIO {
         out.close();
     }
     /**
-     * Loads an RSA key pair from a directory. The directory must have the files
+     * Loads an RSA key pair from a directory. The directory must contain the files
      * "public.key" and "private.key".
      *
      * @param directory
      *            The directory to load from
      * @return The key pair
-     * @throws Exception
-     *             If an error occurs
+     * @throws Exception If an error occurs loading in the files
      */
     public static KeyPair load(File directory) throws Exception {
         // Read the public key file.

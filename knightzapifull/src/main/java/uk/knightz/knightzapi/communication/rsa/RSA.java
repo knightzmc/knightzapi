@@ -14,10 +14,10 @@ import java.util.Arrays;
 import java.util.Base64;
 
 /**
- * Static RSA utility methods for encrypting and decrypting blocks ofGlobal
- * information.
+ * Static RSA utility methods for encrypting and decrypting blocks of information.
+ * Modified to use {@link RSA.Holder} to correctly use RSA and AES keys for encryption
  *
- * @author Blake Beaupain
+ * @author Blake Beaupain & Alexander Wood
  */
 public class RSA {
 
@@ -103,7 +103,6 @@ public class RSA {
             this.encryptedKey = aesKey;
 
         }
-
         public byte[] getByteCipherText() {
             return byteCipherText;
         }
