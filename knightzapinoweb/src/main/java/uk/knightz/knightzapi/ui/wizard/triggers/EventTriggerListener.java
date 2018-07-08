@@ -3,7 +3,6 @@ package uk.knightz.knightzapi.ui.wizard.triggers;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
@@ -56,7 +55,6 @@ class EventTriggerListener implements Listener {
 	public void onEvent(Event e) {
 		listenFor.stream().filter(t -> t.getTriggerEvent() == e.getClass()).forEach(t -> {
 			t.trigger(e);
-				((Cancellable) e).setCancelled(true);
 		});
 	}
 
