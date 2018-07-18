@@ -36,6 +36,7 @@ import uk.knightz.knightzapi.utils.ReflectionUtil;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.bukkit.event.EventPriority.HIGH;
 import static org.bukkit.event.EventPriority.NORMAL;
 
 @Accessors
@@ -59,7 +60,7 @@ class EventTriggerListener implements Listener {
 	public static void addEvent(Class<? extends Event> c) {
 		if (!registered.contains(c)) {
 			Bukkit.getPluginManager().registerEvent(c, inst,
-					NORMAL, ex, KnightzAPI.getP());
+					HIGH, ex, KnightzAPI.getP());
 			registered.add(c);
 		}
 	}

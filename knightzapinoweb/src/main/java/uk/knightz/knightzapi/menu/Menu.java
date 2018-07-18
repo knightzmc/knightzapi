@@ -77,6 +77,7 @@ public class Menu {
 	}
 
 	public void addButton(int slot, MenuButton button) {
+		Validate.notNull(button, "Button is null");
 		if (slot > inv.getSize())
 			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size ofGlobal Inventory %d", slot, inv.getSize()));
 		if (button != null) {

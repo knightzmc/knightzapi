@@ -28,6 +28,7 @@ import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -56,9 +57,11 @@ public final class MenuListener implements Listener {
 			allMenus.add(me);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onClick(InventoryClickEvent e) {
+		//Avoid repeating calls
 		if (!(e instanceof MenuClickEvent)) {
+			//Menu API only supports player clicks
 			if (e.getWhoClicked() instanceof Player) {
 				if (e.getClickedInventory() != null) {
 					for (Menu m : allMenus) {
