@@ -42,6 +42,9 @@ import java.util.function.Function;
 public class EventTrigger<T extends Event> extends AbstractTrigger<T> {
 	private static final Map<Class<? extends Event>, EventTrigger> fromClass = new ConcurrentHashMap<>();
 	private static final Map<Class<? extends Event>, List<EventTrigger>> allFromClass = new ConcurrentHashMap<>();
+	/**
+	 * The Event Class that will trigger this EventTrigger
+	 */
 	private final Class<? extends Event> triggerEvent;
 	private Function<T, Object> executeFromEvent;
 	@Accessors(chain = true)

@@ -46,9 +46,8 @@ public abstract class AbstractWizard<P> implements Wizard<P> {
 		allWizards.add(this);
 	}
 	private void init() {
-		val current = nextStep();
-		current.start();
-		current.getOnStart().accept(p);
+		val firstStep = nextStep();
+		firstStep.start(p);
 		started = true;
 	}
 	protected void addStep(Step step) {
@@ -72,7 +71,7 @@ public abstract class AbstractWizard<P> implements Wizard<P> {
 		val x = steps.poll();
 		if (x == null) return currentStep;
 
-		x.getOnStart().accept(p);
+		x.start(p);
 		return currentStep = x;
 	}
 

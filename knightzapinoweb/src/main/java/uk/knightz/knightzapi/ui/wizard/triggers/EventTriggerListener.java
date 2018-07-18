@@ -31,7 +31,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import uk.knightz.knightzapi.KnightzAPI;
-import uk.knightz.knightzapi.user.EventManager;
 import uk.knightz.knightzapi.utils.ReflectionUtil;
 
 import java.util.HashSet;
@@ -52,34 +51,38 @@ class EventTriggerListener implements Listener {
 	static {
 		inst = new EventTriggerListener();
 		ex = (l, event) -> inst.onEvent(event);
-		EventManager.eventClasses
-				.forEach(e -> {
-					if (!registered.contains(e)) {
-						Bukkit.getPluginManager().registerEvent(e, inst,
-								NORMAL, ex, KnightzAPI.getP());
-						registered.add(e);
-					}
-				});
-
 	}
 
 	private EventTriggerListener() {
 	}
-	public static void addCustomEvent(Class<? extends Event> c) {
-		if (!ReflectionUtil.classHasMethod(c, "getHandlerList")) {
-			throw new IllegalArgumentException("Given event is invalid!");
+
+	public static void addEvent(Class<? extends Event> c) {
+		if (!registered.contains(c)) {
+			Bukkit.getPluginManager().registerEvent(c, inst,
+					NORMAL, ex, KnightzAPI.getP());
+			registered.add(c);
 		}
-		if (!customEvents.contains(c)) {
-			customEvents.add(c);
-			Bukkit.getPluginManager().registerEvent(c, inst, NORMAL, ex, KnightzAPI.getP());
+	}
+	public static void addCustomEvent(Class<? extends Event> c) {
+		addEvent(c);
+		if (!registered.contains(c)) {
+			if (!customEvents.contains(c)) {
+				if (!ReflectionUtil.classHasMethod(c, "getHandlerList")) {
+					throw new IllegalArgumentException("Given event is invalid!");
+				}
+				customEvents.add(c);
+				Bukkit.getPluginManager().registerEvent(c, inst, NORMAL, ex, KnightzAPI.getP());
+			}
 		}
 	}
 
-
+	/**
+	 * Called on an undetermined event's execution and then passes it to any respective EventTrigger
+	 *
+	 * @param e The executed event
+	 */
 	public void onEvent(Event e) {
-		listenFor.stream().filter(t -> t.getTriggerEvent() == e.getClass()).forEach(t -> {
-			t.trigger(e);
-		});
+		listenFor.stream().filter(t -> t.getTriggerEvent() == e.getClass()).forEach(t -> t.trigger(e));
 	}
 
 }

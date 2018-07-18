@@ -26,16 +26,21 @@ package uk.knightz.knightzapi.ui.wizard;
 
 import lombok.Getter;
 import uk.knightz.knightzapi.ui.wizard.triggers.Trigger;
+import uk.knightz.knightzapi.utils.Functions;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * A task that will perform some sort ofGlobal User interaction when performed, and must be completed in order to reach the next step
+ * A task that will perform some sort of user interaction when performed, and must be completed in order to reach the next step
  */
 @Getter
 public class Step<T> {
+	private static long allUids = 0;
+	private final long uid;
 	private final Wizard wizard;
 	private final Trigger trigger;
+
 	private Consumer<T> onStart;
 	private Consumer<T> onComplete;
 	private boolean started, completed;
@@ -44,28 +49,39 @@ public class Step<T> {
 		this.trigger = trigger;
 		this.onComplete = onComplete;
 		this.onStart = onStart;
+		this.uid = ++allUids;
 		trigger.bind(this);
 	}
-	@java.beans.ConstructorProperties({"wizard", "trigger"})
 	public Step(Wizard wizard, Trigger trigger) {
-		this(wizard, trigger, t -> {
-		}, t -> {
-		});
+		this(wizard, trigger, Functions.emptyConsumer(), Functions.emptyConsumer());
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Step<?> step = (Step<?>) o;
+		return uid == step.uid;
+	}
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(uid);
+	}
 	public void complete(T t) {
 		completed = true;
-		onComplete.accept(t);
-		final Step step = wizard.nextStep();
-		step.started = true;
+//		onComplete.accept(t);
+
+		wizard.nextStep();
 	}
 
 	public boolean isCompleted() {
 		return completed;
 	}
 
-	public void start() {
+	public void start(T t) {
 		started = true;
+		getOnStart().accept(t);
 	}
 	public boolean hasStarted() {
 		return started;
