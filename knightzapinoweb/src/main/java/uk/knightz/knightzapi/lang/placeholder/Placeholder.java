@@ -60,7 +60,7 @@ public class Placeholder {
         if (toReplace == null) {
             return null;
         }
-        return toReplace.replace(getPlaceholder(), replacement.getReplacement());
+        return toReplace.replace(getPlaceholder().toLowerCase(), replacement.getReplacement());
     }
 
     public interface Replacement {
