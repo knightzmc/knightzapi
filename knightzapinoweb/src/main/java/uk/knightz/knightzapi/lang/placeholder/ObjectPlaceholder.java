@@ -26,6 +26,11 @@ package uk.knightz.knightzapi.lang.placeholder;
 
 import lombok.Data;
 
+/**
+ * @deprecated Should not be used, useless except for backwards compatibility
+ */
+
+@Deprecated
 @Data
 public class ObjectPlaceholder<T> {
 	protected final String placeholder;

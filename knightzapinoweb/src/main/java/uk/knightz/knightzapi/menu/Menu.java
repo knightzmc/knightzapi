@@ -28,8 +28,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.lang.Chat;
@@ -42,8 +43,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * An Inventory utility for easily creating interactive menus
+ */
 @Data
 @Getter
+@Setter
 public class Menu {
 	private static final int MAX_SIZE = 54;
 	private static final Inventory EMPTY = Bukkit.createInventory(null, 0);
@@ -51,12 +56,19 @@ public class Menu {
 	private final Map<Integer, MenuButton> items;
 	private final Map<Integer, Consumer<MenuClickEvent>> clickMappings;
 	private Inventory inv;
+	private Sound onClick;
 
 	@Setter
 	private Consumer<MenuCloseEvent> onClose;
 	@Setter
 	private boolean destroyWhenClosed = true;
 
+	/**
+	 * Create a new Menu
+	 *
+	 * @param title The title of the Inventory
+	 * @param rows  The amount of rows in the Inventory
+	 */
 	public Menu(String title, int rows) {
 		inv = Bukkit.createInventory(null, rows * 9, Chat.color(title));
 		items = new ConcurrentHashMap<>(rows * 9);
@@ -64,6 +76,10 @@ public class Menu {
 		MenuListener.register(this);
 	}
 
+	/**
+	 * Set the title of the Inventory
+	 * @param title The title to set
+	 */
 	public void setTitle(String title) {
 		ItemStack[] items = inv.getContents();
 		inv = Bukkit.createInventory(null, inv.getSize(), Chat.color(title));

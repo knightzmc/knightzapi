@@ -35,10 +35,9 @@ import java.io.InputStreamReader;
 import java.util.UUID;
 
 /**
- * This class was created by AlexL (Knightz) on 28/01/2018 at 20:16.
- * I DO NOT OWN RIGHTS TO THIS CLASS. I have been unable to find the authors on Bukkit (where I found it), but if you made it, don't
- * hesitate to contact me at @Knightz#0986 on Discord.
- **/
+ * Represents a .yml file stored in your plugins/[yourplugin] directory.
+ * A clean and efficient way of handling many .yml files.
+ */
 public class PluginFile extends YamlConfiguration {
 
     private File file;

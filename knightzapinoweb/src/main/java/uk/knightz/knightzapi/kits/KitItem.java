@@ -30,6 +30,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
+/**
+ * An Item in a Kit. The situation this was made for involved most items having on-click abilities, so
+ * in order to instantiate {@link KitItem#onInteract(PlayerInteractEvent)} must be implemented
+ */
 public abstract class KitItem {
     private final ItemStack item;
     private int slot;

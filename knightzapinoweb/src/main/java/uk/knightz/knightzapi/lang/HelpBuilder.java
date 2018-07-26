@@ -31,6 +31,10 @@ import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.*;
 
+/**
+ * A builder class for making Help messages for commands.
+ * It is YAML serializable.
+ */
 public class HelpBuilder implements ConfigurationSerializable {
 	private final List<HelpMessage> messages = new ArrayList<>();
 	private String title = "";
@@ -39,6 +43,14 @@ public class HelpBuilder implements ConfigurationSerializable {
 
 	public HelpBuilder() {}
 
+	/**
+	 * Create a new HelpBuilder
+	 *
+	 * @param title     The title of the HelpBuilder
+	 * @param primary   The primary color of the HelpBuilder
+	 * @param secondary The secondary color of the HelpBuilder
+	 * @param messages  A list of Messages to put in the HelpBuilder
+	 */
 	private HelpBuilder(String title, ChatColor primary, ChatColor secondary, List<HelpMessage> messages) {
 		this.title = title;
 		this.primary = primary;
@@ -50,6 +62,11 @@ public class HelpBuilder implements ConfigurationSerializable {
 		return HelpMessage.class;
 	}
 
+	/**
+	 * Create a new HelpBuilder from a serialized HelpBuilder
+	 * @param map The contents of {@link org.bukkit.configuration.ConfigurationSection#getValues(boolean)}
+	 * @return A new Helpbuilder from the serialized content
+	 */
 	public static HelpBuilder deserialize(Map<String, Object> map) {
 		ChatColor main = ChatColor.getByChar(((String) map.get("maincolor")).toCharArray()[0]);
 		ChatColor secondary = ChatColor.getByChar(((String) map.get("secondarycolor")).toCharArray()[0]);
@@ -154,6 +171,10 @@ public class HelpBuilder implements ConfigurationSerializable {
 		});
 	}
 
+	/**
+	 * A Message in a HelpMenu.
+	 * Shouldn't be instantiated directly, instead use {@link HelpMessage#addHelpMessage(String, String)}
+	 */
 	@SerializableAs ("HelpMessage")
 	public static final class HelpMessage implements ConfigurationSerializable {
 		private final String main;

@@ -24,13 +24,16 @@
 
 package uk.knightz.knightzapi.kits;
 
+/**
+ * Thrown if a new Kit is made with a duplicate name
+ */
 public class KitAlreadyExistsException extends RuntimeException {
 
-    public KitAlreadyExistsException(String name) {
+    KitAlreadyExistsException(String name) {
         super(name);
     }
 
-    public KitAlreadyExistsException() {
+    KitAlreadyExistsException() {
         super();
     }
 }

@@ -26,11 +26,15 @@ package uk.knightz.knightzapi.menu.item;
 
 import lombok.Data;
 import lombok.NonNull;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import java.util.function.Consumer;
 
+/**
+ * An item that can be added to a {@link uk.knightz.knightzapi.menu.Menu}
+ */
 @Data
 public class MenuButton {
     @NonNull
@@ -38,8 +42,14 @@ public class MenuButton {
     public String onClickAlias;
     @NonNull
     private transient Consumer<MenuClickEvent> onClick;
+    private Sound onClickSound;
 
-    public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
+	/**
+	 * Create a new MenuButton
+	 * @param itemStack The ItemStack that will be added to a menu.
+	 * @param onClick A consumer that will be called when the MenuButton is clicked by a user.
+	 */
+	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
         this.itemStack = itemStack;
         this.onClick = onClick;
     }

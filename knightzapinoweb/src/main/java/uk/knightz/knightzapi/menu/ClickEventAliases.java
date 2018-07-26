@@ -31,6 +31,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * Manages mapping of a MenuClickEvent to a str
+ */
 public class ClickEventAliases {
     @Getter
     private static final ClickEventAliases INSTANCE = new ClickEventAliases();

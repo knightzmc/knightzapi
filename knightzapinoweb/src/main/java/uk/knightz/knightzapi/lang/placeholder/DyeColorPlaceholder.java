@@ -26,7 +26,9 @@ package uk.knightz.knightzapi.lang.placeholder;
 
 import org.bukkit.DyeColor;
 import org.bukkit.material.Colorable;
-
+/**
+ * @deprecated Unused
+ */
 public class DyeColorPlaceholder extends ObjectPlaceholder<DyeColor> {
 	public DyeColorPlaceholder(String placeholder, DyeColor replaceWith) {
 		super(placeholder, replaceWith);

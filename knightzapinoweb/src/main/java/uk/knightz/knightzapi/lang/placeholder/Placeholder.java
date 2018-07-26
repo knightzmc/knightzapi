@@ -24,6 +24,10 @@
 
 package uk.knightz.knightzapi.lang.placeholder;
 
+/**
+ * A Placeholder that can replace text placeholders with dynamic values.
+ * Check the GitHub Wiki for examples.
+ */
 public class Placeholder {
     /**
      * The placeholder string that will be replaced, eg "%username%"

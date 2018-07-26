@@ -48,8 +48,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 import uk.knightz.knightzapi.event.PlayerBlockMoveEvent;
-import uk.knightz.knightzapi.files.FilesManager;
-import uk.knightz.knightzapi.files.MainFilesManager;
 import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.HelpBuilder;
 import uk.knightz.knightzapi.lang.Log;
@@ -78,7 +76,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 	private static final Set<JavaPlugin> dependent = new HashSet<>();
 	private static FileConfiguration config;
 	private boolean webAPIEnabled;
-	private FilesManager filesManager;
 	//Vault
 	private Economy economy;
 	private Chat chat;
@@ -112,8 +109,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 			}
 		}
 
-
-		initManagers();
 		config = new PluginFile(this);
 		PlayerBlockMoveEvent.init();
 		Bukkit.getPluginManager().registerEvents(this, this);
@@ -206,14 +201,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 
 	public Permission getPermission() {
 		return permission;
-	}
-
-	public FilesManager getFilesManager() {
-		return filesManager;
-	}
-
-	private void initManagers() {
-		filesManager = new MainFilesManager(this);
 	}
 
 

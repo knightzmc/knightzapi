@@ -34,11 +34,24 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.utils.Listeners;
 
+/**
+ * An event called when a player moves, but only if they have moved to a different block from their previous one.
+ */
 public class PlayerBlockMoveEvent extends PlayerMoveEvent {
-	public PlayerBlockMoveEvent(Player player, Location from, Location to) {
+	/**
+	 * Create a new PlayerBlockMoveEvent.
+	 * @param player The player who moved
+	 * @param from Their original Location
+	 * @param to Their current Location
+	 */
+	private PlayerBlockMoveEvent(Player player, Location from, Location to) {
 		super(player, from, to);
 	}
 
+	/**
+	 * Register the PlayerMoveEvent Listener that checks when a block was moved.
+	 * Will not register more than once
+	 */
 	public static void init() {
 		Listeners.registerOnce(new MoveListener(), KnightzAPI.getP());
 	}

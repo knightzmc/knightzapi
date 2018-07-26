@@ -31,6 +31,9 @@ import uk.knightz.knightzapi.menu.SubMenu;
 
 import java.util.function.Consumer;
 
+/**
+ * A MenuButton that brings the user back to their previous menu in the hierarchy.
+ */
 public class BackMenuButton extends MenuButton {
 	private static final Consumer<MenuClickEvent> onClick = e -> {
 		if (e.isSubMenu()) {

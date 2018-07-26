@@ -29,6 +29,10 @@ import uk.knightz.knightzapi.KnightzAPI;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
+/**
+ * Utility class for logging KnightzAPI related things to the console.
+ * As such, it likely won't be used by users much.
+ */
 public class Log {
     private static final Logger plugin = KnightzAPI.getP().getLogger();
 

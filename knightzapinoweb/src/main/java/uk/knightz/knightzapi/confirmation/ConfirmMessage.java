@@ -29,7 +29,14 @@ import org.bukkit.entity.Player;
 
 import java.util.function.Consumer;
 
+/**
+ * A configurable message that allows a Player to confirm an action by clicking JSON messages.
+ *
+ * @deprecated Currently in beta, no actual functionality yet. If you want to use it check the
+ * GitHub Wiki for an example subclass
+ */
 @Data
+@Deprecated
 public class ConfirmMessage {
 
 	protected final String action;

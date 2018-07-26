@@ -32,6 +32,9 @@ import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import java.util.function.Consumer;
 
+/**
+ * A MenuButton that closes the user's current Menu upon click.
+ */
 public final class CloseButton extends MenuButton {
 	private static final ItemStack DEFAULT = new ItemBuilder().setType(Material.REDSTONE_BLOCK).setName("&c&lClose")
 			.setUnbreakable(true).build();

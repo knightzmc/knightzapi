@@ -27,6 +27,9 @@ package uk.knightz.knightzapi.kits;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.utils.NotEmptyArrayList;
 
+/**
+ * A builder object that shortens and cleans up the process of creating a new {@link Kit}
+ */
 public class KitBuilder {
     private String name = "Default";
     private ItemStack icon;

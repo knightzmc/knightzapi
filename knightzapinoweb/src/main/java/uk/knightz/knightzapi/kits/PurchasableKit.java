@@ -27,6 +27,9 @@ package uk.knightz.knightzapi.kits;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.utils.NotEmptyArrayList;
 
+/**
+ * An implementation of {@link Kit} that can be purchased by users for a given price
+ */
 public class PurchasableKit extends Kit {
 
     private final double price;

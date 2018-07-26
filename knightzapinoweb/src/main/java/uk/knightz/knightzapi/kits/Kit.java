@@ -41,10 +41,14 @@ import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.user.User;
 import uk.knightz.knightzapi.utils.CollectionUtils;
 import uk.knightz.knightzapi.utils.EnumUtils;
+import uk.knightz.knightzapi.utils.MathUtils;
 import uk.knightz.knightzapi.utils.NotEmptyArrayList;
 
 import java.util.*;
 
+/**
+ * A Kit that can be given to a user
+ */
 public class Kit implements Listener {
 
     private static final Set<Kit> registeredKits = new HashSet<>();
@@ -55,6 +59,14 @@ public class Kit implements Listener {
     private final Set<PotionEffect> effects;
 
 
+    /**
+     * Create a new Kit
+     *
+     * @param name  The name of the kit - must be unique - for best results use a random string in case of other plugins conflicting
+     * @param icon  The ItemStack that will show in the Kit Menu
+     * @param items A list that must contain at least one KitItem to be in the Kit
+     * @throws KitAlreadyExistsException if a kit with the given name already exists
+     */
     protected Kit(String name, ItemStack icon, NotEmptyArrayList<KitItem> items) throws KitAlreadyExistsException {
         this.name = name;
         ItemMeta iconMeta = icon.getItemMeta();
@@ -86,14 +98,23 @@ public class Kit implements Listener {
         return CollectionUtils.getIfContains(registeredKits, Kit::getName, name, true);
     }
 
+    /**
+     * Create the Kit Menu
+     * @return The Kit Menu
+     */
     public static Inventory genGUI() {
-        Inventory inv = Bukkit.createInventory(null, roundUp(registeredKits.size()), "§6§lKits Menu");
+        Inventory inv = Bukkit.createInventory(null, MathUtils.roundUp(registeredKits.size()), "§6§lKits Menu");
         registeredKits.forEach(kit -> inv.addItem(kit.getIcon()));
         return inv;
     }
 
+    /**
+     * Create a User Specific Kit Menu - it will display whether they own the kit or not and allow them to purchase it
+     * @param user The User opening the Kit Menu
+     * @return The User Specific Kit Menu
+     */
     public static Inventory genGUI(User user) {
-        Inventory inv = Bukkit.createInventory(null, roundUp(registeredKits.size()), "§6§lKits Menu");
+        Inventory inv = Bukkit.createInventory(null, MathUtils.roundUp(registeredKits.size()), "§6§lKits Menu");
         for (Kit kit : registeredKits) {
             if (!user.ownsKit(kit)) {
                 inv.addItem(new ItemBuilder().setType(Material.STAINED_GLASS_PANE).setName(kit.getName()).setLore(Arrays.asList(
@@ -105,10 +126,6 @@ public class Kit implements Listener {
             }
         }
         return inv;
-    }
-
-    private static int roundUp(int n) {
-        return (n + 8) / 9 * 9;
     }
 
     @Override

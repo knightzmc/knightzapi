@@ -26,6 +26,10 @@ package uk.knightz.knightzapi.lang.placeholder;
 
 import org.bukkit.ChatColor;
 
+/**
+ * @deprecated Unused
+ */
+@Deprecated
 public class ChatColorPlaceholder extends ObjectPlaceholder<ChatColor> {
 	public ChatColorPlaceholder(String placeholder, ChatColor replaceWith) {
 		super(placeholder, replaceWith);

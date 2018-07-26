@@ -72,6 +72,13 @@ public final class MenuListener implements Listener {
 									val event = convertEvent(m, e);
 									Bukkit.getPluginManager().callEvent(event);
 									m.getItems().get(e.getSlot()).onClick(event);
+									if (m.getOnClick() != null) {
+										val onClickSound = m.getItems().get(e.getSlot()).getOnClickSound();
+										if (onClickSound != null)
+											event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), onClickSound, 1, 1);
+										else
+											event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), m.getOnClick(), 1, 1);
+									}
 									break;
 								}
 							}

@@ -28,6 +28,7 @@ import lombok.*;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -47,6 +48,10 @@ import java.util.function.BiConsumer;
 
 @Data
 @NoArgsConstructor
+/**
+ * A builder class for creating {@link ItemStack} objects.
+ * It is also YAML and JSON Serializable to help with user customisation
+ */
 public class ItemBuilder implements ConfigurationSerializable {
 	private String name = null;
 	private Material type = Material.AIR;
@@ -73,6 +78,11 @@ public class ItemBuilder implements ConfigurationSerializable {
 		return this;
 	}
 
+	/**
+	 * Create a new ItemBuilder from the contents of a {@link ConfigurationSection}
+	 *
+	 * @param fromConfig The contents of {@link ConfigurationSection#getValues(boolean)}
+	 */
 	public ItemBuilder(Map<String, Object> fromConfig) {
 		setType(Material.valueOf(String.valueOf(fromConfig.getOrDefault("type", Material.AIR))));
 		setAmount((Integer) fromConfig.getOrDefault("amount", 1));
@@ -89,7 +99,12 @@ public class ItemBuilder implements ConfigurationSerializable {
 		setEnchantments(enchants);
 	}
 
+	/**
+	 * Create a copy of the given ItemBuilder
+	 * @param previous The ItemBuilder to clone
+	 */
 	public ItemBuilder(ItemBuilder previous) {
+		Objects.requireNonNull(previous);
 		setType(previous.type);
 		setAmount(previous.amount);
 		setName(previous.name);
@@ -107,6 +122,10 @@ public class ItemBuilder implements ConfigurationSerializable {
 		getPlayerDependentPlaceholders().addAll(previous.playerDependentPlaceholders);
 	}
 
+	/**
+	 * Create a new ItemBuilder that copies an ItemStack but allows for editing
+	 * @param root The ItemStack to make a copy of
+	 */
 	public ItemBuilder(ItemStack root) {
 		setType(root.getType());
 		setAmount(root.getAmount());
@@ -120,11 +139,20 @@ public class ItemBuilder implements ConfigurationSerializable {
 		setEnchantments(root.getEnchantments());
 	}
 
+	/**
+	 * Add Placeholders that will be applied to all forms of text in the ItemStack.
+	 * @param p An array of Placeholders to add
+	 * @return the current ItemBuilder, following the Builder pattern
+	 */
 	public ItemBuilder withPlaceholder(Placeholder... p) {
 		placeholders.addAll(Arrays.asList(p));
 		return this;
 	}
 
+	/**
+	 * Serialize this ItemBuilder to a YAML friendly format
+	 * @return A Map of Keys and Values for YAML serialization
+	 */
 	public Map<String, Object> serialize() {
 		Map<String, Object> values = new HashMap<>();
 		values.put("name", name);
@@ -202,12 +230,20 @@ public class ItemBuilder implements ConfigurationSerializable {
 	@Getter
 	private final List<ItemBuilderPlayerPlaceholder> playerDependentPlaceholders = new ArrayList<>();
 
+	/**
+	 * Build the current ItemBuilder to an ItemStack, apply any Player-Dependent placeholders, then give it to the given player
+	 * @param player The player who will receive the item
+	 */
 	public void giveToPlayer(Player player) {
 		final val i = build();
 		playerDependentPlaceholders.forEach(p -> p.replacementFromPlayer.accept(player, i));
 		player.getInventory().addItem(i);
 	}
 
+	/**
+	 * Build the current ItemBuilder to an ItemStack
+	 * @return an ItemStack with the same values that have been set in this current object.
+	 */
 	public ItemStack build() {
 		ItemStack temp = new ItemStack(type, amount, data, color == null ? null : color.getWoolData());
 		ItemMeta tempMeta = temp.getItemMeta();
@@ -242,6 +278,9 @@ public class ItemBuilder implements ConfigurationSerializable {
 		return temp;
 	}
 
+	/**
+	 * A Placeholder that requires a Player provided to it, but will format the ItemStack in some way depending to that Player
+	 */
 	public static class ItemBuilderPlayerPlaceholder {
 		private final String placeholder;
 		private final BiConsumer<Player, ItemStack> replacementFromPlayer;
@@ -252,6 +291,10 @@ public class ItemBuilder implements ConfigurationSerializable {
 		}
 	}
 
+	/**
+	 * A collection of actions that can be performed on an ItemStack to change some aspect of it.
+	 * Largely unused, made for a contract that needed dynamic ItemStack editing.
+	 */
 	public static class ItemActions<EXPECTED_TYPE> {
 		public static final ItemActions SET_NAME = new ItemActions<String>((s, i) -> {
 			val m = i.getItemMeta();

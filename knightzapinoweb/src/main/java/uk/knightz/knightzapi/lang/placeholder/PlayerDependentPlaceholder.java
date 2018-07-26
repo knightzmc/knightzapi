@@ -28,6 +28,11 @@ import org.bukkit.entity.Player;
 
 import java.util.function.Function;
 
+/**
+ * A Placeholder that requires a Player in order to give a response
+ *
+ * @param <T> The type of response that will be given
+ */
 public class PlayerDependentPlaceholder<T> extends ObjectPlaceholder<T> {
 	private final Function<Player, T> getReplacementFromPlayer;
 
