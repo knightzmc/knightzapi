@@ -30,27 +30,31 @@ import uk.knightz.knightzapi.module.Module;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Future;
 
+/**
+ * Represents an external server, running the KnightzAPI Web API.
+ */
 public interface Server {
 
 	/**
-	 * Get the IP address ofGlobal this server.
+	 * Get the IP address of this server.
 	 *
-	 * @return The IP address ofGlobal this server
-	 * @apiNote Will possibly return null in future updates if server aliases are added
+	 * @return The IP address of this server
+	 * Will possibly return null in future updates if server aliases are added
 	 */
 	InetSocketAddress getAddress();
 
 	/**
-	 * Send data to this server. It will be automatically encrypted, and any neccessary authorisation will also be done
+	 * Send data to this server. It will be automatically encrypted, and any necessary authorisation will also be done
 	 *
 	 * @param data The data to send
+	 * @return A Future of the HttpResponse that the server returned
 	 */
 	Future<HttpResponse> sendData(String data);
 
 
 	/**
 	 * Execute a module on this server.
-	 * If the server does not have the module installed, one ofGlobal two things will occur
+	 * If the server does not have the module installed, one of two things will occur
 	 * NOT YET IMPLEMENTED 1) If the server has auto-download set in their config the module will be downloaded and run (potentially dangerous!).
 	 * 2) Otherwise, nothing
 	 *
@@ -60,9 +64,17 @@ public interface Server {
 	 */
 	Future<HttpResponse> callModule(Module m);
 
+	/**
+	 * Execute a module on this server.
+	 *
+	 * @param m    The module to call
+	 * @param data Any other data to provide
+	 * @return A Future of the HttpResponse that the server returned
+	 */
 	Future<HttpResponse> callModule(Module m, String data);
 
 	Future<HttpResponse> sendData(String reqID, String data);
+
 	/**
 	 * Searches for a module with the given request ID on this server, if it is present execute it.
 	 *

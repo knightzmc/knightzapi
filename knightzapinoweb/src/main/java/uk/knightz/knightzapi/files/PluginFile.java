@@ -49,7 +49,7 @@ public class PluginFile extends YamlConfiguration {
      * Creates new PluginFile, without defaults
      *
      * @param plugin   - Your plugin
-     * @param fileName - Name ofGlobal the file
+     * @param fileName - Name of the file
      */
     public PluginFile(JavaPlugin plugin, String fileName) {
         this(plugin, fileName, null);
@@ -59,8 +59,8 @@ public class PluginFile extends YamlConfiguration {
      * Creates new PluginFile, with defaults
      *
      * @param plugin       - Your plugin
-     * @param fileName     - Name ofGlobal the file
-     * @param defaultsName - Name ofGlobal the defaults
+     * @param fileName     - Name of the file
+     * @param defaultsName - Name of the defaults
      */
     public PluginFile(JavaPlugin plugin, String fileName, String defaultsName) {
         this.plugin = plugin;
@@ -73,8 +73,8 @@ public class PluginFile extends YamlConfiguration {
      * Creates a new PluginFile in a directory
      *
      * @param plugin       - Your plugin
-     * @param fileName     - Name ofGlobal the file
-     * @param defaultsName - Name ofGlobal the defaults
+     * @param fileName     - Name of the file
+     * @param defaultsName - Name of the defaults
      * @param directory    - Directory name
      */
     public PluginFile(JavaPlugin plugin, String fileName, String defaultsName, String directory) {
@@ -88,7 +88,7 @@ public class PluginFile extends YamlConfiguration {
     /**
      * For internal use only. Don't use, all it will do is override the current KnightzAPI config.yml file
      *
-     * @param plugin
+     * @param plugin The KnightzAPI plugin
      */
     public PluginFile(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -102,8 +102,8 @@ public class PluginFile extends YamlConfiguration {
      * For internal use only
      * Generates a yml file for a specific player.
      *
-     * @param plugin
-     * @param playerUUID
+     * @param plugin The KnightzAPI plugin
+     * @param playerUUID The player's UUID
      */
     public PluginFile(JavaPlugin plugin, UUID playerUUID) {
         this.plugin = plugin;

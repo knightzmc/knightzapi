@@ -30,34 +30,46 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class NotEmptyArrayList<T> extends ArrayList<T> {
+/**
+ * A wrapper class of ArrayList that cannot be empty
+ *
+ * @param <E> The element type of the List
+ */
+public class NotEmptyArrayList<E> extends ArrayList<E> {
 
-    public NotEmptyArrayList(T initial) {
-        this.ensureCapacity(1);
-        Validate.notNull(initial);
-        add(initial);
-    }
+	public NotEmptyArrayList(E initial) {
+		this.ensureCapacity(1);
+		Validate.notNull(initial);
+		add(initial);
+	}
 
-    @SafeVarargs
-    public NotEmptyArrayList(T... initial) {
-        super(Arrays.stream(initial).collect(Collectors.toList()));
-    }
+	@SafeVarargs
+	public NotEmptyArrayList(E... initial) {
+		super(Arrays.stream(initial).collect(Collectors.toList()));
+	}
 
-    @SafeVarargs
-    public static <T> NotEmptyArrayList<T> asNotEmptyArrayList(T... args) {
-        return new NotEmptyArrayList<>(args);
-    }
+	@SafeVarargs
+	public static <T> NotEmptyArrayList<T> asNotEmptyArrayList(T... args) {
+		return new NotEmptyArrayList<>(args);
+	}
 
-    public T getFirst() {
-        return get(0);
-    }
+	public E getFirst() {
+		return get(0);
+	}
 
-    @Override
-    public T set(int index, T t) {
-        if (size() <= 1) {
-            return t;
-        }
-        return super.set(index, t);
+	@Override
+	public E set(int index, E e) {
+		if (size() <= 1) {
+			return e;
+		}
+		return super.set(index, e);
 
-    }
+	}
+	@Override
+	public E remove(int index) {
+		if (size() == 1) {
+			throw new UnsupportedOperationException("Removal of element would make NotEmptyArrayList empty");
+		}
+		return super.remove(index);
+	}
 }

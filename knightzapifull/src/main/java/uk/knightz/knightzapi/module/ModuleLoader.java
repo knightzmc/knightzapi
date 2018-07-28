@@ -36,15 +36,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * An async class in charge of loading Modules into the JVM
+ */
 class ModuleLoader extends Thread {
 
 
@@ -78,7 +78,7 @@ class ModuleLoader extends Thread {
 		File modulesDir = new File(KnightzAPI.getP().getDataFolder(), "/modules");
 		if (!modulesDir.exists()) modulesDir.mkdir();
 		all = Sets.newHashSet();
-		if (modulesDir.listFiles().length == 0) {
+		if (Objects.requireNonNull(modulesDir.listFiles()).length == 0) {
 			return all;
 		}
 		try {
@@ -86,7 +86,7 @@ class ModuleLoader extends Thread {
 		} catch (ModuleException e) {
 			e.printStackTrace();
 		}
-		for (File file : modulesDir.listFiles()) {
+		for (File file : Objects.requireNonNull(modulesDir.listFiles())) {
 			try {
 				load(file);
 			} catch (ModuleException ex) {

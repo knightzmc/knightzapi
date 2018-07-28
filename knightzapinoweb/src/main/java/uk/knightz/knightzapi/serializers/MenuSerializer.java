@@ -43,6 +43,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * GSON Serializer for Menu objecs
+ * @see Menu
+ */
 public class MenuSerializer extends TypeAdapter<Menu> {
 	@Override
 	public void write(JsonWriter out, Menu menu) throws IOException {

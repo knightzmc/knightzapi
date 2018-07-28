@@ -24,8 +24,6 @@
 
 package uk.knightz.knightzapi;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.BukkitCommandManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.milkbowl.vault.chat.Chat;
@@ -123,18 +121,16 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 		if (webAPIEnabled)
 			try {
 				Class webAPI = Class.forName("uk.knightz.knightzapi.KnightzWebAPI");
-				Method init = webAPI.getDeclaredMethod("init", boolean.class);
-				System.out.println(webAPIEnabled);
-				init.invoke(null, webAPIEnabled);
-				new BukkitCommandManager(KnightzAPI.getP()).registerCommand((BaseCommand) Class.forName("uk.knightz.knightzapi.FakeRequestCommand").getConstructor().newInstance());
+				Method init = webAPI.getDeclaredMethod("init");
+				init.invoke(null);
 
 			} catch (ClassNotFoundException e) {
-				Log.severe("You are trying to load in the communication API without the right file! Make sure you're using knightzapifull-*.jar+\n Disabling plugin...");
+				Log.severe("You are trying to load in the communication API without the right file! Make sure you're using knightzapifull-*.jar\n Disabling plugin...");
 				if (Log.debug()) {
 					e.printStackTrace();
 				}
 				Bukkit.getPluginManager().disablePlugin(this);
-			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				Log.severe("An error occured loading in the communication API! Enable debug mode in the config to view the stack trace.");
 				if (Log.debug()) e.printStackTrace();
 			}
@@ -149,7 +145,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 			} catch (NullPointerException e) {
 				Log.warn("No Vault Chat plugin was found! This will likely cause problems with dependent plugins, so installing an chat plugin (such as EssentialsChat) is highly recommended.");
 			}
-
 			try {
 				setupPermissions();
 			} catch (NullPointerException e) {

@@ -26,6 +26,9 @@ package uk.knightz.knightzapi.user;
 
 import java.util.Objects;
 
+/**
+ * Holds user stats
+ */
 public class StatsContainer {
     private final int kills;
     private final int deaths;

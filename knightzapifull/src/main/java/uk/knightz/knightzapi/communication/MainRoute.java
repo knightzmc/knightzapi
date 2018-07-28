@@ -30,7 +30,10 @@ import spark.Route;
 import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.module.IncomingRequest;
 
-public class MainRoute implements Route {
+/**
+ * The Main Spark route that handles all incoming requests and passes them to be executed by Modules
+ */
+public final class MainRoute implements Route {
 
 	@Override
 	public Object handle(Request request, Response response) {

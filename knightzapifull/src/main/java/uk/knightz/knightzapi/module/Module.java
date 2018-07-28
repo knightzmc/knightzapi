@@ -27,43 +27,48 @@ package uk.knightz.knightzapi.module;
 
 import java.util.jar.JarFile;
 
+/**
+ * A Module is a separate Jar file. It can be extended to add additional functionality to the Web API.
+ * Every extension class must have a {@link ModuleInfo} annotation at the start of the class or it will not be loaded
+ * See the GitHub Wiki for more details on Modules
+ */
 public abstract class Module implements IncomingRequestListener {
 
-    /**
-     * The id that a request should send in order for it to be interpreted by this module.
-     * It should be overridden in an implementation ofGlobal the constructor, as it is null by default, causing the module to never be called
-     */
-    private final String requestID;
-    private final String name;
-    private final JarFile file;
-    private final ModuleInfo info;
+	/**
+	 * The id that a request should send in order for it to be interpreted by this module.
+	 * Along with {@link Module#name} it is loaded by the Module Loader from the values of {@link ModuleInfo}
+	 */
+	private final String requestID;
+	private final String name;
+	private final JarFile file;
+	private final ModuleInfo info;
 
-    protected Module(String requestID, String name, JarFile file, ModuleInfo info) {
-        this.requestID = requestID;
-        this.name = name;
-        this.file = file;
-        this.info = info;
-    }
+	protected Module(String requestID, String name, JarFile file, ModuleInfo info) {
+		this.requestID = requestID;
+		this.name = name;
+		this.file = file;
+		this.info = info;
+	}
 
-    public static Module forName(String name) {
-        return ModuleManager.forName(name);
-    }
+	public static Module forName(String name) {
+		return ModuleManager.forName(name);
+	}
 
-    public JarFile getFile() {
-        return file;
-    }
+	public JarFile getFile() {
+		return file;
+	}
 
-    public ModuleInfo getInfo() {
-        return info;
-    }
+	public ModuleInfo getInfo() {
+		return info;
+	}
 
-    public String getRequestID() {
-        return requestID;
-    }
+	public String getRequestID() {
+		return requestID;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
 
 }

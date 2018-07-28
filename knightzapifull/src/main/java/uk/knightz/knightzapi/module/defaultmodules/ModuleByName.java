@@ -31,6 +31,9 @@ import uk.knightz.knightzapi.module.ModuleManager;
 
 import java.util.jar.JarFile;
 
+/**
+ * A default module that handles an incoming request that calls a Module by its name, not its request id.
+ */
 @ModuleInfo(name = "ModuleByName", requestID = "modulebyname")
 public final class ModuleByName extends Module {
 	protected ModuleByName(String requestID, String name, JarFile file, ModuleInfo info) {

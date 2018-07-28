@@ -24,23 +24,26 @@
 
 package uk.knightz.knightzapi.communication.server.authorisation;
 
+/**
+ * Exception thrown when the current server sends a request to an external server but is not permitted to send requests to that server.,
+ */
 public class NotAuthorisedException extends Exception {
-    public NotAuthorisedException() {
-    }
+	public NotAuthorisedException() {
+	}
 
-    public NotAuthorisedException(String message) {
-        super(message);
-    }
+	public NotAuthorisedException(String message) {
+		super(message);
+	}
 
-    public NotAuthorisedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public NotAuthorisedException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public NotAuthorisedException(Throwable cause) {
-        super(cause);
-    }
+	public NotAuthorisedException(Throwable cause) {
+		super(cause);
+	}
 
-    public NotAuthorisedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+	public NotAuthorisedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
 }

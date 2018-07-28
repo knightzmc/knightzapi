@@ -24,6 +24,7 @@
 
 package uk.knightz.knightzapi.user;
 
+import com.google.common.collect.Sets;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -50,9 +51,12 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * A Player Wrapper class that stores various pieces of data
+ */
 @Data
 public class User implements Listener {
-	private static final Map<OfflinePlayer, User> users = new HashMap<>();
+	private static final Map<OfflinePlayer, User> users = new WeakHashMap<>();
 	private static final Map<User, PluginFile> userFiles = new HashMap<>();
 
 	/**

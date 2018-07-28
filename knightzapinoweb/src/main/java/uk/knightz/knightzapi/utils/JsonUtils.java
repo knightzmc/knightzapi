@@ -29,6 +29,9 @@ import com.google.gson.JsonParser;
 import org.apache.commons.lang.Validate;
 import uk.knightz.knightzapi.KnightzAPI;
 
+/**
+ * JSON related Utility class
+ */
 public class JsonUtils {
 	private static final JsonParser parser = new JsonParser();
 
@@ -37,6 +40,11 @@ public class JsonUtils {
 	private JsonUtils() {
 	}
 
+	/**
+	 * Prettify a given JSON String with GSON
+	 * @param json The JSON to prettify
+	 * @return The prettified JSON
+	 */
 	public static String prettifyJson(String json) {
 		Validate.notNull(json, "String cannot be null");
 		return KnightzAPI.gson.toJson(parser.parse(json));

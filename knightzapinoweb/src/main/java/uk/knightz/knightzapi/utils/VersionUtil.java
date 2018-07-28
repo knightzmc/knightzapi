@@ -27,11 +27,19 @@ package uk.knightz.knightzapi.utils;
 import org.bukkit.Bukkit;
 import uk.knightz.knightzapi.KnightzAPI;
 
+
+/**
+ * Version compatibility related utility class
+ */
 public class VersionUtil {
 
 
-	private VersionUtil() {}
+	private VersionUtil() {
+	}
 
+	/**
+	 * @return The current server version
+	 */
 	public static Version getVersion() {
 		String name = Bukkit.getServer().getClass().getPackage().getName();
 		String versionPackage = name.substring(name.lastIndexOf(46) + 1) + ".";
@@ -44,6 +52,10 @@ public class VersionUtil {
 		throw new RuntimeException("Unsupported Minecraft Version! KnightzAPI supports 1.8-1.12.2");
 	}
 
+	/**
+	 * Check that the current server version is supported by KnightzAPI
+	 * Called in {@link KnightzAPI#onEnable()}, so is unlikely it will need to be called again
+	 */
 	public static void checkVersion() {
 		try {
 			getVersion();
@@ -53,6 +65,12 @@ public class VersionUtil {
 		}
 	}
 
+	/**
+	 * Check that the current version is newer or equal than the given version
+	 *
+	 * @param v The version to check
+	 * @return if the current server version is newer or equal than the given version
+	 */
 	public static boolean isNewerThan(Version v) {
 		return getVersion().version() >= v.version();
 	}
@@ -67,9 +85,13 @@ public class VersionUtil {
 
 		private final int v;
 
-		Version(int v) {this.v = v;}
+		Version(int v) {
+			this.v = v;
+		}
 
-		public int version() {return v;}
+		public int version() {
+			return v;
+		}
 
 		public boolean matchesPackageName(String name) {
 			return name.contains(name());

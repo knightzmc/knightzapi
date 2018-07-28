@@ -24,12 +24,35 @@
 
 package uk.knightz.knightzapi.ui.wizard;
 
+import uk.knightz.knightzapi.annotation.Beta;
+
+/**
+ * A Wizard is similar to a setup wizard for an application. It contains multiple steps (such as accepting a license agreement)
+ * and automatically proceeds to the next step after one is completed
+ * @param <P> The target type of the Wizard
+ * @see AbstractWizard for implementation
+ * @see ExampleWizard for a simple example
+ */
+@Beta
 public interface Wizard<P> {
+	/**
+	 * @return The current step that has not yet been completed
+	 */
 	Step currentStep();
 
+	/**
+	 * Automatically complete the current step and move to the next step
+	 * @return The next step, or current step if there are no more steps
+	 */
 	Step nextStep();
 
+	/**
+	 * @return If there are any more steps that have not yet been completed
+	 */
 	boolean hasNextStep();
 
+	/**
+	 * @return If all steps have been completed
+	 */
 	boolean finished();
 }

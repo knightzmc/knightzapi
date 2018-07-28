@@ -30,12 +30,20 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Enum related utility class
+ */
 public class EnumUtils {
 
 
 	/**
 	 * Get a random element in the given enum, excluding any elements that 'exclude' includes (woo, confusing! :D)
 	 * Typically used for ChatColor
+	 *
+	 * @param enm     The Enum
+	 * @param exclude Any elements from this array will never be selected
+	 * @param <T>     The type of Enum
+	 * @return A random Element from the enum, will never be anything in exclude
 	 */
 	@SafeVarargs
 	public static <T extends Enum<T>> T getRandom(Class<? extends T> enm, T... exclude) {
@@ -51,7 +59,10 @@ public class EnumUtils {
 	/**
 	 * Get multiple random elements from the given enum, excluding any elements that exclude includes
 	 *
-	 * @param amount How many elements to get. Will be shortened if not enough exist
+	 * @param enm     The Enum
+	 * @param exclude Any elements from this array will never be selected
+	 * @param amount  How many elements to get. Will be shortened if not enough exist
+	 * @param <T>     The type of Enum
 	 * @return An array containg the given amount (can be less if not enough exist) ofGlobal randomly picked elements from the enum
 	 */
 	@SafeVarargs
@@ -71,6 +82,12 @@ public class EnumUtils {
 	/**
 	 * Get all random elements, etc, but add them all together in a StringBuilder and convert them to a String
 	 * Literally only used for random Chat Colors
+	 *
+	 * @param amount  The amount of random elements to generate
+	 * @param enm     The enum
+	 * @param exclude Any elements from this array will never be selected
+	 * @param <T>     The type of Enum
+	 * @return A String contain all of the random elements appended to each other
 	 */
 	@SafeVarargs
 	public static <T extends Enum<T>> String getRandomFormatted(Class<? extends T> enm, int amount, T... exclude) {

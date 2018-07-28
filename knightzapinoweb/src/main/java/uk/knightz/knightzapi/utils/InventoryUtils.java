@@ -33,6 +33,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * Inventory related utility class
+ */
 public class InventoryUtils {
 	/**
 	 * Shouldn't be instantiated
@@ -56,19 +59,30 @@ public class InventoryUtils {
 				inv1.getType().equals(inv2.getType());
 	}
 
+	/**
+	 * Check if two Inventory objects are equal, but not comparing their contents.
+	 * @param inv1 The first Inventory
+	 * @param inv2 The second Inventory
+	 * @return true if both Inventory objects are not null, are of equal type, and have an equal title, otherwise false
+	 */
 	public static boolean equalsNoContents(Inventory inv1, Inventory inv2) {
 		return inv1 != null && inv2 != null
 				&& inv1.getTitle().equalsIgnoreCase(inv2.getTitle()) &&
 				inv1.getType().equals(inv2.getType());
 	}
 
+	/**
+	 * Remove a given ItemStack from a Player's Inventory
+	 * @param p The Player to remove the items from
+	 * @param item The ItemStack to remove
+	 * @param quantity The amount of this ItemStack to remove
+	 */
 	public static void removeItemFromPlayer(Player p, ItemStack item, int quantity) {
 		if (p.getInventory().containsAtLeast(item, quantity)) {
 			int n = 0;
 			for (ItemStack i : p.getInventory()) {
 				if (i != null) {
-					if (i
-							.isSimilar(item)) {
+					if (i.isSimilar(item)) {
 						if (n + i.getAmount() > quantity || n > quantity) {
 							i.setAmount(quantity - n);
 							return;
@@ -80,7 +94,12 @@ public class InventoryUtils {
 			}
 		}
 	}
-
+	/**
+	 * Remove a given item from a Player's Inventory
+	 * @param p The Player to remove the items from
+	 * @param item The Material Type to remove
+	 * @param quantity The amount of this Material to remove
+	 */
 	public static void removeItemFromPlayer(Player p, Material item, int quantity) {
 		p.getInventory().removeItem(new ItemStack(item, quantity));
 		//		if (p.getInventory().contains(item, quantity)) {
@@ -104,7 +123,7 @@ public class InventoryUtils {
 	/**
 	 * Get the central slot in an inventory
 	 *
-	 * @param inv
+	 * @param inv The Inventory
 	 * @return the central slot id in the Inventory
 	 */
 	public static int getCenter(Inventory inv) {

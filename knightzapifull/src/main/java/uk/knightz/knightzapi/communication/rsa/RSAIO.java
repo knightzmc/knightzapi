@@ -13,8 +13,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
- *
- * @author Blake Beaupain
+ * Controls RSA key IO operations
  **/
 public class RSAIO {
     /**

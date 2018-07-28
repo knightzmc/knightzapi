@@ -27,6 +27,9 @@ package uk.knightz.knightzapi.utils;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Utility class for Functional Interface related operations
+ */
 public class Functions {
 	private Functions() {
 	}

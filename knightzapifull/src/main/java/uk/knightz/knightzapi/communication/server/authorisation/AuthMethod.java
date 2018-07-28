@@ -28,54 +28,57 @@ import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
-import uk.knightz.knightzapi.communication.server.Webserver;
 import uk.knightz.knightzapi.communication.json.JSONMessage;
+import uk.knightz.knightzapi.communication.server.Webserver;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * An enum of authorisation methods that can be used for the Webserver
+ */
 public enum AuthMethod {
-    /**
-     * Least secure, anyone can send a request
-     */
-    NONE {
-        @Override
-        void validate(Request request, Response response) {
-        }
-    },
-    /**
-     * Username and Password Authentication
-     */
-    AUTH {
-        @Override
-        void validate(Request request, Response response) {
-        }
-    },
+	/**
+	 * Least secure, anyone can send a request
+	 */
+	NONE {
+		@Override
+		void validate(Request request, Response response) {
+		}
+	},
+	/**
+	 * Username and Password Authentication
+	 */
+	AUTH {
+		@Override
+		void validate(Request request, Response response) {
+		}
+	},
 
-    /**
-     * A whitelist ofGlobal IP addresses that are allowed to send requests to this server
-     */
-    WHITELIST {
-        @Override
-        void validate(Request request, Response response) {
-            try {
-                if (!Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
-                    Spark.halt(401, new Gson().toJson(new JSONMessage(401, "Your IP is not whitelisted!")));
-                }
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        }
-    },
+	/**
+	 * A whitelist ofGlobal IP addresses that are allowed to send requests to this server
+	 */
+	WHITELIST {
+		@Override
+		void validate(Request request, Response response) {
+			try {
+				if (!Webserver.getInstance().getWhitelist().contains(InetAddress.getByName(request.ip()))) {
+					Spark.halt(401, new Gson().toJson(new JSONMessage(401, "Your IP is not permitted to send requests to this server.")));
+				}
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			}
+		}
+	},
 
-    /**
-     * Username and Password, but also with a Whitelist that doesn't require login details
-     */
-    WHITEAUTH {
-        @Override
-        void validate(Request request, Response response) {
-        }
-    };
+	/**
+	 * Username and Password, but also with a Whitelist that doesn't require login details
+	 */
+	WHITEAUTH {
+		@Override
+		void validate(Request request, Response response) {
+		}
+	};
 
-    abstract void validate(Request request, Response response);
+	abstract void validate(Request request, Response response);
 }

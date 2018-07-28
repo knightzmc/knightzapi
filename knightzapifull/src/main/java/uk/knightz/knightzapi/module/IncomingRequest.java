@@ -31,6 +31,9 @@ import uk.knightz.knightzapi.communication.server.Webserver;
 
 import java.util.Base64;
 
+/**
+ * Represents an incoming web request
+ */
 public final class IncomingRequest {
 	/**
 	 * The root {@link Request} Request that has been used to construct this IncomingRequest object.
@@ -52,20 +55,15 @@ public final class IncomingRequest {
 		this.root = root;
 		this.response = response;
 		try {
-			this.data = new String((RSA.decrypt(Base64.getDecoder().decode(root
-							.queryParams("data").getBytes()),
-					Base64.getDecoder(
-
-					).decode
-							(root.queryParams("aes").
-									getBytes()),
+			this.data = new String((RSA.decrypt(Base64.getDecoder().decode(root.queryParams("data").getBytes()),
+					Base64.getDecoder().decode(root.queryParams("aes").getBytes()),
 					Webserver.getInstance().getPair().getPrivate())));
 			if (root.queryParams("module") != null) {
 				this.id = root.queryParams("module");
 			} else {
                 /*
                 Either invalid, or a stock system request.
-                TODO: Add some form ofGlobal identifier for system requests, rather than just "no module"
+                TODO: Add some form  of identifier for system requests, rather than just "no module"
                  */
 				this.id = "SYSTEM";
 			}

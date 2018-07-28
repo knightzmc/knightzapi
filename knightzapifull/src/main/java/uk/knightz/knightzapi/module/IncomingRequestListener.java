@@ -24,7 +24,10 @@
 
 package uk.knightz.knightzapi.module;
 
+/**
+ * Indicates that the class will listen to incoming web requests
+ */
 public interface IncomingRequestListener {
 
-    void onIncomingRequest(IncomingRequest incomingRequest);
+	void onIncomingRequest(IncomingRequest incomingRequest);
 }

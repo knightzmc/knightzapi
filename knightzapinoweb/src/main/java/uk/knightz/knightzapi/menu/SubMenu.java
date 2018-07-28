@@ -26,12 +26,20 @@ package uk.knightz.knightzapi.menu;
 
 import lombok.Getter;
 
+/**
+ * A child Menu that is usually opened by a parent Menu
+ */
 @Getter
 public final class SubMenu extends Menu {
 	private final Menu parent;
 
+	/**
+	 * {@inheritDoc}
+	 * @param parent The parent Menu of this SubMenu
+	 */
 	public SubMenu(String title, int rows, Menu parent) {
 		super(title, rows);
 		this.parent = parent;
+		parent.addSubMenu(this);
 	}
 }

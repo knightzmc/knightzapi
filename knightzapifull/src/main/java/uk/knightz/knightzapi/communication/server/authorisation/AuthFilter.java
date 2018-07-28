@@ -29,13 +29,14 @@ import spark.Request;
 import spark.Response;
 import uk.knightz.knightzapi.communication.server.Webserver;
 
-public class AuthFilter implements Filter {
+/**
+ * Spark Filter that blocks any requests that are not authorised to communicate with this server
+ */
+public final class AuthFilter implements Filter {
     @Override
     public void handle(Request request, Response response) {
         try {
-            Webserver.getInstance().getAuth()
-                    .validate( request
-                            , response);
+            Webserver.getInstance().getAuth().validate( request, response);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -30,6 +30,13 @@ import spark.Spark;
 import java.util.HashSet;
 import java.util.Set;
 
+import static uk.knightz.knightzapi.communication.WebModule.Verb.GET;
+import static uk.knightz.knightzapi.communication.WebModule.Verb.POST;
+
+/**
+ * A WebModule is a Spark Route wrapper that can handle simple Web related content.
+ * If you are looking for something more dynamic and interactive with the server, consider {@link uk.knightz.knightzapi.module.Module}
+ */
 public abstract class WebModule implements Route {
 	private static final Set<WebModule> allModules = new HashSet<>();
 	private final String name;
@@ -48,11 +55,14 @@ public abstract class WebModule implements Route {
 		return allModules;
 	}
 
+	/**
+	 * Register this WebModule in Spark
+	 */
 	public void exec() {
-		if (verb.equals(Verb.GET)) {
+		if (verb.equals(GET)) {
 			Spark.get(path, this);
 		} else {
-			if (verb.equals(Verb.POST)) {
+			if (verb.equals(POST)) {
 				Spark.post(path, this);
 			}
 		}

@@ -24,7 +24,6 @@
 
 package uk.knightz.knightzapi.user;
 
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -38,8 +37,11 @@ import uk.knightz.knightzapi.utils.ReflectionUtil;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * In charge of handling user events.
+ * Can also provide a Set of all Bukkit event classes {@link EventManager#getEventClasses()}
+ */
 public class EventManager implements Listener {
-	@Getter
 	public static final EventManager inst = new EventManager();
 
 	public static Set<Class<? extends Event>> eventClasses;
@@ -59,5 +61,11 @@ public class EventManager implements Listener {
 
 
 	private EventManager() {
+	}
+	public static EventManager getInst() {
+		return EventManager.inst;
+	}
+	public static Set<Class<? extends Event>> getEventClasses() {
+		return EventManager.eventClasses;
 	}
 }

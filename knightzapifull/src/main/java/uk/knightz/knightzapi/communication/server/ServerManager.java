@@ -26,33 +26,36 @@ package uk.knightz.knightzapi.communication.server;
 
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
 
+/**
+ * Manages the current running {@link Webserver}
+ */
 public class ServerManager {
 
-    private static ServerManager instance;
-    private static Webserver webserver;
+	private static ServerManager instance;
+	private static Webserver webserver;
 
-    private ServerManager() {
-    }
+	private ServerManager() {
+	}
 
-    public static ServerManager getInstance() {
-        if (instance == null) init();
-        return instance;
-    }
+	public static ServerManager getInstance() {
+		if (instance == null) init();
+		return instance;
+	}
 
-    public static void init() {
-        instance = new ServerManager();
-    }
+	public static void init() {
+		instance = new ServerManager();
+	}
 
-    public Webserver initServer(AuthMethod method) {
-        if (webserver != null) {
-            return webserver;
-        }
-        return webserver = Webserver.init(method);
-    }
+	public Webserver initServer(AuthMethod method) {
+		if (webserver != null) {
+			return webserver;
+		}
+		return webserver = Webserver.init(method);
+	}
 
-    public void shutdown() {
-        webserver
-                .shutdown();
-        webserver = null;
-    }
+	public void shutdown() {
+		webserver
+				.shutdown();
+		webserver = null;
+	}
 }

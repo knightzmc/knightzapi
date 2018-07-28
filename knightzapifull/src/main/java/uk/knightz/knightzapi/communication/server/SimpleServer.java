@@ -54,6 +54,9 @@ import java.util.concurrent.Future;
 
 import static uk.knightz.knightzapi.communication.rsa.RSA.*;
 
+/**
+ * Implementation of {@link Server}
+ */
 public class SimpleServer implements Server {
 	private final InetSocketAddress address;
 	private final HttpClient client;
@@ -62,9 +65,9 @@ public class SimpleServer implements Server {
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private UsernamePasswordCredentials credentials;
 
-	public SimpleServer(InetSocketAddress address) throws NotAuthorisedException {
+	public SimpleServer(InetSocketAddress address) throws NotAuthorisedException, NotAServerException {
 		synchronized (this) {
-			//Some methods ofGlobal getting an URL put a slash at the start
+			//Some methods of getting an URL put a slash at the start
 			validURL = address.toString().replace("/", "");
 			HttpClient client1;
 			String pubKey1;
@@ -72,14 +75,17 @@ public class SimpleServer implements Server {
 				client1 = HttpClientBuilder.create().build();
 				HttpGet get = new HttpGet("http://" + validURL + "/validate");
 				HttpResponse response = client1.execute(get);
-				JSONMessage message = null;
+				if (response.getStatusLine().getStatusCode() != 201) {
+					throw new NotAServerException("Handshake with " + validURL + " did not return code 201");
+				}
+				JSONMessage message;
 				try {
 					message = new Gson().fromJson(read(response.getEntity().getContent()), JSONMessage.class);
 					if (response.getStatusLine().getStatusCode() == 401) {
 						throw new NotAuthorisedException(message.getMessage());
 					}
 				} catch (JsonSyntaxException e) {
-					e.printStackTrace();
+					throw new NotAServerException("Handshake with " + validURL + " returned invalid JSON Public Key", e);
 				}
 				pubKey1 = message == null ? null : message.getMessage();
 			} catch (IOException e) {

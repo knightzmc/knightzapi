@@ -24,6 +24,9 @@
 
 package uk.knightz.knightzapi.module;
 
+/**
+ * Thrown when an exception occurs to do with a Module
+ */
 public class ModuleException extends Exception {
     public ModuleException() {
     }

@@ -28,10 +28,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
+/**
+ * Reader related utility class
+ */
 public class ReaderUtils {
 
     private ReaderUtils() {}
 
+    /**
+     * Read all lines from a given reader and append it to a String
+     * @param reader The Reader to read
+     * @return All lines from the given reader as a StringC
+     */
     public static String readAllLines(Reader reader) {
         StringBuilder builder = new StringBuilder();
         try (BufferedReader b = new BufferedReader(reader)) {

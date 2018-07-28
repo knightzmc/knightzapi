@@ -78,6 +78,7 @@ public class Menu {
 
 	/**
 	 * Set the title of the Inventory
+	 *
 	 * @param title The title to set
 	 */
 	public void setTitle(String title) {
@@ -87,22 +88,39 @@ public class Menu {
 	}
 
 
+	/**
+	 * Register a SubMenu.
+	 * This is called in the constructor of {@link SubMenu}, so usually will not need to be called
+	 *
+	 * @param subMenu The SubMenu to register
+	 */
 	public void addSubMenu(SubMenu subMenu) {
 		if (subMenu != null)
 			children.add(subMenu);
 	}
 
+	/**
+	 * Set a slot of the inventory to the given button
+	 *
+	 * @param slot   The slot to set
+	 * @param button The button to add
+	 * @throws IndexOutOfBoundsException if the given slot is not in the Inventory
+	 */
 	public void addButton(int slot, MenuButton button) {
 		Validate.notNull(button, "Button is null");
 		if (slot > inv.getSize())
-			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size ofGlobal Inventory %d", slot, inv.getSize()));
-		if (button != null) {
-			items.put(slot, button);
-			clickMappings.put(slot, button.getOnClick());
-			inv.setItem(slot, button.getItemStack());
-		}
+			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
+		items.put(slot, button);
+		clickMappings.put(slot, button.getOnClick());
+		inv.setItem(slot, button.getItemStack());
 	}
 
+	/**
+	 * Add a MenuButton to the first empty slot in the Inventory
+	 *
+	 * @param button The button to add
+	 * @throws IndexOutOfBoundsException if there are no more free slots
+	 */
 	public void addButton(MenuButton button) {
 		addButton(inv.firstEmpty(), button);
 	}
@@ -129,23 +147,39 @@ public class Menu {
 		}
 	}
 
+	/**
+	 * Set the amount of rows in the Inventory. If decreasing the rows amount, some items may be removed
+	 *
+	 * @param rows The amount of rows to set.
+	 */
 	public void setRows(int rows) {
 		adjustSize(rows * 9);
 	}
 
+	/**
+	 * Set the Event listener for a certain slot. This can override the event handler of a button
+	 *
+	 * @param slot The slot to bind the event to
+	 * @param e    Called when the slot is clicked on by a player
+	 */
 	public void mapButton(int slot, Consumer<MenuClickEvent> e) {
 		Validate.notNull(e);
 		if (slot > inv.getSize())
-			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size ofGlobal Inventory %d", slot, inv.getSize()));
+			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
 
 		clickMappings.put(slot, e);
 	}
 
 
+	/**
+	 * @return The Bukkit Inventory of this Menu
+	 */
 	public Inventory getInv() {
 		return inv;
 	}
-
+	/**
+	 * Removes any trailing rows of empty slots in the Inventory, rounding up to the nearest whole row if necessary
+	 */
 	public void trim() {
 		adjustSize(items.size());
 	}
@@ -156,7 +190,7 @@ public class Menu {
 	//Use at your own risk!
 
 	/**
-	 * @param o
+	 * @param o The map of slots and buttons to set
 	 * @deprecated Dangerous
 	 */
 	@Deprecated

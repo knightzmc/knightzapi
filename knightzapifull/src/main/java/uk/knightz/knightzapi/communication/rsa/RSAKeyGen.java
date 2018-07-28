@@ -27,10 +27,13 @@ package uk.knightz.knightzapi.communication.rsa;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
+/**
+ * Utility class to generate a new RSA key
+ */
 public class RSAKeyGen {
-    public static KeyPair generate(int bits) throws Exception {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        generator.initialize(bits);
-        return generator.generateKeyPair();
-    }
+	public static KeyPair generate(int bits) throws Exception {
+		KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+		generator.initialize(bits);
+		return generator.generateKeyPair();
+	}
 }

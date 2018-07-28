@@ -27,10 +27,12 @@ package uk.knightz.knightzapi.ui.wizard;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * Static Factory class for creating new {@link Wizard} objects
+ */
 public class WizardFactory {
 	private WizardFactory() {
 	}
-
 
 	public static Wizard<Player> createWizard(Player player) {
 		return new PlayerWizard(player);

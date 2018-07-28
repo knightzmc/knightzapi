@@ -28,6 +28,10 @@ import uk.knightz.knightzapi.communication.server.authorisation.NotAuthorisedExc
 
 import java.net.InetSocketAddress;
 
+/**
+ * An abstract Factory responsible for creating new {@link Server} objects.
+ * Until additional functionality is added, it will always create a new {@link SimpleServer}
+ */
 public interface ServerFactory {
 	static ServerFactory getInstance() {
 		return FactoryStorage.getInstance();

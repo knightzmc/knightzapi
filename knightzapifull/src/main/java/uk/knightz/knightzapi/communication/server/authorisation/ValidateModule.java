@@ -34,6 +34,9 @@ import uk.knightz.knightzapi.communication.server.Webserver;
 
 import java.security.GeneralSecurityException;
 
+/**
+ * In charge of
+ */
 public class ValidateModule extends WebModule {
 
 
@@ -44,11 +47,7 @@ public class ValidateModule extends WebModule {
     @Override
     public Object handle(Request request, Response response) {
         try {
-            return new Gson().toJson
-                    (new JSONMessage(200,
-                            RSA.savePublicKey
-                                    (Webserver.getInstance().getPair().getPublic())
-                    ));
+            return new Gson().toJson(new JSONMessage(201, RSA.savePublicKey(Webserver.getInstance().getPair().getPublic())));
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }

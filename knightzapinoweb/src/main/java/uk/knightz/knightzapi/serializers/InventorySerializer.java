@@ -38,6 +38,10 @@ import java.util.List;
 
 import static org.bukkit.Material.AIR;
 
+/**
+ * GSON Serializer for Bukkit Inventory objects
+ * @see Inventory
+ */
 public class InventorySerializer extends TypeAdapter<Inventory> {
 	@Override
 	public void write(JsonWriter out, Inventory value) throws IOException {

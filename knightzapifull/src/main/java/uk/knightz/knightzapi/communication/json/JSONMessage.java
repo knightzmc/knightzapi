@@ -26,25 +26,25 @@ package uk.knightz.knightzapi.communication.json;
 
 import com.google.gson.Gson;
 
+/**
+ * Represents a JSON status message returned by an external server.
+ */
 public class JSONMessage {
-    private static final Gson gson = new Gson();
-    private final int code;
-    private final String message;
+	private static final Gson gson = new Gson();
+	private final int code;
+	private final String message;
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public JSONMessage(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public String toJson() {
-        return gson.toJson(this);
-    }
+	public JSONMessage(int code, String message) {
+		this.code = code;
+		this.message = message;
+	}
+	public int getCode() {
+		return code;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public String toJson() {
+		return gson.toJson(this);
+	}
 }

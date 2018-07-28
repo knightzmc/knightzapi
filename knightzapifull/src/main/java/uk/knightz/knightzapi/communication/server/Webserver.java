@@ -24,7 +24,9 @@
 
 package uk.knightz.knightzapi.communication.server;
 
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang.Validate;
 import spark.Spark;
 import uk.knightz.knightzapi.KnightzAPI;
@@ -52,6 +54,10 @@ import java.util.Set;
 
 import static spark.Spark.*;
 
+/**
+ * The Main Webserver of the Web API. It wraps a Spark Webserver and handles encryption, modulation, and all other aspects of the Web API
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class Webserver extends Thread {
 	private static Webserver instance;
@@ -138,8 +144,7 @@ public class Webserver extends Thread {
 		before(new AuthFilter());
 		WebModule.getAllModules().forEach(WebModule::exec);
 		Spark.init();
-		System.out.println(port());
-		Log.normal("[KnightzWebAPI] Webserver successfully started up!");
+		Log.normal("[KnightzWebAPI] Webserver successfully started up! Running on port " + port());
 	}
 
 	public void registerModule(WebModule module) {

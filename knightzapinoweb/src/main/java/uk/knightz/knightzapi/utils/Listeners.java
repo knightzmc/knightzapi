@@ -30,6 +30,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
+/**
+ * EventHandler and Listener related Utility class
+ */
 public class Listeners {
 
     private Listeners() {
@@ -39,7 +42,7 @@ public class Listeners {
      * Register a listener if it is not already registered, to prevent duplicate event registering
      *
      * @param listener The listener to register
-     * @param p
+     * @param p The plugin that should register this listener
      */
     public static void registerOnce(Listener listener, Plugin p) {
         if (HandlerList.getRegisteredListeners(p).stream().map(RegisteredListener::getListener).map(Object::getClass).noneMatch(c -> c.equals(listener.getClass()))) {

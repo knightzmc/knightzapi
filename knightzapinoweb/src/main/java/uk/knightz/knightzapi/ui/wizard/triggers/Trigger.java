@@ -26,6 +26,11 @@ package uk.knightz.knightzapi.ui.wizard.triggers;
 
 import uk.knightz.knightzapi.ui.wizard.Step;
 
+/**
+ * In charge of handling when a Wizard should proceed to the next step.
+ * Difficult to explain, look at {@link uk.knightz.knightzapi.ui.wizard.ExampleWizard} for more detail
+ * @param <T> The type of Trigger
+ */
 public interface Trigger<T> {
 
 	void trigger(T t);

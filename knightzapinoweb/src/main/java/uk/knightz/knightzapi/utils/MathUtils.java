@@ -24,6 +24,9 @@
 
 package uk.knightz.knightzapi.utils;
 
+/**
+ * Mathematical related utility class
+ */
 public final class MathUtils {
     private MathUtils() {
     }
