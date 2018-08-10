@@ -1,1 +1,10 @@
 language: java
+deploy:
+  provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  file:
+    - "knightzapifull/target/knightzapifull.jar"
+    - "knightzapinoweb/target/knightzapinoweb.jar"
+  skip_cleanup: true
+  on:
+    tags: true
