@@ -31,12 +31,6 @@
     <artifactId>knightzapi</artifactId>
     <packaging>pom</packaging>
     <version>1.0.8-RELEASE</version>
-    <!--<distributionManagement>-->
-    <!--<repository>-->
-    <!--<id>knightz-central</id>-->
-    <!--<url>http://repo.knightz.uk:8081/repository/maven-releases/</url>-->
-    <!--</repository>-->
-    <!--</distributionManagement>-->
     <build>
         <plugins>
             <plugin>
@@ -133,23 +127,23 @@
     </repositories>
 
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>org.spigotmc</groupId>-->
+            <!--<artifactId>spigot-api</artifactId>-->
+            <!--<version>1.8.8-R0.1-SNAPSHOT</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--<dependency>-->
-        <!--<groupId>org.spigotmc</groupId>-->
-        <!--<artifactId>spigot</artifactId>-->
-        <!--<version>1.12.2-R0.1-SNAPSHOT</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.spigotmc</groupId>-->
-        <!--<artifactId>spigot-api</artifactId>-->
-        <!--<version>1.10.2-R0.1-SNAPSHOT</version>-->
-        <!--<scope>provided</scope>-->
+            <!--<groupId>org.spigotmc</groupId>-->
+            <!--<artifactId>spigot-api</artifactId>-->
+            <!--<version>1.10.2-R0.1-SNAPSHOT</version>-->
+            <!--<scope>provided</scope>-->
         <!--</dependency>-->
         <dependency>
             <groupId>co.aikar</groupId>

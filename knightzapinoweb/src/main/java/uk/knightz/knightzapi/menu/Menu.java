@@ -27,7 +27,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
