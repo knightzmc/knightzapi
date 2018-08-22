@@ -35,7 +35,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -52,7 +51,6 @@ import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.serializers.InventorySerializer;
 import uk.knightz.knightzapi.serializers.ItemStackJsonSerializer;
 import uk.knightz.knightzapi.serializers.MenuSerializer;
-import uk.knightz.knightzapi.ui.wizard.ExampleWizard;
 import uk.knightz.knightzapi.user.User;
 import uk.knightz.knightzapi.user.UserEventBlocker;
 import uk.knightz.knightzapi.utils.VersionUtil;
@@ -178,12 +176,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 	@EventHandler
 	public void leave(PlayerQuitEvent e) {
 		User.saveData();
-	}
-
-	//TODO DEBUG
-	@EventHandler
-	public void doClick(PlayerInteractEvent event) {
-		new ExampleWizard(event.getPlayer());
 	}
 	public Economy getEconomy() {
 		return economy;

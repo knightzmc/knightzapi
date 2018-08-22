@@ -44,11 +44,17 @@
     </build>
     <dependencies>
         <!--<dependency>-->
-            <!--<groupId>org.spigotmc</groupId>-->
-            <!--<artifactId>spigot</artifactId>-->
-            <!--<version>1.12.2-R0.1-SNAPSHOT</version>-->
-            <!--<scope>provided</scope>-->
+        <!--<groupId>org.spigotmc</groupId>-->
+        <!--<artifactId>spigot</artifactId>-->
+        <!--<version>1.12.2-R0.1-SNAPSHOT</version>-->
+        <!--<scope>provided</scope>-->
         <!--</dependency>-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>26.0-jre</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
