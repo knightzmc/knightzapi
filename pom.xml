@@ -89,8 +89,8 @@
         </plugins>
     </build>
     <modules>
-        <module>knightzapifull</module>
         <module>knightzapinoweb</module>
+        <module>knightzapifull</module>
     </modules>
     <repositories>
         <repository>
