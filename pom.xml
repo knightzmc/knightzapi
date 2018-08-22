@@ -51,7 +51,7 @@
                 <version>3.0.1</version>
                 <configuration>
                     <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
-                    <quiet>true</quiet>
+                    <quiet>false</quiet>
                 </configuration>
                 <executions>
                     <execution>
