@@ -30,7 +30,7 @@
     <groupId>uk.knightz</groupId>
     <artifactId>knightzapi</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.9-RELEASE</version>
+    <version>1.0.10-RELEASE</version>
     <build>
         <plugins>
             <plugin>
