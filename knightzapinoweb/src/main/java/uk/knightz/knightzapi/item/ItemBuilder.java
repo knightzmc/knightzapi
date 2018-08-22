@@ -45,13 +45,15 @@ import uk.knightz.knightzapi.utils.VersionUtil;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-@Data
-@NoArgsConstructor
 /**
  * A builder class for creating {@link ItemStack} objects.
  * It is also YAML and JSON Serializable to help with user customisation
  */
+@Data
+@NoArgsConstructor
 public class ItemBuilder implements ConfigurationSerializable {
+	@Getter
+	private final List<ItemBuilderPlayerPlaceholder> playerDependentPlaceholders = new ArrayList<>();
 	private String name = null;
 	private Material type = Material.AIR;
 	private Set<ItemFlag> flags = new HashSet<>();
@@ -65,17 +67,7 @@ public class ItemBuilder implements ConfigurationSerializable {
 	private Color potionColor = Color.LIME;
 	private PotionType potionType = PotionType.INSTANT_HEAL;
 	private List<Placeholder> placeholders = new ArrayList<>();
-
 	private DyeColor color;
-
-	public DyeColor getColor() {
-		return color;
-	}
-
-	public ItemBuilder setColor(DyeColor color) {
-		this.color = color;
-		return this;
-	}
 
 	/**
 	 * Create a new ItemBuilder from the contents of a {@link ConfigurationSection}
@@ -85,7 +77,8 @@ public class ItemBuilder implements ConfigurationSerializable {
 	public ItemBuilder(Map<String, Object> fromConfig) {
 		setType(Material.valueOf(String.valueOf(fromConfig.getOrDefault("type", Material.AIR))));
 		setAmount((Integer) fromConfig.getOrDefault("amount", 1));
-		setName(Chat.color(String.valueOf(fromConfig.getOrDefault("name", null))));
+		if (fromConfig.containsKey("name"))
+			setName(Chat.color((String) fromConfig.get("name")));
 		for (String v : (List<String>) fromConfig.getOrDefault("itemflags", new ArrayList<>())) {
 			addFlag(ItemFlag.valueOf(v));
 		}
@@ -100,6 +93,7 @@ public class ItemBuilder implements ConfigurationSerializable {
 
 	/**
 	 * Create a copy of the given ItemBuilder
+	 *
 	 * @param previous The ItemBuilder to clone
 	 */
 	public ItemBuilder(ItemBuilder previous) {
@@ -123,6 +117,7 @@ public class ItemBuilder implements ConfigurationSerializable {
 
 	/**
 	 * Create a new ItemBuilder that copies an ItemStack but allows for editing
+	 *
 	 * @param root The ItemStack to make a copy of
 	 */
 	public ItemBuilder(ItemStack root) {
@@ -137,9 +132,16 @@ public class ItemBuilder implements ConfigurationSerializable {
 		}
 		setEnchantments(root.getEnchantments());
 	}
-
+	public DyeColor getColor() {
+		return color;
+	}
+	public ItemBuilder setColor(DyeColor color) {
+		this.color = color;
+		return this;
+	}
 	/**
 	 * Add Placeholders that will be applied to all forms of text in the ItemStack.
+	 *
 	 * @param p An array of Placeholders to add
 	 * @return the current ItemBuilder, following the Builder pattern
 	 */
@@ -147,9 +149,9 @@ public class ItemBuilder implements ConfigurationSerializable {
 		placeholders.addAll(Arrays.asList(p));
 		return this;
 	}
-
 	/**
 	 * Serialize this ItemBuilder to a YAML friendly format
+	 *
 	 * @return A Map of Keys and Values for YAML serialization
 	 */
 	public Map<String, Object> serialize() {
@@ -164,73 +166,57 @@ public class ItemBuilder implements ConfigurationSerializable {
 		values.put("enchantments", enchantments);
 		return values;
 	}
-
 	public ItemBuilder setPotionType(PotionType potionType) {
 		this.potionType = potionType;
 		return this;
 	}
-
 	public ItemBuilder setPotionColor(Color potionColor) {
 		this.potionColor = potionColor;
 		return this;
 	}
-
 	public ItemBuilder setPotion(boolean potion) {
 		this.potion = potion;
 		return this;
 	}
-
 	public ItemBuilder setEffects(List<PotionEffect> effects) {
 		this.effects = effects;
 		return this;
 	}
-
 	public ItemBuilder setUnbreakable(boolean unbreakable) {
 		this.unbreakable = unbreakable;
 		return this;
 	}
-
 	public ItemBuilder setName(String name) {
 		this.name = name;
 		return this;
 	}
-
 	public void addFlag(ItemFlag... flag) {
 		flags.addAll(Arrays.asList(flag));
 	}
-
 	public ItemBuilder setType(Material type) {
 		potion = type.equals(Material.POTION);
 		this.type = type;
 		return this;
 	}
-
 	public ItemBuilder setLore(List<String> lore) {
 		this.lore = lore;
 		return this;
 	}
-
 	public ItemBuilder setAmount(int amount) {
 		this.amount = amount;
 		return this;
 	}
-
 	public ItemBuilder setData(short data) {
 		this.data = data;
 		return this;
 	}
-
 	public ItemBuilder setEnchantments(Map<Enchantment, Integer> enchantments) {
 		this.enchantments = enchantments;
 		return this;
 	}
-
-
-	@Getter
-	private final List<ItemBuilderPlayerPlaceholder> playerDependentPlaceholders = new ArrayList<>();
-
 	/**
 	 * Build the current ItemBuilder to an ItemStack, apply any Player-Dependent placeholders, then give it to the given player
+	 *
 	 * @param player The player who will receive the item
 	 */
 	public void giveToPlayer(Player player) {
@@ -241,15 +227,15 @@ public class ItemBuilder implements ConfigurationSerializable {
 
 	/**
 	 * Build the current ItemBuilder to an ItemStack
+	 *
 	 * @return an ItemStack with the same values that have been set in this current object.
 	 */
 	public ItemStack build() {
 		ItemStack temp = new ItemStack(type, amount, data, color == null ? null : color.getWoolData());
 		ItemMeta tempMeta = temp.getItemMeta();
 		if (tempMeta == null) return temp;
-		tempMeta
-				.setDisplayName(
-						Chat.color(name));
+		if (name != null)
+			tempMeta.setDisplayName(Chat.color(name));
 		placeholders.forEach(p -> tempMeta.setDisplayName(p.replace(tempMeta.getDisplayName())));
 		placeholders.forEach(p -> lore.replaceAll(p::replace));
 		tempMeta.setLore(Chat.color(lore));

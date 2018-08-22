@@ -29,7 +29,6 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -86,10 +85,8 @@ public class Menu {
 	 * @param backgroundItem The background item to set
 	 */
 	public void setBackgroundItem(ItemStack backgroundItem) {
-		MenuButton newButton = new MenuButton(backgroundItem, Functions.emptyConsumer());
-		//update old background items
+		this.backgroundItem = new MenuButton(backgroundItem, Functions.emptyConsumer());
 		addBackgroundItems();
-		this.backgroundItem = newButton;
 
 	}
 	/**
@@ -134,13 +131,11 @@ public class Menu {
 
 	private void addBackgroundItems() {
 		if (this.backgroundItem != null) {
-			items.forEach((slot, button) -> {
-				if (button == null
-						|| backgroundItem.getItemStack().getType().equals(Material.AIR)
-						|| this.backgroundItem.equals(button)) {
+			for (int slot = 0; slot < getInv().getSize(); slot++) {
+				if (!items.containsKey(slot) || items.get(slot)==null){
 					addButtonWithoutMap(slot, this.backgroundItem);
 				}
-			});
+			}
 		}
 	}
 	/**
