@@ -226,9 +226,6 @@ public class Menu {
 	 * Removes any trailing rows of empty slots in the Inventory, rounding up to the nearest whole row if necessary
 	 */
 	public void trim() {
-		if (backgroundItem != null) {
-
-		}
 		adjustSize(items.size());
 	}
 
