@@ -29,11 +29,14 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.annotation.Dangerous;
 import uk.knightz.knightzapi.lang.Chat;
 import uk.knightz.knightzapi.menu.item.MenuButton;
+import uk.knightz.knightzapi.utils.Functions;
 import uk.knightz.knightzapi.utils.MathUtils;
 
 import java.util.Arrays;
@@ -56,11 +59,12 @@ public class Menu {
 	private final Map<Integer, Consumer<MenuClickEvent>> clickMappings;
 	private Inventory inv;
 	private Sound onClick;
-
+	private MenuButton backgroundItem;
 	@Setter
 	private Consumer<MenuCloseEvent> onClose;
 	@Setter
 	private boolean destroyWhenClosed = true;
+
 
 	/**
 	 * Create a new Menu
@@ -73,6 +77,35 @@ public class Menu {
 		items = new ConcurrentHashMap<>(rows * 9);
 		clickMappings = new ConcurrentHashMap<>(rows * 9);
 		MenuListener.register(this);
+	}
+
+	/**
+	 * Set the background item of the Menu, which will take up all non-inhabited slots
+	 * It does nothing when clicked
+	 *
+	 * @param backgroundItem The background item to set
+	 */
+	public void setBackgroundItem(ItemStack backgroundItem) {
+		MenuButton newButton = new MenuButton(backgroundItem, Functions.emptyConsumer());
+		//update old background items
+		addBackgroundItems();
+		this.backgroundItem = newButton;
+
+	}
+	/**
+	 * Adds a MenuButton to the Inventory without adding it to the internal items map,
+	 * so it is treated as if it doesn't exist (but will still fire events when clicked on).
+	 * Used so background items are not detected by {@link Menu#trim()}
+	 *
+	 * @param slot   The slot of the button
+	 * @param button The button to add
+	 */
+	private void addButtonWithoutMap(int slot, MenuButton button) {
+		Validate.notNull(button, "Button is null");
+		if (slot > inv.getSize())
+			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
+		clickMappings.put(slot, button.getOnClick());
+		inv.setItem(slot, button.getItemStack());
 	}
 
 	/**
@@ -98,6 +131,18 @@ public class Menu {
 			children.add(subMenu);
 	}
 
+
+	private void addBackgroundItems() {
+		if (this.backgroundItem != null) {
+			items.forEach((slot, button) -> {
+				if (button == null
+						|| backgroundItem.getItemStack().getType().equals(Material.AIR)
+						|| this.backgroundItem.equals(button)) {
+					addButtonWithoutMap(slot, this.backgroundItem);
+				}
+			});
+		}
+	}
 	/**
 	 * Set a slot of the inventory to the given button
 	 *
@@ -138,6 +183,7 @@ public class Menu {
 			tempInv.setContents(inv.getContents());
 			inv.setMaxStackSize(inv.getMaxStackSize());
 			inv = tempInv;
+			addBackgroundItems();
 		} else {
 			val tempInv = Bukkit.createInventory(null, MathUtils.roundUp(size), inv.getTitle());
 			tempInv.setContents(Arrays.copyOf(inv.getContents(), size));
@@ -180,6 +226,9 @@ public class Menu {
 	 * Removes any trailing rows of empty slots in the Inventory, rounding up to the nearest whole row if necessary
 	 */
 	public void trim() {
+		if (backgroundItem != null) {
+
+		}
 		adjustSize(items.size());
 	}
 
@@ -193,10 +242,10 @@ public class Menu {
 	 * @deprecated Dangerous
 	 */
 	@Deprecated
+	@Dangerous
 	public void setButtons(Map<Integer, MenuButton> o) {
 		items.clear();
 		items.putAll(o);
-
 	}
 }
 
