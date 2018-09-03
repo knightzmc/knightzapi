@@ -36,9 +36,11 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
 
+import static uk.knightz.knightzapi.communication.rsa.RSA.*;
+
 /**
  * Static RSA utility methods for encrypting and decrypting blocks of information.
- * Uses {@link RSA.Holder} for holding AES and RSA keys in a single object
+ * Uses {@link Holder} for holding AES and RSA keys in a single object
  */
 public class RSA {
 
@@ -57,9 +59,9 @@ public class RSA {
 		Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
 		aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
 		byte[] byteCipherText = aesCipher.doFinal(data.getBytes());
-		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-		cipher.init(Cipher.PUBLIC_KEY, key);
-		return new Holder(byteCipherText, cipher.doFinal(secKey.getEncoded()));
+		Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		rsaCipher.init(Cipher.PUBLIC_KEY, key);
+		return new Holder(byteCipherText, rsaCipher.doFinal(secKey.getEncoded()));
 	}
 
 	/**

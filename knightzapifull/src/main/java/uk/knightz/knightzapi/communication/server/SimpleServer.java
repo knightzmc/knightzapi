@@ -25,6 +25,7 @@ package uk.knightz.knightzapi.communication.server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import org.apache.commons.lang.Validate;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -118,17 +119,18 @@ public class SimpleServer implements Server {
 		return address;
 	}
 
-
 	@Override
 	public Future<HttpResponse> sendData(String data) {
 		return sendData(null, data);
 	}
 
 	public Future<HttpResponse> sendData(String requestID, String data) {
-		@SuppressWarnings("UnusedAssignment") Future<HttpResponse> future = new CompletableFuture<>();
+		Validate.notNull(data, "Data cannot be null");
+		CompletableFuture<HttpResponse> future = new CompletableFuture<>();
 		HttpPost post = new HttpPost("http://" + validURL + "/requests");
 		try {
-			PublicKey key = loadPublicKey((pubKey));
+			//Load server's public key and encrypt it with their key
+			PublicKey key = loadPublicKey(pubKey);
 			Holder byteData = encrypt(data, key);
 			post.setEntity(new UrlEncodedFormEntity(new ArrayList<NameValuePair>() {{
 				if (requestID != null) add(new BasicNameValuePair("module", requestID));
@@ -142,7 +144,7 @@ public class SimpleServer implements Server {
 				}
 			}}));
 			Future<HttpResponse> submit = executor.submit(() -> client.execute(post));
-			((CompletableFuture<HttpResponse>) future).complete(submit.get());
+			future.complete(submit.get());
 		} catch (Exception e) {
 			throw new RuntimeException("Error sending request to " + address.toString(), e);
 		}
