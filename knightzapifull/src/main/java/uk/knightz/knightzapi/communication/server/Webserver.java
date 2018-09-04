@@ -54,7 +54,7 @@ import java.util.Set;
 import static spark.Spark.*;
 
 /**
- * The Main Webserver of the Web API. It wraps a Spark Webserver and handles encryption, modulation, and all other aspects of the Web API
+ * The Main Web server of the Web API. It wraps a Spark Web server and handles encryption, modulation, and all other aspects of the Web API
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -66,9 +66,8 @@ public class Webserver extends Thread {
 	private final AuthMethod auth;
 	private Whitelist whitelist;
 
-
 	private Webserver(AuthMethod auth) {
-		this.setName("KnightzAPI Webserver");
+		this.setName("KnightzAPI Web server");
 		this.auth = auth;
 		//RSA Keys
 		{
@@ -93,8 +92,6 @@ public class Webserver extends Thread {
 			}
 			this.pair = pair;
 		}
-
-
 		new ValidateModule();
 		if (auth.equals(AuthMethod.WHITELIST) || auth.equals(AuthMethod.WHITEAUTH)) {
 			whitelist = Whitelist.deserialize(KnightzWebAPI.getWebserverFile().getConfigurationSection("auth").getValues(true));
@@ -163,5 +160,4 @@ public class Webserver extends Thread {
 			}
 		}
 	}
-
 }

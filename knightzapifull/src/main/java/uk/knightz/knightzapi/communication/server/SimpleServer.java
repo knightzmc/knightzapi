@@ -125,7 +125,7 @@ public class SimpleServer implements Server {
 	}
 
 	public Future<HttpResponse> sendData(String requestID, String data) {
-		Validate.notNull(data, "Data cannot be null");
+		if (data == null) data = "";
 		CompletableFuture<HttpResponse> future = new CompletableFuture<>();
 		HttpPost post = new HttpPost("http://" + validURL + "/requests");
 		try {
@@ -134,10 +134,8 @@ public class SimpleServer implements Server {
 			Holder byteData = encrypt(data, key);
 			post.setEntity(new UrlEncodedFormEntity(new ArrayList<NameValuePair>() {{
 				if (requestID != null) add(new BasicNameValuePair("module", requestID));
-
 				add(new BasicNameValuePair("data", new String(Base64.getEncoder().encode(byteData.getByteCipherText()))));
 				add(new BasicNameValuePair("aes", new String(Base64.getEncoder().encode(byteData.getEncryptedKey()))));
-
 				if (credentials != null) {
 					add(new BasicNameValuePair("username", new String(Base64.getEncoder().encode(credentials.getUserName().getBytes()))));
 					add(new BasicNameValuePair("password", new String(Base64.getEncoder().encode(credentials.getPassword().getBytes()))));
