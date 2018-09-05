@@ -25,6 +25,8 @@ public class ExampleModule extends Module {
         Bukkit.broadcastMessage(message); //Broadcast the message
         incomingRequest.getResponse() //Get the HTTP Response object that will be returned
                 .body( //Set the HTML body
-                        new JSONMessage(200, "Message Broadcast").toJson()); //Easy JSON status messages
+                        new JSONMessage(
+                                200, //HTTP status code for "all ok"
+                                "Message Broadcast").toJson()); //Easy JSON status messages
     }
 }
