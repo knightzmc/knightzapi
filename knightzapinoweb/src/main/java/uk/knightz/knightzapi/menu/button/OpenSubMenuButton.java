@@ -21,34 +21,20 @@
  *
  */
 
-package uk.knightz.knightzapi.menu.item;
+package uk.knightz.knightzapi.menu.button;
 
-import org.bukkit.Material;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.ClickEventAliases;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import uk.knightz.knightzapi.menu.SubMenu;
 
-import java.util.function.Consumer;
+@Data
+@EqualsAndHashCode(callSuper = true)
+public final class OpenSubMenuButton extends MenuButton {
+	private SubMenu toOpen;
 
-/**
- * A MenuButton that closes the user's current Menu upon click.
- */
-public final class CloseButton extends MenuButton {
-	private static final ItemStack DEFAULT = new ItemBuilder().setType(Material.REDSTONE_BLOCK).setName("&c&lClose")
-			.setUnbreakable(true).build();
-
-	private static final Consumer<MenuClickEvent> onClick = e -> e.getWhoClicked().closeInventory();
-
-	static {
-		ClickEventAliases.getINSTANCE().add("close", onClick);
-	}
-
-	public CloseButton() {
-		this(DEFAULT);
-	}
-
-	public CloseButton(ItemStack itemStack) {
-		super(itemStack, onClick);
+	public OpenSubMenuButton(ItemStack itemStack, SubMenu toOpen) {
+		super(itemStack, e -> e.getWhoClicked().openInventory(toOpen.getInv()));
+		this.toOpen = toOpen;
 	}
 }

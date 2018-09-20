@@ -30,18 +30,21 @@ import lombok.val;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.annotation.Dangerous;
 import uk.knightz.knightzapi.lang.Chat;
-import uk.knightz.knightzapi.menu.item.MenuButton;
+import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.utils.Functions;
 import uk.knightz.knightzapi.utils.MathUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -79,10 +82,10 @@ public class Menu {
 	}
 
 	/**
-	 * Set the background item of the Menu, which will take up all non-inhabited slots
+	 * Set the background button of the Menu, which will take up all non-inhabited slots
 	 * It does nothing when clicked
 	 *
-	 * @param backgroundItem The background item to set
+	 * @param backgroundItem The background button to set
 	 */
 	public void setBackgroundItem(ItemStack backgroundItem) {
 		this.backgroundItem = new MenuButton(backgroundItem, Functions.emptyConsumer());
@@ -132,7 +135,7 @@ public class Menu {
 	private void addBackgroundItems() {
 		if (this.backgroundItem != null) {
 			for (int slot = 0; slot < getInv().getSize(); slot++) {
-				if (!items.containsKey(slot) || items.get(slot)==null){
+				if (!items.containsKey(slot) || items.get(slot) == null) {
 					addButtonWithoutMap(slot, this.backgroundItem);
 				}
 			}
@@ -225,6 +228,29 @@ public class Menu {
 	}
 
 
+	/**
+	 * Clear the Menu, removing all buttons but not executing {@link #trim()}
+	 */
+	public void clear() {
+		inv.clear();
+		items.clear();
+		clickMappings.clear();
+	}
+
+
+	/**
+	 * Open the Menu for a Player. Note that MenuButton permissions will only be used if the Inventory
+	 * is opened this way.
+	 */
+	public void open(Player p) {
+		HashMap<Integer, MenuButton> itemMap = new HashMap<>(getItems());
+		itemMap.entrySet().removeIf(m -> {
+			val menuButton = m.getValue();
+			if (menuButton.hasPermission())
+				return !p.hasPermission(menuButton.getPermission());
+			return false;
+		});
+	}
 	//Dangerous Methods
 	//These will likely break things unless you know what you're doing
 	//Use at your own risk!

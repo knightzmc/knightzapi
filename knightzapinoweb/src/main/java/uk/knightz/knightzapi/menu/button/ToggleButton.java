@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.item;
+package uk.knightz.knightzapi.menu.button;
 
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.menu.MenuClickEvent;

@@ -34,7 +34,7 @@ import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.menu.ClickEventAliases;
 import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.menu.SubMenu;
-import uk.knightz.knightzapi.menu.item.MenuButton;
+import uk.knightz.knightzapi.menu.button.MenuButton;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -65,7 +65,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 			try {
 				out.beginObject();
 				out.name("slot").value(integer);
-				out.name("item");
+				out.name("button");
 				KnightzAPI.gson.getAdapter(ItemStack.class).write(out, menuButton.getItemStack());
 				if (ClickEventAliases.getINSTANCE().getMapToEvent().containsKey(menuButton.getOnClickAlias()))
 					out.name("alias").value(menuButton.getOnClickAlias());
@@ -112,7 +112,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 								case "slot":
 									slot = in.nextInt();
 									break;
-								case "item":
+								case "button":
 									stack = KnightzAPI.gson.getAdapter(ItemStack.class).read(in);
 									break;
 								case "alias":

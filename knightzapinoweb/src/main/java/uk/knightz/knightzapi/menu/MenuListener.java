@@ -37,6 +37,7 @@ import uk.knightz.knightzapi.utils.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -69,13 +70,14 @@ public final class MenuListener implements Listener {
 								e.setCancelled(true);
 								if (m.getItems().containsKey(e.getSlot())) {
 									val event = convertEvent(m, e);
+									Objects.requireNonNull(event);
 									Bukkit.getPluginManager().callEvent(event);
 									m.getItems().get(e.getSlot()).onClick(event);
 									if (m.getOnClick() != null) {
 										val onClickSound = m.getItems().get(e.getSlot()).getOnClickSound();
-										if (onClickSound != null)
+										if (onClickSound != null) {
 											event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), onClickSound, 1, 1);
-										else
+										} else
 											event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), m.getOnClick(), 1, 1);
 									}
 									break;
@@ -94,7 +96,7 @@ public final class MenuListener implements Listener {
 			if (InventoryUtils.equalsNoContents(m.getInv(), e.getClickedInventory())) {
 				clicked.set(m);
 			} else {
-				List<Menu> menus = recursiveCheckChildren(e, m);
+				List<Menu> menus = recursiveCheckChildren(m);
 				clicked.set(menus.get(0));
 			}
 			if (clicked.get() == null) {
@@ -106,10 +108,10 @@ public final class MenuListener implements Listener {
 		throw new IllegalArgumentException("InventoryClickEvent does not refer to a Menu being clicked!");
 	}
 
-	private List<Menu> recursiveCheckChildren(InventoryClickEvent e, Menu menu) {
+	private List<Menu> recursiveCheckChildren(Menu menu) {
 		List<Menu> childList = new ArrayList<>();
 		for (SubMenu sub : menu.getChildren()) {
-			childList.addAll(recursiveCheckChildren(e, menu));
+			childList.addAll(recursiveCheckChildren(sub));
 		}
 		return childList;
 	}

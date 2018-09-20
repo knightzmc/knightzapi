@@ -21,20 +21,30 @@
  *
  */
 
-package uk.knightz.knightzapi.menu.item;
+package uk.knightz.knightzapi.menu.button;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.menu.ClickEventAliases;
+import uk.knightz.knightzapi.menu.MenuClickEvent;
 import uk.knightz.knightzapi.menu.SubMenu;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-public final class OpenSubMenuButton extends MenuButton {
-	private SubMenu toOpen;
+import java.util.function.Consumer;
 
-	public OpenSubMenuButton(ItemStack itemStack, SubMenu toOpen) {
-		super(itemStack, e -> e.getWhoClicked().openInventory(toOpen.getInv()));
-		this.toOpen = toOpen;
+/**
+ * A MenuButton that brings the user back to their previous menu in the hierarchy.
+ */
+public class BackMenuButton extends MenuButton {
+	private static final Consumer<MenuClickEvent> onClick = e -> {
+		if (e.isSubMenu()) {
+			e.getWhoClicked().openInventory(((SubMenu) e.getMenu()).getParent().getInv());
+		}
+	};
+
+	static {
+		ClickEventAliases.getINSTANCE().add("back", onClick);
+	}
+
+	public BackMenuButton(ItemStack itemStack) {
+		super(itemStack, onClick);
 	}
 }

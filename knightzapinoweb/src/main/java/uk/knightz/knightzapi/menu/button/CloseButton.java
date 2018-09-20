@@ -21,41 +21,34 @@
  *
  */
 
-package uk.knightz.knightzapi.menu.item;
+package uk.knightz.knightzapi.menu.button;
 
-import lombok.Data;
-import lombok.NonNull;
-import org.bukkit.Sound;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.item.ItemBuilder;
+import uk.knightz.knightzapi.menu.ClickEventAliases;
 import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import java.util.function.Consumer;
 
 /**
- * An item that can be added to a {@link uk.knightz.knightzapi.menu.Menu}
+ * A MenuButton that closes the user's current Menu upon click.
  */
-@Data
-public class MenuButton {
-    @NonNull
-    private final ItemStack itemStack;
-    public String onClickAlias;
-    @NonNull
-    private transient Consumer<MenuClickEvent> onClick;
-    private Sound onClickSound;
+public final class CloseButton extends MenuButton {
+	private static final ItemStack DEFAULT = new ItemBuilder().setType(Material.REDSTONE_BLOCK).setName("&c&lClose")
+			.setUnbreakable(true).build();
 
-	/**
-	 * Create a new MenuButton
-	 * @param itemStack The ItemStack that will be added to a menu.
-	 * @param onClick A consumer that will be called when the MenuButton is clicked by a user.
-	 */
-	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
-        this.itemStack = itemStack;
-        this.onClick = onClick;
-    }
+	private static final Consumer<MenuClickEvent> onClick = e -> e.getWhoClicked().closeInventory();
 
+	static {
+		ClickEventAliases.getINSTANCE().add("close", onClick);
+	}
 
-    public void onClick(MenuClickEvent e) {
-        if (e == null) return;
-        onClick.accept(e);
-    }
+	public CloseButton() {
+		this(DEFAULT);
+	}
+
+	public CloseButton(ItemStack itemStack) {
+		super(itemStack, onClick);
+	}
 }
