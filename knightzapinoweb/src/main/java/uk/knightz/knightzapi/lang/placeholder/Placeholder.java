@@ -56,7 +56,7 @@ public class Placeholder {
     /**
      * Apply the placeholders to the given String
      *
-     * @param toReplace The string to replace any instances ofGlobal Placeholder#getPlaceholder with Placeholder#getReplacement
+     * @param toReplace The string to replace any instances of Placeholder#getPlaceholder with Placeholder#getReplacement
      * @return The formatted String
      */
     public String replace(String toReplace) {

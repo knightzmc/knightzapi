@@ -35,6 +35,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.annotation.Dangerous;
 import uk.knightz.knightzapi.lang.Chat;
+import uk.knightz.knightzapi.menu.button.DynamicDataButton;
 import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.utils.Functions;
 import uk.knightz.knightzapi.utils.MathUtils;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -241,7 +243,7 @@ public class Menu {
 	 * Open the Menu for a Player. Note that MenuButton permissions will only be used if the Inventory
 	 * is opened this way.
 	 */
-	public void open(Player p) {
+	public void open(Player p, Object... dynData) {
 		HashMap<Integer, MenuButton> itemMap = new HashMap<>(getItems());
 		itemMap.entrySet().removeIf(m -> {
 			val menuButton = m.getValue();
@@ -251,6 +253,12 @@ public class Menu {
 		});
 		val inv = cloneInventory();
 		itemMap.forEach((integer, menuButton) -> inv.setItem(integer, menuButton.getItemStack()));
+		itemMap.forEach((integer, menuButton) -> {
+			if (menuButton instanceof DynamicDataButton) {
+				val i = ((DynamicDataButton) menuButton).applyDynData(p, dynData);
+				inv.setItem(integer, i);
+			}
+		});
 		p.openInventory(inv);
 	}
 
