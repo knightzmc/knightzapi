@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -250,7 +249,12 @@ public class Menu {
 				return !p.hasPermission(menuButton.getPermission());
 			return false;
 		});
+		val inv = cloneInventory();
+		itemMap.forEach((integer, menuButton) -> inv.setItem(integer, menuButton.getItemStack()));
+		p.openInventory(inv);
 	}
+
+
 	//Dangerous Methods
 	//These will likely break things unless you know what you're doing
 	//Use at your own risk!
@@ -264,6 +268,13 @@ public class Menu {
 	public void setButtons(Map<Integer, MenuButton> o) {
 		items.clear();
 		items.putAll(o);
+	}
+
+
+	private Inventory cloneInventory() {
+		val inventory = Bukkit.createInventory(null, inv.getSize(), inv.getTitle());
+		inventory.setContents(inv.getContents());
+		return inventory;
 	}
 }
 
