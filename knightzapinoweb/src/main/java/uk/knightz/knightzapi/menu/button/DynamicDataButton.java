@@ -25,19 +25,16 @@
 package uk.knightz.knightzapi.menu.button;
 
 import lombok.Setter;
-import lombok.experimental.ExtensionMethod;
 import lombok.val;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.lang.placeholder.Placeholder;
-import uk.knightz.knightzapi.lang.placeholder.PlayerDependentPlaceholder;
 import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -80,5 +77,9 @@ public class DynamicDataButton extends MenuButton {
 		});
 		temp.setItemMeta(meta);
 		return temp;
+	}
+
+	public void addPlaceholder(Placeholder p) {
+		placeholdersForItem.add(p);
 	}
 }
