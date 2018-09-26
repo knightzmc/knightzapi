@@ -33,7 +33,6 @@ public class Functions {
 	private Functions() {
 	}
 
-
 	public static Runnable emptyRunnable() {
 		return () -> {
 		};

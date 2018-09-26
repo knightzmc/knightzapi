@@ -44,6 +44,9 @@ public class DynamicDataButton extends MenuButton {
 	private final ItemStack defaultValue;
 	@Nonnull
 	private final List<Placeholder> placeholdersForItem = new ArrayList<>();
+
+	@Nonnull
+	private final List<BiFunction<Player, String, String>> contextualPlaceholders = new ArrayList<>();
 	@Nullable
 	@Setter
 	private BiFunction<Player, ItemStack, ItemStack> editItem;
@@ -67,6 +70,11 @@ public class DynamicDataButton extends MenuButton {
 			temp = editItem.apply(menuUser, getItemStack());
 		}
 		val meta = getItemStack().getItemMeta();
+		contextualPlaceholders.forEach(f -> {
+			meta.setDisplayName(f.apply(menuUser, meta.getDisplayName()));
+			meta.setLore(meta.getLore().stream().map(s -> s = f.apply(menuUser, s)).collect(Collectors.toList()));
+
+		});
 		placeholdersForItem.forEach(p -> {
 			meta.setDisplayName(String.format(p.replace(meta.getDisplayName()), format));
 			val tempList = meta.getLore().stream()
@@ -81,5 +89,8 @@ public class DynamicDataButton extends MenuButton {
 
 	public void addPlaceholder(Placeholder p) {
 		placeholdersForItem.add(p);
+	}
+	public void addContextualPlaceholder(BiFunction<Player, String, String> s) {
+		contextualPlaceholders.add(s);
 	}
 }

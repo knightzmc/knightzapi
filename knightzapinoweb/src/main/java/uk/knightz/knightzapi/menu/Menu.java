@@ -45,8 +45,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import static org.bukkit.Material.AIR;
 
 /**
  * An Inventory utility for easily creating interactive menus
@@ -55,6 +56,12 @@ import java.util.function.Consumer;
 @Getter
 @Setter
 public class Menu {
+
+
+	public static final Consumer<MenuClickEvent> doNothing = (e) -> {
+	};
+	public static final Consumer<MenuClickEvent> cancel = (e) -> e.setCancelled(true);
+
 	private static final int MAX_SIZE = 54;
 	private static final Inventory EMPTY = Bukkit.createInventory(null, 0);
 	private final Set<SubMenu> children = ConcurrentHashMap.newKeySet();
@@ -65,6 +72,12 @@ public class Menu {
 	private MenuButton backgroundItem;
 	@Setter
 	private Consumer<MenuCloseEvent> onClose;
+	/**
+	 * Indicate if the Menu should be "destroyed" when it is closed by a player.
+	 * Bear in mind that "destroyed" means the Menu will be removed from the Collection of all in-use
+	 * menus and no click-events will be fired, however, there is no guarantee that it will be garbage
+	 * collected by the JVM, as it may be referred to elsewhere.
+	 */
 	@Setter
 	private boolean destroyWhenClosed = true;
 
@@ -91,7 +104,6 @@ public class Menu {
 	public void setBackgroundItem(ItemStack backgroundItem) {
 		this.backgroundItem = new MenuButton(backgroundItem, Functions.emptyConsumer());
 		addBackgroundItems();
-
 	}
 	/**
 	 * Adds a MenuButton to the Inventory without adding it to the internal items map,
@@ -165,7 +177,15 @@ public class Menu {
 	 * @throws IndexOutOfBoundsException if there are no more free slots
 	 */
 	public void addButton(MenuButton button) {
+		//If there's a background item, firstEmpty will be -1, temporarily remove them
+		for (int x = 0; x < inv.getContents().length; x++) {
+			ItemStack i = inv.getContents()[x];
+			if (i != null && i.isSimilar(backgroundItem.getItemStack())) {
+				inv.setItem(x, new ItemStack(AIR));
+			}
+		}
 		addButton(inv.firstEmpty(), button);
+		addBackgroundItems();
 	}
 
 	private void adjustSize(int size) {
@@ -271,6 +291,7 @@ public class Menu {
 	 * @param o The map of slots and buttons to set
 	 * @deprecated Dangerous
 	 */
+	@SuppressWarnings("DeprecatedIsStillUsed")
 	@Deprecated
 	@Dangerous
 	public void setButtons(Map<Integer, MenuButton> o) {
@@ -279,10 +300,59 @@ public class Menu {
 	}
 
 
+	/**
+	 * Centre all buttons in the Menu vertically and horizontally.
+	 * This operation will break predefined button order.
+	 */
+	public void centreButtons() {
+		int totalSlots = inv.getSize();
+		int occupiedSlots;
+		if (backgroundItem == null) {
+			occupiedSlots = (int) getItems().values().stream().filter(m -> m.getItemStack().getType() != AIR).count();
+		} else {
+			occupiedSlots = (int) getItems().values().stream().filter(m -> m.getItemStack().isSimilar(backgroundItem.getItemStack())).count();
+		}
+
+		/*
+		0 0 0 0
+		0 1 2 0    3 items, round up to square of 2^2
+		3 0 0 0
+		0 0 0 0
+		 */
+		val root_slots = Math.sqrt(occupiedSlots);
+		val floorRootSlots = Math.floor(root_slots);
+		val ceilRootSlots = floorRootSlots + 1;
+		val ceilRootSquare = Math.pow(ceilRootSlots, 2); //In example, expected result should be 4
+
+
+	}
+	/**
+	 * Create a copy of the internal Bukkit Inventory that is used.
+	 *
+	 * @return A copy of {@link Menu#inv}
+	 */
 	private Inventory cloneInventory() {
 		val inventory = Bukkit.createInventory(null, inv.getSize(), inv.getTitle());
 		inventory.setContents(inv.getContents());
 		return inventory;
+	}
+
+	/**
+	 * Make a copy of this Menu. It will be functionally equal, in that it {@code originalMenu#equals( originalMenu.copy)} will return
+	 * {@code true}, but {@code originalMenu == originalMenu.copy} will return false.
+	 *
+	 * @return A functionally equal copy of this Menu.
+	 */
+	public Menu copy() {
+		Menu copy = new Menu(getInv().getTitle(), getInv().getSize() / 9);
+		copy.setButtons(this.items);
+		copy.backgroundItem = this.backgroundItem;
+		copy.onClick = this.onClick;
+		copy.inv = this.inv;
+		copy.onClose = this.onClose;
+		this.children.forEach(copy::addSubMenu);
+		copy.destroyWhenClosed = this.destroyWhenClosed;
+		return copy;
 	}
 }
 
