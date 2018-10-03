@@ -34,29 +34,34 @@ import java.util.function.Consumer;
  * Manages mapping of a MenuClickEvent to a str
  */
 public class ClickEventAliases {
-    @Getter
-    private static final ClickEventAliases INSTANCE = new ClickEventAliases();
+	@Getter
+	private static final ClickEventAliases instance = new ClickEventAliases();
 
 
-    private final Map<String, Consumer<MenuClickEvent>> mapToEvent = new ConcurrentHashMap<>();
+	private final Map<String, Consumer<MenuClickEvent>> mapToEvent = new ConcurrentHashMap<>();
 
-    private ClickEventAliases() { }
+	private ClickEventAliases() {
+	}
 
 
-    public void add(String s, Consumer<MenuClickEvent> e) {
-        mapToEvent.put(s, e);
-    }
+	public void add(String s, Consumer<MenuClickEvent> e) {
+		mapToEvent.put(s, e);
+	}
 
-    public void remove(String s) {
-        mapToEvent.remove(s);
-    }
+	public void remove(String s) {
+		mapToEvent.remove(s);
+	}
 
-    /**
-     * Get all the aliases registered
-     *
-     * @return an immutable copy ofGlobal the aliases Map
-     */
-    public Map<String, Consumer<MenuClickEvent>> getMapToEvent() {
-        return ImmutableBiMap.copyOf(mapToEvent);
-    }
+
+	public Consumer<MenuClickEvent> get(String alias) {
+        return mapToEvent.get(alias);
+	}
+	/**
+	 * Get all the aliases registered
+	 *
+	 * @return an immutable copy ofGlobal the aliases Map
+	 */
+	public Map<String, Consumer<MenuClickEvent>> getMapToEvent() {
+		return ImmutableBiMap.copyOf(mapToEvent);
+	}
 }

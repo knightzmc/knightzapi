@@ -29,7 +29,7 @@ import lombok.Getter;
  * A child Menu that is usually opened by a parent Menu
  */
 @Getter
-public final class SubMenu extends Menu {
+public class SubMenu extends Menu {
 	private final Menu parent;
 
 	/**

@@ -35,16 +35,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.annotation.Dangerous;
 import uk.knightz.knightzapi.lang.Chat;
+import uk.knightz.knightzapi.menu.button.BackPageButton;
 import uk.knightz.knightzapi.menu.button.DynamicDataButton;
 import uk.knightz.knightzapi.menu.button.MenuButton;
+import uk.knightz.knightzapi.menu.button.NextPageButton;
 import uk.knightz.knightzapi.utils.Functions;
+import uk.knightz.knightzapi.utils.InventoryUtils;
 import uk.knightz.knightzapi.utils.MathUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static org.bukkit.Material.AIR;
@@ -56,20 +55,24 @@ import static org.bukkit.Material.AIR;
 @Getter
 @Setter
 public class Menu {
-
-
 	public static final Consumer<MenuClickEvent> doNothing = (e) -> {
 	};
 	public static final Consumer<MenuClickEvent> cancel = (e) -> e.setCancelled(true);
-
+	public static final Menu EMPTY_MENU = new Menu(null, 0);
 	private static final int MAX_SIZE = 54;
 	private static final Inventory EMPTY = Bukkit.createInventory(null, 0);
-	private final Set<SubMenu> children = ConcurrentHashMap.newKeySet();
+	private final Set<SubMenu> children = new HashSet<>();
 	private final Map<Integer, MenuButton> items;
 	private final Map<Integer, Consumer<MenuClickEvent>> clickMappings;
+	private final LinkedList<Page> pages = new LinkedList<>();
+	/**
+	 * Page 1 of the Inventory, and the "main" page.
+	 * Any additional pages will be in {@link Menu#pages}
+	 */
 	private Inventory inv;
 	private Sound onClick;
 	private MenuButton backgroundItem;
+	private int pagesAmount = 1;
 	@Setter
 	private Consumer<MenuCloseEvent> onClose;
 	/**
@@ -81,7 +84,6 @@ public class Menu {
 	@Setter
 	private boolean destroyWhenClosed = true;
 
-
 	/**
 	 * Create a new Menu
 	 *
@@ -89,12 +91,102 @@ public class Menu {
 	 * @param rows  The amount of rows in the Inventory
 	 */
 	public Menu(String title, int rows) {
-		inv = Bukkit.createInventory(null, rows * 9, Chat.color(title));
-		items = new ConcurrentHashMap<>(rows * 9);
-		clickMappings = new ConcurrentHashMap<>(rows * 9);
+		if (rows * 9 > MAX_SIZE) {
+			inv = Bukkit.createInventory(null, MAX_SIZE, Chat.color(title));
+			rows -= MAX_SIZE / 9;
+			do {
+				rows -= addPage().getSize() / 9;
+			}
+			while (rows > 0);
+		} else {
+			inv = Bukkit.createInventory(null, rows * 9, Chat.color(title));
+		}
+		items = new HashMap<>();
+		clickMappings = new HashMap<>();
 		MenuListener.register(this);
 	}
+	public int getFullSize() {
+		return inv.getSize() + pages.stream().mapToInt(Page::getSize).sum();
+	}
+	public int getSize() {
+		return inv.getSize();
+	}
 
+
+	/**
+	 * Get the page that the given slot refers to
+	 *
+	 * @param slot An integer slot that shouldn't be bigger than {@link Menu#getFullSize()}
+	 * @return The Inventory that contains this slot
+	 */
+	private Menu indexOf(int slot) {
+		if (slot < 0) {
+			throw new IndexOutOfBoundsException("Slot is less than 0!");
+		}
+		if (slot > getFullSize()) {
+			throw new IndexOutOfBoundsException(String.format("Slot is more than full size of Inventory! (%d)", getFullSize()));
+		}
+		if (slot < inv.getSize()) {
+			return this;
+		}
+		int x = inv.getSize();
+		for (Page v : getPages()) {
+			if (x <= slot && slot <= (x += v.getSize())) {
+				return v;
+			}
+		}
+		throw new NullPointerException();
+	}
+
+
+	/**
+	 * Bring a "global" slot (one that is more than
+	 * a singular Inventory's size to refer to a next page, to a "local" slot (a
+	 * slot that refers to an actual slot on a certain page)
+	 *
+	 * @param allInvSlot The "global" slot
+	 * @param inv        The Inventory that the "global" slot refers to,
+	 *                   obtained by calling {@link Menu#indexOf(int)}
+	 * @return The "local" slot
+	 */
+	private int localize(int allInvSlot, Menu inv) {
+		allInvSlot -= this.inv.getSize();
+		for (Page p : pages) {
+			if (!InventoryUtils.equalsNoContents(p.getInv(), inv.getInv())) {
+				allInvSlot -= p.getSize();
+			}
+		}
+		return allInvSlot;
+	}
+
+	public int trueFirstEmpty() {
+		if (inv.firstEmpty() != -1) {
+			return inv.firstEmpty();
+		}
+		for (Page p : pages) {
+			Inventory i = p.getInv();
+			if (i.firstEmpty() != -1) {
+				return i.firstEmpty();
+			}
+		}
+		return -1;
+	}
+	/**
+	 * Set a slot of the inventory to the given button
+	 *
+	 * @param slot   The slot to set
+	 * @param button The button to add
+	 * @throws IndexOutOfBoundsException if the given slot is not in the Inventory
+	 */
+
+	public void addButton(int slot, MenuButton button) {
+		Validate.notNull(button);
+		Menu toAdd = indexOf(slot);
+		if (toAdd == null) return;
+		toAdd.getInv().setItem(localize(slot, toAdd), button.getItemStack());
+		items.put(slot, button);
+		clickMappings.put(slot, button.onClickAlias == null ? button.getOnClick() : ClickEventAliases.getInstance().get(button.onClickAlias));
+	}
 	/**
 	 * Set the background button of the Menu, which will take up all non-inhabited slots
 	 * It does nothing when clicked
@@ -115,7 +207,7 @@ public class Menu {
 	 */
 	private void addButtonWithoutMap(int slot, MenuButton button) {
 		Validate.notNull(button, "Button is null");
-		if (slot > inv.getSize())
+		if (slot > getFullSize())
 			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
 		clickMappings.put(slot, button.getOnClick());
 		inv.setItem(slot, button.getItemStack());
@@ -155,22 +247,6 @@ public class Menu {
 		}
 	}
 	/**
-	 * Set a slot of the inventory to the given button
-	 *
-	 * @param slot   The slot to set
-	 * @param button The button to add
-	 * @throws IndexOutOfBoundsException if the given slot is not in the Inventory
-	 */
-	public void addButton(int slot, MenuButton button) {
-		Validate.notNull(button, "Button is null");
-		if (slot > inv.getSize())
-			throw new IndexOutOfBoundsException(String.format("%d exceeds maximum size of Inventory %d", slot, inv.getSize()));
-		items.put(slot, button);
-		clickMappings.put(slot, button.getOnClick());
-		inv.setItem(slot, button.getItemStack());
-	}
-
-	/**
 	 * Add a MenuButton to the first empty slot in the Inventory
 	 *
 	 * @param button The button to add
@@ -184,7 +260,19 @@ public class Menu {
 				inv.setItem(x, new ItemStack(AIR));
 			}
 		}
-		addButton(inv.firstEmpty(), button);
+		for (Page p : pages) {
+			Inventory inv = p.getInv();
+			for (int x = 0; x < inv.getContents().length; x++) {
+				ItemStack i = inv.getContents()[x];
+				if (i != null && i.isSimilar(backgroundItem.getItemStack())) {
+					inv.setItem(x, new ItemStack(AIR));
+				}
+			}
+		}
+		try {
+			addButton(trueFirstEmpty(), button);
+		} catch (IndexOutOfBoundsException ignored) {
+		}
 		addBackgroundItems();
 	}
 
@@ -194,7 +282,8 @@ public class Menu {
 			return;
 		}
 		if (size >= MAX_SIZE) {
-			//TODO pagination
+			val menu = indexOf(size);
+			menu.adjustSize(localize(size, menu));
 			return;
 		}
 		if (size > inv.getSize()) {
@@ -211,6 +300,19 @@ public class Menu {
 		}
 	}
 
+
+	private Page addPage() {
+		Page newPage = new Page(this);
+		newPage.addButton(new BackPageButton());
+		final val lastInv = pages.getLast();
+		if (lastInv.getInv().firstEmpty() == -1) {
+			MenuButton last = lastInv.getItems().get(lastInv.getInv().getSize());
+			pages.getLast().addButton(lastInv.getSize(), new NextPageButton());
+			newPage.addButton(last);
+		}
+		pages.add(newPage);
+		return newPage;
+	}
 	/**
 	 * Set the amount of rows in the Inventory. If decreasing the rows amount, some items may be removed
 	 *
@@ -345,6 +447,7 @@ public class Menu {
 	 */
 	public Menu copy() {
 		Menu copy = new Menu(getInv().getTitle(), getInv().getSize() / 9);
+		//noinspection deprecation
 		copy.setButtons(this.items);
 		copy.backgroundItem = this.backgroundItem;
 		copy.onClick = this.onClick;

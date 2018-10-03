@@ -41,7 +41,7 @@ public class BackMenuButton extends MenuButton {
 	};
 
 	static {
-		ClickEventAliases.getINSTANCE().add("back", onClick);
+		ClickEventAliases.getInstance().add("back", onClick);
 	}
 
 	public BackMenuButton(ItemStack itemStack) {

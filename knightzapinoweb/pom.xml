@@ -32,23 +32,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <powermock.version>1.7.1</powermock.version>
+    </properties>
     <artifactId>knightzapinoweb</artifactId>
-    <!--<repositories>-->
-    <!--<repository>-->
-    <!--<id>knightz-central</id>-->
-    <!--<url>http://repo.knightz.uk:8081/repository/maven-releases/</url>-->
-    <!--</repository>-->
-    <!--</repositories>-->
     <build>
         <finalName>knightzapinoweb</finalName>
     </build>
     <dependencies>
-        <!--<dependency>-->
-        <!--<groupId>org.spigotmc</groupId>-->
-        <!--<artifactId>spigot</artifactId>-->
-        <!--<version>1.12.2-R0.1-SNAPSHOT</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -59,12 +50,6 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.11</version>
-            <!--<exclusions>-->
-            <!--<exclusion>-->
-            <!--<groupId>com.google.guava</groupId>-->
-            <!--<artifactId>guava</artifactId>-->
-            <!--</exclusion>-->
-            <!--</exclusions>-->
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -72,6 +57,18 @@
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4-legacy</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
