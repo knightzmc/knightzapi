@@ -41,7 +41,7 @@ public final class CloseButton extends MenuButton {
 	private static final Consumer<MenuClickEvent> onClick = e -> e.getWhoClicked().closeInventory();
 
 	static {
-		ClickEventAliases.getINSTANCE().add("close", onClick);
+		ClickEventAliases.getInstance().add("close", onClick);
 	}
 
 	public CloseButton() {

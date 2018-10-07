@@ -44,95 +44,99 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class MenuListener implements Listener {
 
-	private static final Set<Menu> allMenus = ConcurrentHashMap.newKeySet();
+    private static final Set<Menu> allMenus = ConcurrentHashMap.newKeySet();
 
-	private static final MenuListener instance = new MenuListener();
+    private static final MenuListener instance = new MenuListener();
 
-	private MenuListener() {
-		Bukkit.getPluginManager().registerEvents(this, KnightzAPI.getP());
-	}
+    private MenuListener() {
+        Bukkit.getPluginManager().registerEvents(this, KnightzAPI.getP());
+    }
 
-	public static void register(Menu me) {
-		if (me != null)
-			allMenus.add(me);
-	}
+    public static void register(Menu me) {
+        if (me != null)
+            allMenus.add(me);
+    }
 
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onClick(InventoryClickEvent e) {
-		//Avoid repeating calls
-		if (!(e instanceof MenuClickEvent)) {
-			//Menu API only supports player clicks
-			if (e.getWhoClicked() instanceof Player) {
-				if (e.getClickedInventory() != null) {
-					for (Menu m : allMenus) {
-						if (InventoryUtils.equalsNoContents(m.getInv(), e.getClickedInventory())) {
-							if (e.getCurrentItem() != null) {
-								e.setCancelled(true);
-								if (m.getItems().containsKey(e.getSlot())) {
-									val event = convertEvent(m, e);
-									Objects.requireNonNull(event);
-									Bukkit.getPluginManager().callEvent(event);
-									m.getItems().get(e.getSlot()).onClick(event);
-									if (m.getOnClick() != null) {
-										val onClickSound = m.getItems().get(e.getSlot()).getOnClickSound();
-										if (onClickSound != null) {
-											event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), onClickSound, 1, 1);
-										} else
-											event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), m.getOnClick(), 1, 1);
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    public static void handle(InventoryClickEvent e) {
+        instance.onClick(e);
+    }
 
-	private MenuClickEvent convertEvent(Menu m, InventoryClickEvent e) {
-		if (e.getClickedInventory() != null) {
-			AtomicReference<Menu> clicked = new AtomicReference<>();
-			if (InventoryUtils.equalsNoContents(m.getInv(), e.getClickedInventory())) {
-				clicked.set(m);
-			} else {
-				List<Menu> menus = recursiveCheckChildren(m);
-				clicked.set(menus.get(0));
-			}
-			if (clicked.get() == null) {
-				Log.warn("No Menu matched " + e.getClickedInventory().toString() + " but it was registered as a Menu!");
-				return null;
-			}
-			return new MenuClickEvent(e, clicked.get());
-		}
-		throw new IllegalArgumentException("InventoryClickEvent does not refer to a Menu being clicked!");
-	}
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onClick(InventoryClickEvent e) {
+        //Avoid repeating calls
+        if (!(e instanceof MenuClickEvent)) {
+            //Menu API only supports player clicks
+            if (e.getWhoClicked() instanceof Player) {
+                if (e.getClickedInventory() != null) {
+                    for (Menu m : allMenus) {
+                        if (InventoryUtils.equalsNoContents(m.getInv(), e.getClickedInventory())) {
+                            if (e.getCurrentItem() != null) {
+                                e.setCancelled(true);
+                                if (m.getItems().containsKey(e.getSlot())) {
+                                    val event = convertEvent(m, e);
+                                    Objects.requireNonNull(event);
+                                    Bukkit.getPluginManager().callEvent(event);
+                                    m.getItems().get(e.getSlot()).onClick(event);
+                                    if (m.getOnClick() != null) {
+                                        val onClickSound = m.getItems().get(e.getSlot()).getOnClickSound();
+                                        if (onClickSound != null) {
+                                            event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), onClickSound, 1, 1);
+                                        } else
+                                            event.getWhoClicked().playSound(event.getWhoClicked().getLocation(), m.getOnClick(), 1, 1);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	private List<Menu> recursiveCheckChildren(Menu menu) {
-		List<Menu> childList = new ArrayList<>();
-		for (SubMenu sub : menu.getChildren()) {
-			childList.addAll(recursiveCheckChildren(sub));
-		}
-		return childList;
-	}
+    private MenuClickEvent convertEvent(Menu m, InventoryClickEvent e) {
+        if (e.getClickedInventory() != null) {
+            AtomicReference<Menu> clicked = new AtomicReference<>();
+            if (InventoryUtils.equalsNoContents(m.getInv(), e.getClickedInventory())) {
+                clicked.set(m);
+            } else {
+                List<Menu> menus = recursiveCheckChildren(m);
+                clicked.set(menus.get(0));
+            }
+            if (clicked.get() == null) {
+                Log.warn("No Menu matched " + e.getClickedInventory().toString() + " but it was registered as a Menu!");
+                return null;
+            }
+            return new MenuClickEvent(e, clicked.get());
+        }
+        throw new IllegalArgumentException("InventoryClickEvent does not refer to a Menu being clicked!");
+    }
 
-	@EventHandler
-	public void onClose(InventoryCloseEvent e) {
-		if (!(e instanceof MenuCloseEvent)) {
-			if (e.getInventory() != null)
-				for (Menu m : allMenus) {
-					if (InventoryUtils.equalsNoContents(m.getInv(), e.getInventory())) {
-						MenuCloseEvent event = new MenuCloseEvent(e.getView(), m);
-						Bukkit.getPluginManager().callEvent(event);
-						if (event.isCancelled()) {
-							Bukkit.getScheduler().runTaskLater(KnightzAPI.getP(), () ->
-									e.getPlayer().openInventory(e.getInventory()), 1L);
-						} else if (m.isDestroyWhenClosed()) {
-							allMenus.remove(m);
-							break;
-						}
-					}
-				}
-		}
-	}
+    private List<Menu> recursiveCheckChildren(Menu menu) {
+        List<Menu> childList = new ArrayList<>();
+        for (SubMenu sub : menu.getChildren()) {
+            childList.addAll(recursiveCheckChildren(sub));
+        }
+        return childList;
+    }
+
+    @EventHandler
+    public void onClose(InventoryCloseEvent e) {
+        if (!(e instanceof MenuCloseEvent)) {
+            if (e.getInventory() != null)
+                for (Menu m : allMenus) {
+                    if (InventoryUtils.equalsNoContents(m.getInv(), e.getInventory())) {
+                        MenuCloseEvent event = new MenuCloseEvent(e.getView(), m);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            Bukkit.getScheduler().runTaskLater(KnightzAPI.getP(), () ->
+                                    e.getPlayer().openInventory(e.getInventory()), 1L);
+                        } else if (m.isDestroyWhenClosed()) {
+                            allMenus.remove(m);
+                            break;
+                        }
+                    }
+                }
+        }
+    }
 }

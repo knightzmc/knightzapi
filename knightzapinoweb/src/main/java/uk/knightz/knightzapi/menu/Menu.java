@@ -101,6 +101,9 @@ public class Menu {
 		} else {
 			inv = Bukkit.createInventory(null, rows * 9, Chat.color(title));
 		}
+		if(inv==null) {
+			throw new NullPointerException("Inventory is null!");
+		}
 		items = new HashMap<>();
 		clickMappings = new HashMap<>();
 		MenuListener.register(this);

@@ -67,7 +67,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 				out.name("slot").value(integer);
 				out.name("button");
 				KnightzAPI.gson.getAdapter(ItemStack.class).write(out, menuButton.getItemStack());
-				if (ClickEventAliases.getINSTANCE().getMapToEvent().containsKey(menuButton.getOnClickAlias()))
+				if (ClickEventAliases.getInstance().getMapToEvent().containsKey(menuButton.getOnClickAlias()))
 					out.name("alias").value(menuButton.getOnClickAlias());
 				out.endObject();
 			} catch (IOException e) {
@@ -117,7 +117,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 									break;
 								case "alias":
 									String tempAlias = in.nextString();
-									if (ClickEventAliases.getINSTANCE().getMapToEvent().containsKey(tempAlias)) {
+									if (ClickEventAliases.getInstance().getMapToEvent().containsKey(tempAlias)) {
 										alias = tempAlias;
 									}
 							}
@@ -135,7 +135,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 							} else if (o instanceof ButtonHolder) {
 								ButtonHolder h = (ButtonHolder) o;
 								finalMenu.addButton(integer, new MenuButton(h.getItemStack(),
-										ClickEventAliases.getINSTANCE().getMapToEvent().get(h.getAlias())));
+										ClickEventAliases.getInstance().getMapToEvent().get(h.getAlias())));
 							}
 						});
 						in.endObject();
