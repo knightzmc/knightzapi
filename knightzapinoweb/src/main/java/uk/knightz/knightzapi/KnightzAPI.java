@@ -89,7 +89,7 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 
     public void onEnable() {
         VersionUtil.checkVersion();
-
+        plugin = this;
         UserEventBlocker userEventBlocker = new UserEventBlocker();
         EventExecutor ev = (listener, event) -> userEventBlocker.event(event);
         for (Class<? extends PlayerEvent> e : new Reflections("org.bukkit.event").getSubTypesOf(PlayerEvent.class)) {
@@ -154,7 +154,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
                 Bukkit.getPluginManager().disablePlugin(javaPlugin);
             }
         }
-        plugin = this;
     }
 
     @Override

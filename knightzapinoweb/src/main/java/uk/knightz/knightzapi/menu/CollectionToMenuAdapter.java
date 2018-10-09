@@ -1,6 +1,6 @@
 package uk.knightz.knightzapi.menu;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.button.MenuButton;
+import uk.knightz.knightzapi.utils.MathUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,22 +38,34 @@ import java.util.stream.Stream;
  * //The getter will return a Material, so will be set as the item ID
  * }}
  */
-public class CollectionToMenuAdapter implements Function<Collection<?>, Menu> {
+public class CollectionToMenuAdapter {
+    public static <T> Menu generateMenu(Collection<T> objects) {
+        return generateMenu(objects, null);
+    }
 
-    @Override
-    public Menu apply(Collection<?> objects) {
+    public static <T> Menu generateMenu(Collection<T> objects, Option<T> options) {
         if (objects == null || objects.isEmpty()) return Menu.EMPTY_MENU;
 
+        if (options == null) {
+            options = new Option<>(null);
+        }
+
         Menu menu = new Menu(objects.iterator().next().getClass().getSimpleName() + "s",
-                objects.size());
-        for (Object o : objects) {
-            menu.addButton(convert(o));
+                MathUtils.roundUp(objects.size()) / 9);
+        for (T t : objects) {
+            menu.addButton(convert(t, options));
         }
         return menu;
     }
 
     @SneakyThrows
-    private MenuButton convert(Object o) {
+    private static <T> MenuButton convert(T o, Option<T> options) {
+        if (o instanceof ItemStack) {
+            return new MenuButton((ItemStack) o, Menu.cancel);
+        }
+        if (o instanceof MenuButton) {
+            return (MenuButton) o;
+        }
         Set<Method> getters = Reflection.getGetters(o.getClass());
         Set<Object> returns = getters.stream().map(m -> {
             try {
@@ -62,8 +75,11 @@ public class CollectionToMenuAdapter implements Function<Collection<?>, Menu> {
             }
             return null;
         }).collect(Collectors.toSet());
-
-        ItemBuilder i = new ItemBuilder();
+        ItemBuilder i;
+        if (options.hasManualItemStackFunction()) {
+            i = new ItemBuilder(options.manualItemStackFunction.apply(o));
+        } else
+            i = new ItemBuilder();
         val materialStream = returns.stream().filter(o1 -> attemptConvert(o1) != null);
         if (materialStream.count() > 0) {
             materialStream.forEach(m -> i.setType((Material) m));
@@ -92,9 +108,13 @@ public class CollectionToMenuAdapter implements Function<Collection<?>, Menu> {
         return new MenuButton(i.build(), Menu.cancel);
     }
 
-    public Material attemptConvert(Object o) {
+    private static Material attemptConvert(Object o) {
         if (o instanceof Material) return (Material) o;
-        if (o instanceof String) return Material.valueOf(((String) o).toUpperCase());
+        if (o instanceof String) {
+            val material = Material.matchMaterial(((String) o).toUpperCase());
+            if (material != null)
+                return material;
+        }
         return null;
     }
 
@@ -116,16 +136,15 @@ public class CollectionToMenuAdapter implements Function<Collection<?>, Menu> {
     }
 
 
-    @Builder(builderClassName = "Options")
-    public static class Option {
+    @AllArgsConstructor
+    public static class Option<T> {
 
 
-        private final Map<OptionNames, Object>
-
-        public static class OptionNames<T> {
-            public static final OptionNames<Function<Object, ItemStack>> MANUAL_ITEMSTACK;
+        private Function<T, ItemStack> manualItemStackFunction;
 
 
+        public boolean hasManualItemStackFunction() {
+            return manualItemStackFunction != null;
         }
     }
 }

@@ -106,7 +106,10 @@ public class PluginFile extends YamlConfiguration {
      */
     public PluginFile(JavaPlugin plugin, UUID playerUUID) {
         this.plugin = plugin;
-        this.file = new File(plugin.getDataFolder().getParent() + File.separator + "KnightzAPI" + File.separator + "userdata" + File.separator + playerUUID + ".yml");
+        this.file = new File(
+                plugin.getDataFolder()
+                        .getParent()
+                        + File.separator + "KnightzAPI" + File.separator + "userdata" + File.separator + playerUUID + ".yml");
         reload();
     }
 

@@ -125,14 +125,14 @@ public class CollectionUtils {
 //	public static <Type, Return> Collection<Return> applyToEach(Collection<Type> collection, Function<Type, Return> toExec) {
 //		if (collection instanceof HashSet) {
 //			HashSet set = new HashSet();
-//			collection.forEach(t -> set.add(toExec.apply(t)));
+//			collection.forEach(t -> set.add(toExec.generateMenu(t)));
 //			return set;
 //		}
 //		//NOT UNNECESSARY - REQUIRED TO ENSURE THE ORIGINAL COLLECTION IS NOT CLEARED
 //		//noinspection UnnecessaryLocalVariable
 //		Collection temp = collection;
 //		temp.clear();
-//		collection.forEach(t -> temp.add(toExec.apply(t)));
+//		collection.forEach(t -> temp.add(toExec.generateMenu(t)));
 //		return (Collection) temp;
 //	}
 

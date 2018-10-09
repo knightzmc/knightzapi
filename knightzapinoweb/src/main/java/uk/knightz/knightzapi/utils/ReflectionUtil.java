@@ -404,7 +404,7 @@ public class ReflectionUtil {
 		}
 
 		/**
-		 * apply method to object
+		 * generateMenu method to object
 		 *
 		 * @param e object to which the method is applied
 		 * @return RefExecutor with method call(...)
@@ -435,7 +435,7 @@ public class ReflectionUtil {
 			}
 
 			/**
-			 * apply method for selected object
+			 * generateMenu method for selected object
 			 *
 			 * @param params sent parameters
 			 * @return return value
@@ -522,7 +522,7 @@ public class ReflectionUtil {
 		}
 
 		/**
-		 * apply field for object
+		 * generateMenu field for object
 		 *
 		 * @param e applied object
 		 * @return RefExecutor with getter and setter
