@@ -37,7 +37,7 @@ public class ReaderUtils {
     /**
      * Read all lines from a given reader and append it to a String
      * @param reader The Reader to read
-     * @return All lines from the given reader as a StringC
+     * @return All lines from the given reader as a String
      */
     public static String readAllLines(Reader reader) {
         StringBuilder builder = new StringBuilder();

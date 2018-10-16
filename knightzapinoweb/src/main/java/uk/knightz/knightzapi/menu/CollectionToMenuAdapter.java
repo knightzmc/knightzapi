@@ -5,6 +5,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.button.MenuButton;
@@ -12,8 +14,8 @@ import uk.knightz.knightzapi.utils.MathUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,7 +49,7 @@ public class CollectionToMenuAdapter {
         if (objects == null || objects.isEmpty()) return Menu.EMPTY_MENU;
 
         if (options == null) {
-            options = new Option<>(null);
+            options = new Option<>(null, null, null);
         }
 
         Menu menu = new Menu(objects.iterator().next().getClass().getSimpleName() + "s",
@@ -69,30 +71,48 @@ public class CollectionToMenuAdapter {
         Set<Method> getters = Reflection.getGetters(o.getClass());
         Set<Object> returns = getters.stream().map(m -> {
             try {
-                return m.invoke(o);
+                Object o1 = m.invoke(o);
+                if (options.hasAnyObjectParsers()) {
+                    final val parse = options.parse(o.getClass(), o1);
+                    System.out.println(parse);
+                    return parse;
+                }
+                return o1;
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
             return null;
         }).collect(Collectors.toSet());
+
+
+        //Create new ItemStack builder
         ItemBuilder i;
-        if (options.hasManualItemStackFunction()) {
-            i = new ItemBuilder(options.manualItemStackFunction.apply(o));
-        } else
+        if (options.hasManualItemStackFunction()) i = new ItemBuilder(options.manualItemStackFunction.apply(o));
+
+        else {
             i = new ItemBuilder();
-        val materialStream = returns.stream().filter(o1 -> attemptConvert(o1) != null);
-        if (materialStream.count() > 0) {
-            materialStream.forEach(m -> i.setType((Material) m));
-        } else {
-            i.setType(Material.STONE);
+            val materialStream = returns.stream().filter(o1 -> attemptConvert(o1) != null);
+            if (materialStream.count() > 0) {
+                materialStream.forEach(m -> i.setType((Material) m));
+            } else {
+                i.setType(Material.STONE);
+            }
         }
-        Stream<Method> getterStream = getters.stream().filter(m -> m.getName().contains("name") && String.class.isAssignableFrom(m.getReturnType()));
-        val any = getterStream.findAny();
-        if (any.isPresent()) {
-            i.setName((String) any.get().invoke(o));
-            getters.remove(any.get());
+
+
+        if (options.hasManualNameFunction()) {
+            i.setName(options.manualNameFunction.apply(o));
         } else {
-            i.setName(o.toString());
+            Stream<Method> getterStream = getters.stream().filter(m -> m.getName().contains("name") && String.class.isAssignableFrom(m.getReturnType()));
+            if (getterStream.count() > 0) {
+                for (Iterator<Method> it = getterStream.iterator(); it.hasNext(); ) {
+                    Method any = it.next();
+                    i.setName((String) any.invoke(o));
+                    getters.remove(any);
+                }
+            } else {
+                i.setName(o.toString());
+            }
         }
 
         List<String> lore = new ArrayList<>();
@@ -101,6 +121,7 @@ public class CollectionToMenuAdapter {
                     StringUtils.capitalize(m.getName().replace("get", "")) +
                     "&6: &7" +
                     m.invoke(o).toString();
+            System.out.println(loreData);
             lore.add(loreData);
         }
         i.setLore(lore);
@@ -120,16 +141,19 @@ public class CollectionToMenuAdapter {
 
     private static class Reflection {
 
-        private static final Map<Class, Set<Method>> cache = new ConcurrentHashMap<>();
+        private static final Map<Class, Set<Method>> cache = new WeakHashMap<>();
 
 
-        static public Set<Method> getGetters(Class<?> clazz) {
+        public static Set<Method> getGetters(Class<?> clazz) {
             if (cache.containsKey(clazz)) {
                 return cache.get(clazz);
             }
             Set<Method> methods = new HashSet<>(Arrays.asList(clazz.getMethods()));
             methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
-            methods.removeIf(m -> !m.getName().contains("get") || m.getReturnType().equals(void.class) || !m.isAccessible());
+            methods.removeIf(m -> !m.getName().contains("get"));
+            methods.removeIf(m -> m.getName().equals("getClass"));
+            methods.removeIf(m -> m.getReturnType().equals(void.class));
+            methods.removeIf(m -> !Modifier.isPublic(m.getModifiers()));
             cache.put(clazz, methods);
             return methods;
         }
@@ -139,12 +163,67 @@ public class CollectionToMenuAdapter {
     @AllArgsConstructor
     public static class Option<T> {
 
-
+        private Map<Class, Function<Object, String>> manualObjectParsers = new HashMap<>();
         private Function<T, ItemStack> manualItemStackFunction;
+        private Function<T, String> manualNameFunction;
 
+        public static <T> OptionBuilder<T> builder() {
+            return new OptionBuilder<>();
+        }
+
+
+        public String parse(Class clazz, Object type) {
+            if (manualObjectParsers != null && manualObjectParsers.containsKey(clazz)) {
+                return manualObjectParsers.get(clazz).apply(type);
+            }
+            return type.toString();
+        }
+
+        public boolean hasManualNameFunction() {
+            return manualNameFunction != null;
+        }
 
         public boolean hasManualItemStackFunction() {
             return manualItemStackFunction != null;
+        }
+
+        public boolean hasAnyObjectParsers() {
+            return manualObjectParsers != null && !manualObjectParsers.isEmpty();
+        }
+
+        public static class OptionBuilder<T> {
+            private Function<T, ItemStack> manualItemStackFunction;
+            private Function<T, String> manualNameFunction;
+            private Map<Class, Function<Object, String>> manualObjectParsers = new HashMap<>();
+
+            public OptionBuilder() {
+                addManualObjectParser(Player.class, HumanEntity::getName);
+            }
+
+            public OptionBuilder<T> setManualObjectParsers(Map<Class, Function<Object, String>> manualObjectParsers) {
+                this.manualObjectParsers.putAll(manualObjectParsers);
+                return this;
+            }
+
+            public <O> OptionBuilder<T> addManualObjectParser(Class<O> m, Function<O, String> function) {
+                manualObjectParsers.put(m, (Function<Object, String>) function);
+                return this;
+            }
+
+            public OptionBuilder<T> manualItemStackFunction(Function<T, ItemStack> manualItemStackFunction) {
+                this.manualItemStackFunction = manualItemStackFunction;
+                return this;
+            }
+
+            public OptionBuilder<T> manualNameFunction(Function<T, String> manualNameFunction) {
+                this.manualNameFunction = manualNameFunction;
+                return this;
+            }
+
+            public Option<T> build() {
+                return new Option<>(manualObjectParsers, manualItemStackFunction, manualNameFunction);
+            }
+
         }
     }
 }

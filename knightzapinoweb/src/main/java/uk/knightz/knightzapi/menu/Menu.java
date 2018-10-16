@@ -40,7 +40,6 @@ import uk.knightz.knightzapi.menu.button.DynamicDataButton;
 import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.menu.button.NextPageButton;
 import uk.knightz.knightzapi.utils.Functions;
-import uk.knightz.knightzapi.utils.InventoryUtils;
 import uk.knightz.knightzapi.utils.MathUtils;
 
 import java.util.*;
@@ -149,18 +148,24 @@ public class Menu {
      * Bring a "global" slot (one that is more than
      * a singular Inventory's size to refer to a next page, to a "local" slot (a
      * slot that refers to an actual slot on a certain page)
+     * <p>
+     * For example, a slot of 103 would refer to slot 49 of page 2
      *
      * @param allInvSlot The "global" slot
      * @param inv        The Inventory that the "global" slot refers to,
      *                   obtained by calling {@link Menu#indexOf(int)}
-     * @return The "local" slot
+     * @return The "local" slot. If the given "global" slot would not be in the given Menu, the global slot is returned
      */
     private int localize(int allInvSlot, Menu inv) {
+        if (allInvSlot < inv.getSize() || allInvSlot > getFullSize()) {
+            return allInvSlot;
+        }
         allInvSlot -= this.inv.getSize();
         for (Page p : pages) {
-            if (!InventoryUtils.equalsNoContents(p.getInv(), inv.getInv())) {
-                allInvSlot -= p.getSize();
+            if (allInvSlot <= p.getSize()) {
+                return allInvSlot;
             }
+            allInvSlot -= p.getSize();
         }
         return allInvSlot;
     }
@@ -263,22 +268,25 @@ public class Menu {
      * @throws IndexOutOfBoundsException if there are no more free slots
      */
     public void addButton(MenuButton button) {
-        //If there's a background item, firstEmpty will be -1, temporarily remove them
-        for (int x = 0; x < inv.getContents().length; x++) {
-            ItemStack i = inv.getContents()[x];
-            if (i != null && i.isSimilar(backgroundItem.getItemStack())) {
-                inv.setItem(x, new ItemStack(AIR));
-            }
-        }
-        for (Page p : pages) {
-            Inventory inv = p.getInv();
+        if (backgroundItem != null) {
+            //If there's a background item, firstEmpty will be -1, temporarily remove them
             for (int x = 0; x < inv.getContents().length; x++) {
                 ItemStack i = inv.getContents()[x];
                 if (i != null && i.isSimilar(backgroundItem.getItemStack())) {
                     inv.setItem(x, new ItemStack(AIR));
                 }
             }
+            for (Page p : pages) {
+                Inventory inv = p.getInv();
+                for (int x = 0; x < inv.getContents().length; x++) {
+                    ItemStack i = inv.getContents()[x];
+                    if (i != null && i.isSimilar(backgroundItem.getItemStack())) {
+                        inv.setItem(x, new ItemStack(AIR));
+                    }
+                }
+            }
         }
+
         try {
             addButton(trueFirstEmpty(), button);
         } catch (IndexOutOfBoundsException ignored) {
