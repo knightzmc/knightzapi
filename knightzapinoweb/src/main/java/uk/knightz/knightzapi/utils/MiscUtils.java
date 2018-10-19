@@ -175,8 +175,8 @@ public class MiscUtils {
     public static ItemStack skullOfPlayer(OfflinePlayer p) {
         ItemStack item = new ItemStack(SKULL_ITEM);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwner(p.getName());
         meta.setDisplayName(p.getName());
+        meta.setOwner(p.getName());
         item.setItemMeta(meta);
         return item;
     }

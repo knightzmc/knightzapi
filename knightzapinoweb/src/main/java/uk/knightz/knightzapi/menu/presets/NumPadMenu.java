@@ -7,6 +7,7 @@ import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.menu.button.MenuButton;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
@@ -14,39 +15,44 @@ import java.util.function.BiConsumer;
 public class NumPadMenu extends Menu {
     private final LinkedList<Integer> numberList = new LinkedList<>();
 
-    public NumPadMenu(String title, BiConsumer<Player, Integer> onSubmit) {
+    public NumPadMenu(String title, BiConsumer<Player, BigInteger> onSubmit) {
         super(title, 9);
         setBackgroundItem(new ItemBuilder().setType(Material.STAINED_GLASS_PANE).setData((short) 7).build());
-        for (int n = 0; n < 9; n++) {
-            addButton(12 + n, new NumberButton(this, n));
+        int amount = 1;
+        for (int n = 12; n < 31; n += 9) {
+            addButton(n, new NumberButton(this, amount++));
+            addButton(n + 1, new NumberButton(this, amount++));
+            addButton(n + 2, new NumberButton(this, amount++));
         }
-        addButton(21, new MenuButton(
+        addButton(39, new MenuButton(
                 new ItemBuilder()
                         .setName("&c&lBackspace")
                         .setType(Material.REDSTONE)
                         .build()
                 , e -> {
-            numberList.removeLast();
+            numberList.pollLast();
             updateInfo();
         }));
         updateInfo();
-        addButton(23, new MenuButton(
+        addButton(41, new MenuButton(
                 new ItemBuilder()
                         .setName("&a&lSubmit")
                         .setType(Material.EMERALD_BLOCK)
                         .build()
                 , e -> {
             String s = getFullNumber();
-            onSubmit.accept(e.getWhoClicked(), Integer.parseInt(s));
+            onSubmit.accept(e.getWhoClicked(), new BigInteger(s));
+            numberList.clear();
+            updateInfo();
         }));
     }
 
 
     private void updateInfo() {
-        addButton(22, new MenuButton(
+        addButton(40, new MenuButton(
                 new ItemBuilder()
                         .setType(Material.NAME_TAG)
-                        .setName("&aCurrent Number")
+                        .setName("&aCurrent Number: ")
                         .setLore(Collections.singletonList(getFullNumber())
                         ).build(),
                 Menu.cancel));
@@ -63,8 +69,8 @@ public class NumPadMenu extends Menu {
 
     private void appendNumber(int number) {
         numberList.add(number);
+        updateInfo();
     }
-
 
     private static class NumberButton extends MenuButton {
         private final NumPadMenu menu;

@@ -1,6 +1,5 @@
 package uk.knightz.knightzapi.menu;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
@@ -49,13 +48,14 @@ public class CollectionToMenuAdapter {
         if (objects == null || objects.isEmpty()) return Menu.EMPTY_MENU;
 
         if (options == null) {
-            options = new Option<>(null, null, null);
+            options = new Option<>(null, null, null, null);
         }
 
         Menu menu = new Menu(objects.iterator().next().getClass().getSimpleName() + "s",
                 MathUtils.roundUp(objects.size()) / 9);
         for (T t : objects) {
-            menu.addButton(convert(t, options));
+            if (t != null)
+                menu.addButton(convert(t, options));
         }
         return menu;
     }
@@ -69,15 +69,10 @@ public class CollectionToMenuAdapter {
             return (MenuButton) o;
         }
         Set<Method> getters = Reflection.getGetters(o.getClass());
+        getters.removeIf(g -> options.methodsToIgnore.contains(g.getName()));
         Set<Object> returns = getters.stream().map(m -> {
             try {
-                Object o1 = m.invoke(o);
-                if (options.hasAnyObjectParsers()) {
-                    final val parse = options.parse(o.getClass(), o1);
-                    System.out.println(parse);
-                    return parse;
-                }
-                return o1;
+                return m.invoke(o);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -117,11 +112,15 @@ public class CollectionToMenuAdapter {
 
         List<String> lore = new ArrayList<>();
         for (Method m : getters) {
+            Object value = m.invoke(o);
+            String parse = options.parse
+                    (value.getClass(), value);
+            if (parse != null)
+                value = parse;
             String loreData = "&a" +
                     StringUtils.capitalize(m.getName().replace("get", "")) +
                     "&6: &7" +
-                    m.invoke(o).toString();
-            System.out.println(loreData);
+                    value;
             lore.add(loreData);
         }
         i.setLore(lore);
@@ -160,23 +159,45 @@ public class CollectionToMenuAdapter {
     }
 
 
-    @AllArgsConstructor
     public static class Option<T> {
 
-        private Map<Class, Function<Object, String>> manualObjectParsers = new HashMap<>();
+        public List<String> methodsToIgnore;
+        private Map<Class, Function<Object, String>> manualObjectParsers;
         private Function<T, ItemStack> manualItemStackFunction;
         private Function<T, String> manualNameFunction;
+
+        public Option(List<String> methodsToIgnore, Map<Class, Function<Object, String>> manualObjectParsers, Function<T, ItemStack> manualItemStackFunction, Function<T, String> manualNameFunction) {
+            this.methodsToIgnore = methodsToIgnore;
+            this.manualObjectParsers = manualObjectParsers;
+            this.manualItemStackFunction = manualItemStackFunction;
+            this.manualNameFunction = manualNameFunction;
+            addManualObjectParser(Player.class, HumanEntity::getName);
+        }
 
         public static <T> OptionBuilder<T> builder() {
             return new OptionBuilder<>();
         }
 
+        public <O> Option<T> addManualObjectParser(Class<O> m, Function<O, String> function) {
+            manualObjectParsers.put(m, (Function<Object, String>) function);
+            return this;
+        }
 
         public String parse(Class clazz, Object type) {
-            if (manualObjectParsers != null && manualObjectParsers.containsKey(clazz)) {
-                return manualObjectParsers.get(clazz).apply(type);
-            }
+            Class castedClass = objectParsersContainsClass(clazz);
+            boolean parserExists = castedClass != null;
+            if (parserExists) return manualObjectParsers.get(castedClass)
+                    .apply(type);
             return type.toString();
+        }
+
+        private Class objectParsersContainsClass(Class clazz) {
+            if (manualObjectParsers.containsKey(clazz)) return clazz;
+            for (Class c : manualObjectParsers.keySet()) {
+                if (c.isAssignableFrom(clazz) && c != clazz)
+                    return c;
+            }
+            return null;
         }
 
         public boolean hasManualNameFunction() {
@@ -192,6 +213,7 @@ public class CollectionToMenuAdapter {
         }
 
         public static class OptionBuilder<T> {
+            private List<String> methodsToIgnore = new ArrayList<>();
             private Function<T, ItemStack> manualItemStackFunction;
             private Function<T, String> manualNameFunction;
             private Map<Class, Function<Object, String>> manualObjectParsers = new HashMap<>();
@@ -202,6 +224,11 @@ public class CollectionToMenuAdapter {
 
             public OptionBuilder<T> setManualObjectParsers(Map<Class, Function<Object, String>> manualObjectParsers) {
                 this.manualObjectParsers.putAll(manualObjectParsers);
+                return this;
+            }
+
+            public OptionBuilder<T> addMethodToIgnore(String method) {
+                methodsToIgnore.add(method);
                 return this;
             }
 
@@ -221,7 +248,7 @@ public class CollectionToMenuAdapter {
             }
 
             public Option<T> build() {
-                return new Option<>(manualObjectParsers, manualItemStackFunction, manualNameFunction);
+                return new Option<>(methodsToIgnore, manualObjectParsers, manualItemStackFunction, manualNameFunction);
             }
 
         }

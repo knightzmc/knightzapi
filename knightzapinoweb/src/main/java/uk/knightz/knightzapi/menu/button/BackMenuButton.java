@@ -34,17 +34,17 @@ import java.util.function.Consumer;
  * A MenuButton that brings the user back to their previous menu in the hierarchy.
  */
 public class BackMenuButton extends MenuButton {
-	private static final Consumer<MenuClickEvent> onClick = e -> {
-		if (e.isSubMenu()) {
-			e.getWhoClicked().openInventory(((SubMenu) e.getMenu()).getParent().getInv());
-		}
-	};
+    private static final Consumer<MenuClickEvent> onClick = e -> {
+        if (e.isSubMenu()) {
+            ((SubMenu) e.getMenu()).getParent().open(e.getWhoClicked());
+        }
+    };
 
-	static {
-		ClickEventAliases.getInstance().add("back", onClick);
-	}
+    static {
+        ClickEventAliases.getInstance().add("back", onClick);
+    }
 
-	public BackMenuButton(ItemStack itemStack) {
-		super(itemStack, onClick);
-	}
+    public BackMenuButton(ItemStack itemStack) {
+        super(itemStack, onClick);
+    }
 }

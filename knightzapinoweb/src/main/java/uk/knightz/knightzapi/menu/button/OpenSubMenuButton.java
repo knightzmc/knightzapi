@@ -31,10 +31,10 @@ import uk.knightz.knightzapi.menu.SubMenu;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public final class OpenSubMenuButton extends MenuButton {
-	private SubMenu toOpen;
+    private SubMenu toOpen;
 
-	public OpenSubMenuButton(ItemStack itemStack, SubMenu toOpen) {
-		super(itemStack, e -> e.getWhoClicked().openInventory(toOpen.getInv()));
-		this.toOpen = toOpen;
-	}
+    public OpenSubMenuButton(ItemStack itemStack, SubMenu toOpen) {
+        super(itemStack, e -> toOpen.open(e.getWhoClicked()));
+        this.toOpen = toOpen;
+    }
 }

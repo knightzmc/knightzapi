@@ -322,8 +322,8 @@ public class Menu {
     private Page addPage() {
         Page newPage = new Page(this);
         newPage.addButton(new BackPageButton());
-        final val lastInv = pages.getLast();
-        if (lastInv.getInv().firstEmpty() == -1) {
+        final val lastInv = pages.peekLast();
+        if (lastInv != null && lastInv.getInv().firstEmpty() == -1) {
             MenuButton last = lastInv.getItems().get(lastInv.getInv().getSize());
             pages.getLast().addButton(lastInv.getSize(), new NextPageButton());
             newPage.addButton(last);
