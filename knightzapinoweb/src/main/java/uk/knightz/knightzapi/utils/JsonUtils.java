@@ -40,7 +40,7 @@ public class JsonUtils {
 	}
 
 	/**
-	 * Prettify a given JSON String with GSON
+	 * Prettify a given JSON String with Gson
 	 * @param json The JSON to prettify
 	 * @return The prettified JSON
 	 */

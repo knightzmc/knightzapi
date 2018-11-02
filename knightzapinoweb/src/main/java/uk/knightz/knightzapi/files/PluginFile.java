@@ -92,7 +92,7 @@ public class PluginFile extends YamlConfiguration {
     public PluginFile(JavaPlugin plugin) {
         this.plugin = plugin;
         this.defaults = "config.yml";
-        this.file = new File(plugin.getDataFolder().getParent() + File.separator + "KnightzAPI" + File.separator + "config.yml");
+        this.file = new File(plugin.getDataFolder().getParent() + File.separator + plugin.getName() + File.separator + "config.yml");
         reload();
     }
 
@@ -101,7 +101,7 @@ public class PluginFile extends YamlConfiguration {
      * For internal use only
      * Generates a yml file for a specific player.
      *
-     * @param plugin The KnightzAPI plugin
+     * @param plugin     The KnightzAPI plugin
      * @param playerUUID The player's UUID
      */
     public PluginFile(JavaPlugin plugin, UUID playerUUID) {

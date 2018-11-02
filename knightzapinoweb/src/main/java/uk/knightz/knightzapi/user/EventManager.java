@@ -41,30 +41,32 @@ import java.util.stream.Collectors;
  * Can also provide a Set of all Bukkit event classes {@link EventManager#getEventClasses()}
  */
 public class EventManager implements Listener {
-	public static final EventManager inst = new EventManager();
+    public static final EventManager inst = new EventManager();
 
-	public static Set<Class<? extends Event>> eventClasses;
+    public static Set<Class<? extends Event>> eventClasses;
 
-	static {
-		Reflections reflections = new Reflections("org.bukkit.event");
-		eventClasses = reflections.getSubTypesOf(Event.class).stream().filter(c ->
-				ReflectionUtil.classHasMethod(c, "getHandlerList")).collect(Collectors.toSet());
-		EventExecutor executor = (listener, event) -> {
-			PlayerEvent p = (PlayerEvent) event;
-			User.valueOf(p.getPlayer()).playerAction(p);
-		};
-		eventClasses.stream().filter(PlayerEvent.class::isAssignableFrom)
-				.filter(e -> ReflectionUtil.classHasMethod(e, "getHandlerList")).forEach(e ->
-				Bukkit.getPluginManager().registerEvent(e, inst, EventPriority.LOWEST, executor, KnightzAPI.getP()));
-	}
+    static {
+        Reflections reflections = new Reflections("org.bukkit.event");
+        eventClasses = reflections.getSubTypesOf(Event.class).stream().filter(c ->
+                ReflectionUtil.classHasMethod(c, "getHandlerList")).collect(Collectors.toSet());
+        EventExecutor executor = (listener, event) -> {
+            PlayerEvent p = (PlayerEvent) event;
+            User.valueOf(p.getPlayer()).playerAction(p);
+        };
+        eventClasses.stream().filter(PlayerEvent.class::isAssignableFrom)
+                .filter(e -> ReflectionUtil.classHasMethod(e, "getHandlerList")).forEach(e ->
+                Bukkit.getPluginManager().registerEvent(e, inst, EventPriority.LOWEST, executor, KnightzAPI.getP()));
+    }
 
 
-	private EventManager() {
-	}
-	public static EventManager getInst() {
-		return EventManager.inst;
-	}
-	public static Set<Class<? extends Event>> getEventClasses() {
-		return EventManager.eventClasses;
-	}
+    private EventManager() {
+    }
+
+    public static EventManager getInst() {
+        return EventManager.inst;
+    }
+
+    public static Set<Class<? extends Event>> getEventClasses() {
+        return EventManager.eventClasses;
+    }
 }

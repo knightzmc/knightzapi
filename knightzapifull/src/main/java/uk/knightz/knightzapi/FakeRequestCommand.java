@@ -41,7 +41,7 @@ import java.util.concurrent.Future;
 import static uk.knightz.knightzapi.communication.server.SimpleServer.read;
 
 /**
- * Debugging command for sending a fake request to the current server.
+ * Debugging COMMAND for sending a fake request to the current server.
  * Allows for debugging without having multiple servers running
  */
 @CommandAlias("fakereq")

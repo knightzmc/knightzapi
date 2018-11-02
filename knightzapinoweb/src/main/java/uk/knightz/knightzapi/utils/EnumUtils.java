@@ -23,10 +23,8 @@
 
 package uk.knightz.knightzapi.utils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import org.apache.commons.lang.StringUtils;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -35,74 +33,82 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EnumUtils {
 
 
-	/**
-	 * Get a random element in the given enum, excluding any elements that 'exclude' includes (woo, confusing! :D)
-	 * Typically used for ChatColor
-	 *
-	 * @param enm     The Enum
-	 * @param exclude Any elements from this array will never be selected
-	 * @param <T>     The type of Enum
-	 * @return A random Element from the enum, will never be anything in exclude
-	 */
-	@SafeVarargs
-	public static <T extends Enum<T>> T getRandom(Class<? extends T> enm, T... exclude) {
-		T[] tEnum = enm.getEnumConstants();
-		int size = tEnum.length;
-		T t = tEnum[ThreadLocalRandom.current().nextInt(0, size - 1)];
-		while (Arrays.asList(exclude).contains(t)) {
-			t = tEnum[ThreadLocalRandom.current().nextInt(0, size - 1)];
-		}
-		return t;
-	}
+    /**
+     * Get a random element in the given enum, excluding any elements that 'exclude' includes (woo, confusing! :D)
+     * Typically used for ChatColor
+     *
+     * @param enm     The Enum
+     * @param exclude Any elements from this array will never be selected
+     * @param <T>     The type of Enum
+     * @return A random Element from the enum, will never be anything in exclude
+     */
+    @SafeVarargs
+    public static <T extends Enum<T>> T getRandom(Class<? extends T> enm, T... exclude) {
+        T[] tEnum = enm.getEnumConstants();
+        int size = tEnum.length;
+        List<T> exclusions = Arrays.asList(exclude);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        T t;
+        while (true) {
+            if (!exclusions.contains(t = tEnum[random.nextInt(0, tEnum.length)])) break;
+        }
+        return t;
+    }
 
-	/**
-	 * Get multiple random elements from the given enum, excluding any elements that exclude includes
-	 *
-	 * @param enm     The Enum
-	 * @param exclude Any elements from this array will never be selected
-	 * @param amount  How many elements to get. Will be shortened if not enough exist
-	 * @param <T>     The type of Enum
-	 * @return An array containg the given amount (can be less if not enough exist) ofGlobal randomly picked elements from the enum
-	 */
-	@SafeVarargs
-	public static <T extends Enum<T>> Collection<T> getRandom(Class<? extends T> enm, int amount, T... exclude) {
-		Set<T> list = new HashSet<>();
-		int i = 0;
-		while (list.size() > amount) {
-			if (i > enm.getEnumConstants().length) {
-				break;
-			}
-			list.add(getRandom(enm, exclude));
-			i++;
-		}
-		return list;
-	}
+    /**
+     * Get multiple random elements from the given enum, excluding any elements that exclude includes
+     *
+     * @param enm     The Enum
+     * @param exclude Any elements from this array will never be selected
+     * @param amount  How many elements to get. Will be shortened if not enough exist
+     * @param <T>     The type of Enum
+     * @return An array containing the given amount (may be less if not enough exist) of randomly picked elements from the enum
+     */
+    @SafeVarargs
+    public static <T extends Enum<T>> Collection<T> getRandom(Class<? extends T> enm, int amount, T... exclude) {
+        Set<T> list = new HashSet<>();
+        int i = 0;
+        T[] enumConstants = enm.getEnumConstants();
+        if (enumConstants.length < amount) {
+            amount = enumConstants.length;
+        }
+        while (list.size() < amount)
+            for (int j = 0; j < amount; j++) {
+                list.add(getRandom(enm, exclude));
+            }
+        return list;
+    }
 
-	/**
-	 * Get all random elements, etc, but add them all together in a StringBuilder and convert them to a String
-	 * Literally only used for random Chat Colors
-	 *
-	 * @param amount  The amount of random elements to generate
-	 * @param enm     The enum
-	 * @param exclude Any elements from this array will never be selected
-	 * @param <T>     The type of Enum
-	 * @return A String contain all of the random elements appended to each other
-	 */
-	@SafeVarargs
-	public static <T extends Enum<T>> String getRandomFormatted(Class<? extends T> enm, int amount, T... exclude) {
-		Set<T> list = new HashSet<>();
-		int i = 0;
-		while (list.size() < amount) {
-			if (i > enm.getEnumConstants().length) {
-				break;
-			}
-			list.add(getRandom(enm, exclude));
-			i++;
-		}
-		StringBuilder builder = new StringBuilder();
-		for (T t : list) {
-			builder.append(t);
-		}
-		return builder.toString();
-	}
+    /**
+     * Get all random elements, etc, but add them all together in a StringBuilder and convert them to a String
+     * Literally only used for random Chat Colors
+     *
+     * @param amount  The amount of random elements to generate
+     * @param enm     The enum
+     * @param exclude Any elements from this array will never be selected
+     * @param <T>     The type of Enum
+     * @return A String contain all of the random elements appended to each other
+     */
+    @SafeVarargs
+    public static <T extends Enum<T>> String getRandomFormatted(Class<? extends T> enm, int amount, T... exclude) {
+        Set<T> list = new HashSet<>();
+        int i = 0;
+        while (list.size() < amount) {
+            if (i > enm.getEnumConstants().length) {
+                break;
+            }
+            list.add(getRandom(enm, exclude));
+            i++;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (T t : list) {
+            builder.append(t);
+        }
+        return builder.toString();
+    }
+
+
+    public static String getFriendlyName(Enum e) {
+        return StringUtils.capitalize(e.name().toLowerCase().replace("_", " "));
+    }
 }

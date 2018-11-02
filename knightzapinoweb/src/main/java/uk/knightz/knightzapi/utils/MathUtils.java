@@ -38,7 +38,7 @@ public final class MathUtils {
      * @param d The double to truncate
      * @return The truncated double
      */
-    public static double truncuateDouble(double d) {
+    public static double truncateDouble(double d) {
         return Math.floor(d * 100) / 100;
     }
 

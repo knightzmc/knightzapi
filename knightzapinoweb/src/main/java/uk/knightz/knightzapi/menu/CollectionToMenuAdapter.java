@@ -1,5 +1,6 @@
 package uk.knightz.knightzapi.menu;
 
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang.StringUtils;
@@ -11,12 +12,10 @@ import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.utils.MathUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -70,25 +69,17 @@ public class CollectionToMenuAdapter {
         }
         Set<Method> getters = Reflection.getGetters(o.getClass());
         getters.removeIf(g -> options.methodsToIgnore.contains(g.getName()));
-        Set<Object> returns = getters.stream().map(m -> {
-            try {
-                return m.invoke(o);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).collect(Collectors.toSet());
-
+        Map<String, Object> returns = Reflection.getAllNamesAndValuesOfObject(o, options);
 
         //Create new ItemStack builder
         ItemBuilder i;
-        if (options.hasManualItemStackFunction()) i = new ItemBuilder(options.manualItemStackFunction.apply(o));
-
-        else {
+        if (options.hasManualItemStackFunction()) {
+            i = new ItemBuilder(options.manualItemStackFunction.apply(o));
+        } else {
             i = new ItemBuilder();
-            val materialStream = returns.stream().filter(o1 -> attemptConvert(o1) != null);
+            Stream<Map.Entry<String, Object>> materialStream = returns.entrySet().stream().filter(o1 -> attemptConvert(o1.getValue()) != null);
             if (materialStream.count() > 0) {
-                materialStream.forEach(m -> i.setType((Material) m));
+                materialStream.forEach(m -> i.setType((Material) m.getValue()));
             } else {
                 i.setType(Material.STONE);
             }
@@ -113,15 +104,16 @@ public class CollectionToMenuAdapter {
         List<String> lore = new ArrayList<>();
         for (Method m : getters) {
             Object value = m.invoke(o);
-            String parse = options.parse
-                    (value.getClass(), value);
-            if (parse != null)
-                value = parse;
-            String loreData = "&a" +
-                    StringUtils.capitalize(m.getName().replace("get", "")) +
-                    "&6: &7" +
-                    value;
-            lore.add(loreData);
+            if (value != null) {
+                String parse = options.parse(value.getClass(), value);
+                if (parse != null)
+                    value = parse;
+                String loreData = "&a" +
+                        StringUtils.capitalize(m.getName().replace("get", ""))
+                        + "&6: &7"
+                        + value;
+                lore.add(loreData);
+            }
         }
         i.setLore(lore);
 
@@ -138,14 +130,20 @@ public class CollectionToMenuAdapter {
         return null;
     }
 
-    private static class Reflection {
+    public static class Reflection {
 
+        public static final Class[] simpleTypes = {
+                Double.class, Float.class, Long.class, Integer.class, Short.class, Character.class, Byte.class, Boolean.class, Enum.class, String.class
+        };
         private static final Map<Class, Set<Method>> cache = new WeakHashMap<>();
-
 
         public static Set<Method> getGetters(Class<?> clazz) {
             if (cache.containsKey(clazz)) {
                 return cache.get(clazz);
+            }
+            //Class classes cause StackOverFlow errors
+            if (clazz.equals(Class.class)) {
+                return Collections.emptySet();
             }
             Set<Method> methods = new HashSet<>(Arrays.asList(clazz.getMethods()));
             methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
@@ -153,14 +151,57 @@ public class CollectionToMenuAdapter {
             methods.removeIf(m -> m.getName().equals("getClass"));
             methods.removeIf(m -> m.getReturnType().equals(void.class));
             methods.removeIf(m -> !Modifier.isPublic(m.getModifiers()));
+            methods.removeIf(m -> m.getParameters().length >= 1);
             cache.put(clazz, methods);
             return methods;
+        }
+
+        public static boolean isSimpleType(Class clazz) {
+            if (clazz.isEnum()) return true;
+            for (Class simple : simpleTypes) {
+                if (simple == clazz || clazz.isAssignableFrom(simple)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static boolean isSimpleType(Object o) {
+            if (o == null)
+                return false;
+            return isSimpleType(o.getClass());
+        }
+
+        /**
+         * Invoke all getters of an Object and put them into a Map with the getter's friendly
+         * name as the key, and the returned value as the value
+         * <p>
+         * No caching is used as some getters may not always return the same value.
+         *
+         * @param o The Object
+         * @return The map
+         */
+        @SneakyThrows
+        public static Map<String, Object> getAllNamesAndValuesOfObject(Object o, Option options) {
+            Map<String, Object> ourMap = new HashMap<>();
+            Set<Method> getters = getGetters(o.getClass());
+            for (Method g : getters) {
+                if (!options.methodsToIgnore.contains(g)) {
+                    Object invoke = g.invoke(o);
+                    ourMap.put(StringUtils.capitalize(g.getName().replace("get", "")), invoke);
+//                    if (!isSimpleType(invoke)) {
+//                        ourMap.putAll(getAllNamesAndValuesOfObject(invoke, options));
+//                    }
+                }
+            }
+            return ourMap;
         }
     }
 
 
     public static class Option<T> {
 
+        public static final Option EMPTY = new Option(new ArrayList<>(), new HashMap<>(), null, null);
         public List<String> methodsToIgnore;
         private Map<Class, Function<Object, String>> manualObjectParsers;
         private Function<T, ItemStack> manualItemStackFunction;
@@ -213,6 +254,7 @@ public class CollectionToMenuAdapter {
         }
 
         public static class OptionBuilder<T> {
+            @NonNull
             private List<String> methodsToIgnore = new ArrayList<>();
             private Function<T, ItemStack> manualItemStackFunction;
             private Function<T, String> manualNameFunction;

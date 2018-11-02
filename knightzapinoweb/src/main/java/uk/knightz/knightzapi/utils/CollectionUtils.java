@@ -30,7 +30,9 @@ import java.util.function.Predicate;
 
 /**
  * A utility class for handling Collection objects
+ * @deprecated Stream API has all of these functions
  */
+@Deprecated
 public class CollectionUtils {
 
 	/**

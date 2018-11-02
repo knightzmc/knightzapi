@@ -169,6 +169,7 @@ public class MiscUtils {
     /**
      * Generate an ItemStack of a given Player's skull
      * The skull will match the cache of the Player's skin, and will have their username as its item name
+     *
      * @param p The Player whose skull will be generated
      * @return An ItemStack of the Player's skull
      */
@@ -180,6 +181,7 @@ public class MiscUtils {
         item.setItemMeta(meta);
         return item;
     }
+
 
 
     public enum ArmorID {
