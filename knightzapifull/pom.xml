@@ -34,12 +34,6 @@
 
     <artifactId>knightzapifull
     </artifactId>
-    <!--<repositories>-->
-    <!--<repository>-->
-    <!--<id>knightz-central</id>-->
-    <!--<url>http://repo.knightz.uk:8081/repository/maven-releases/</url>-->
-    <!--</repository>-->
-    <!--</repositories>-->
     <build>
         <finalName>knightzapifull</finalName>
         <plugins>
