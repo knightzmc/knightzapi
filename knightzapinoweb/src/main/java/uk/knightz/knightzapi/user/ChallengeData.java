@@ -55,4 +55,22 @@ public class ChallengeData {
         challengesInProgress.add(c);
         c.getObjectives().forEach(o -> objectiveProgress.put(o, 0));
     }
+
+    public boolean hasTakenOrCompleted(Challenge c) {
+        return challengesInProgress.contains(c) || completedChallenges.contains(c);
+    }
+
+    public boolean hasCompleted(Challenge c) {
+        return completedChallenges.contains(c);
+    }
+
+    public boolean hasCompleted(ChallengeObjective co) {
+        return completedObjectives.contains(co);
+    }
+
+    public void complete(Challenge c) {
+        completedChallenges.add(c);
+        challengesInProgress.remove(c);
+        c.getObjectives().forEach(objectiveProgress::remove);
+    }
 }

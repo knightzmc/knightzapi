@@ -30,42 +30,42 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import uk.knightz.knightzapi.KnightzAPI;
-import uk.knightz.knightzapi.utils.Listeners;
 
 /**
  * An event called when a player moves, but only if they have moved to a different block from their previous one.
  */
 public class PlayerBlockMoveEvent extends PlayerMoveEvent {
-	/**
-	 * Create a new PlayerBlockMoveEvent.
-	 * @param player The player who moved
-	 * @param from Their original Location
-	 * @param to Their current Location
-	 */
-	private PlayerBlockMoveEvent(Player player, Location from, Location to) {
-		super(player, from, to);
-	}
+    /**
+     * Create a new PlayerBlockMoveEvent.
+     *
+     * @param player The player who moved
+     * @param from   Their original Location
+     * @param to     Their current Location
+     */
+    private PlayerBlockMoveEvent(Player player, Location from, Location to) {
+        super(player, from, to);
+    }
 
-	/**
-	 * Register the PlayerMoveEvent Listener that checks when a block was moved.
-	 * Will not register more than once
-	 */
-	public static void init() {
-		Listeners.registerOnce(new MoveListener(), KnightzAPI.getP());
-	}
+    /**
+     * Register the PlayerMoveEvent Listener that checks when a block was moved.
+     * Will not register more than once
+     */
+    public static void init() {
+        //TODO Disabled as interferes with JRebel, should be enabled in production
+//        Listeners.registerOnce(new MoveListener(), KnightzAPI.getP());
+    }
 
-	private static class MoveListener implements Listener {
-		@EventHandler (priority = EventPriority.MONITOR)
-		public void onMove(PlayerMoveEvent ex) {
-			if (ex instanceof PlayerBlockMoveEvent) {
-				return;
-			}
-			Location f = ex.getFrom();
-			Location t = ex.getTo();
-			if (!f.getBlock().getLocation().equals(t.getBlock().getLocation())) {
-				Bukkit.getPluginManager().callEvent(new PlayerBlockMoveEvent(ex.getPlayer(), ex.getFrom(), ex.getTo()));
-			}
-		}
-	}
+    private static class MoveListener implements Listener {
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onMove(PlayerMoveEvent ex) {
+            if (ex instanceof PlayerBlockMoveEvent) {
+                return;
+            }
+            Location f = ex.getFrom();
+            Location t = ex.getTo();
+            if (!f.getBlock().getLocation().equals(t.getBlock().getLocation())) {
+                Bukkit.getPluginManager().callEvent(new PlayerBlockMoveEvent(ex.getPlayer(), ex.getFrom(), ex.getTo()));
+            }
+        }
+    }
 }

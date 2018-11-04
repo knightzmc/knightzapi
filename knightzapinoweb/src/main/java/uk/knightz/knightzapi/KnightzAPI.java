@@ -36,6 +36,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -66,6 +67,7 @@ import uk.knightz.knightzapi.utils.VersionUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -75,8 +77,8 @@ import static uk.knightz.knightzapi.challenge.ObjectiveType.BREAK_BLOCK;
 import static uk.knightz.knightzapi.challenge.ObjectiveType.CREATURE_KILL;
 
 public class KnightzAPI extends JavaPlugin implements Listener {
-    public static final Gson gson = new GsonBuilder().disableHtmlEscaping()
-            .setPrettyPrinting().registerTypeAdapter(ItemStack.class, new ItemStackJsonSerializer())
+    public static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
+            .registerTypeAdapter(ItemStack.class, new ItemStackJsonSerializer())
             .registerTypeAdapter(Inventory.class, new InventorySerializer())
             .registerTypeAdapter(Menu.class, new MenuSerializer()).create();
     /**
@@ -96,6 +98,7 @@ public class KnightzAPI extends JavaPlugin implements Listener {
     }
 
     public static KnightzAPI getP() {
+        if (plugin == null) throw new NullPointerException("KnightzAPI instance is null!");
         return plugin;
     }
 
@@ -104,14 +107,14 @@ public class KnightzAPI extends JavaPlugin implements Listener {
     public void onEnable() {
         VersionUtil.checkVersion();
         plugin = this;
+
         UserEventBlocker userEventBlocker = new UserEventBlocker();
         EventExecutor ev = (listener, event) -> userEventBlocker.event(event);
         for (Class<? extends PlayerEvent> e : new Reflections("org.bukkit.event").getSubTypesOf(PlayerEvent.class)) {
-            if (!e.getName().equals(PlayerEvent.class.getName())) {
+            if (Modifier.isAbstract(e.getModifiers())) continue;
+            if (e != PlayerEvent.class) {
                 try {
-                    Bukkit.getPluginManager().registerEvent(e, userEventBlocker, EventPriority.NORMAL,
-                            ev,
-                            this, true);
+                    Bukkit.getPluginManager().registerEvent(e, userEventBlocker, EventPriority.NORMAL, ev, this, true);
                 } catch (Exception ex) {
                     System.out.println(e.getName());
                 }
@@ -124,12 +127,13 @@ public class KnightzAPI extends JavaPlugin implements Listener {
         Listeners.registerOnce(new ObjectiveListener(), this);
         ConfigurationSerialization.registerClass(HelpBuilder.class);
         ConfigurationSerialization.registerClass(HelpBuilder.getHelpMessageClass());
-        webAPIEnabled = config.getBoolean("communication");
+
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             if (plugin.getDescription().getDepend().contains("KnightzAPI") || plugin.getDescription().getSoftDepend().contains("KnightzAPI")) {
                 dependent.add(JavaPlugin.getProvidingPlugin(plugin.getClass()));
             }
         }
+        webAPIEnabled = config.getBoolean("communication");
         if (webAPIEnabled)
             try {
                 Class webAPI = Class.forName("uk.knightz.knightzapi.KnightzWebAPI");
@@ -187,11 +191,7 @@ public class KnightzAPI extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        try {
-            User.saveData();
-        } catch (NoClassDefFoundError e) {
-            //TODO FIX
-        }
+        User.saveData();
         if (webAPIEnabled) try {
             Class webAPI = Class.forName("uk.knightz.knightzapi.KnightzWebAPI");
             Method init = webAPI.getDeclaredMethod("onDisable");
@@ -214,7 +214,7 @@ public class KnightzAPI extends JavaPlugin implements Listener {
         if (e.isSneaking()) {
             User u = User.valueOf(e.getPlayer());
             if (u.getChallengeData().getChallengesInProgress().isEmpty()) {
-                Challenge challenge = Challenge.newChallenge(ex -> System.out.println("complete"),
+                Challenge challenge = Challenge.newChallenge("Test", ex -> System.out.println("complete"),
                         new SimpleObjective(CREATURE_KILL, 2,
                                 new HashMap<String, Object>() {{
                                     put(CREATURE_KILL.getDataKey(), CHICKEN);
@@ -228,6 +228,13 @@ public class KnightzAPI extends JavaPlugin implements Listener {
             } else {
                 u.getChallengeData().clear();
             }
+        }
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        if (e.getMessage().equals("menu")) {
+            User.valueOf(e.getPlayer()).getChallengeMenu().open(e.getPlayer());
         }
     }
 

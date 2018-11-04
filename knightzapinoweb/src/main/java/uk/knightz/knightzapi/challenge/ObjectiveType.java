@@ -50,6 +50,14 @@ public class ObjectiveType<T> {
         this.dataKey = dataKey;
     }
 
+
+    public String toFriendlyString() {
+        if (this == CREATURE_KILL) {
+            return "Kill Creature";
+        } else if (this == BREAK_BLOCK) return "Break Block";
+        return "";
+    }
+
     public String getDataKey() {
         return dataKey;
     }

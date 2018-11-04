@@ -50,8 +50,7 @@ public class CollectionToMenuAdapter {
             options = new Option<>(null, null, null, null);
         }
 
-        Menu menu = new Menu(objects.iterator().next().getClass().getSimpleName() + "s",
-                MathUtils.roundUp(objects.size()) / 9);
+        Menu menu = new Menu(objects.iterator().next().getClass().getSimpleName() + "s", MathUtils.roundUp(objects.size()) / 9);
         for (T t : objects) {
             if (t != null)
                 menu.addButton(convert(t, options));
@@ -227,8 +226,7 @@ public class CollectionToMenuAdapter {
         public String parse(Class clazz, Object type) {
             Class castedClass = objectParsersContainsClass(clazz);
             boolean parserExists = castedClass != null;
-            if (parserExists) return manualObjectParsers.get(castedClass)
-                    .apply(type);
+            if (parserExists) return manualObjectParsers.get(castedClass).apply(type);
             return type.toString();
         }
 

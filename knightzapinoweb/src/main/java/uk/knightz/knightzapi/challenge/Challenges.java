@@ -24,32 +24,26 @@
 
 package uk.knightz.knightzapi.challenge;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
+import java.util.HashSet;
+import java.util.Set;
 
-@Getter
-public class ChallengeCompleteEvent extends PlayerEvent implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public class Challenges {
 
-    private final Challenge completed;
-    @Setter
-    private boolean cancelled;
+    private static final Set<Challenge> allChallenges = new HashSet<>();
 
-    public ChallengeCompleteEvent(Player who, Challenge completed) {
-        super(who);
-        this.completed = completed;
+
+    private Challenges() {
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
+    public static void addChallenge(Challenge c) {
+        allChallenges.add(c);
     }
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
+    public static Set<Challenge> getAllChallenges() {
+        return new HashSet<>(allChallenges);
+    }
+
+    public static void removeChallenge(Challenge c) {
+        allChallenges.remove(c);
     }
 }

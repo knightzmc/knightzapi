@@ -45,8 +45,8 @@ public interface ChallengeObjective {
     Map<String, Object> getObjectiveData();
 
     default void complete(Player p) {
+        p.sendMessage(String.format("%sChallenge Objective Complete: %s\"%s\"%s!", ChatColor.GREEN, ChatColor.DARK_GREEN, toNaturalString(), ChatColor.GREEN));
         User.valueOf(p).completeChallengeObjective(this);
-        p.sendMessage(String.format("%sChallenge Complete: %s\"%s\"%s!", ChatColor.GREEN, ChatColor.DARK_GREEN, toNaturalString(), ChatColor.GREEN));
     }
 
 
@@ -69,4 +69,5 @@ public interface ChallengeObjective {
         }
         return builder.toString();
     }
+
 }

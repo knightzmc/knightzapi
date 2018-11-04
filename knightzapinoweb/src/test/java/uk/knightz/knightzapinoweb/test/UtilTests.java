@@ -63,7 +63,6 @@ public class UtilTests {
         assertEquals("2", MapUtils.firstKeyOf(map, Tests.TEST_ENUM_2));
     }
 
-
     private void testJsonUtils() {
         String json = new Gson().toJson(new Struct<>(Tests.TEST_ENUM_1, "lol"));
         assertEquals("{\n" +
@@ -96,4 +95,5 @@ public class UtilTests {
         TEST_ENUM_2,
         TEST_ENUM_3,
     }
+
 }

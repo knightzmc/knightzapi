@@ -26,6 +26,7 @@ package uk.knightz.knightzapi.user;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -35,17 +36,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.challenge.Challenge;
 import uk.knightz.knightzapi.challenge.ChallengeCompleteEvent;
 import uk.knightz.knightzapi.challenge.ChallengeObjective;
+import uk.knightz.knightzapi.challenge.Challenges;
 import uk.knightz.knightzapi.files.JsonFile;
+import uk.knightz.knightzapi.menu.CollectionToMenuAdapter;
+import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.utils.Listeners;
 
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
+
+import static org.bukkit.Material.EMERALD_BLOCK;
+import static org.bukkit.Material.REDSTONE_BLOCK;
 
 /**
  * A Player Wrapper class that stores various pieces of data
@@ -70,19 +78,21 @@ public class User implements Listener {
      */
     private User(OfflinePlayer root) {
         this.root = root;
-        users.put(root, this);
-
 
         JsonFile file = new JsonFile(KnightzAPI.getP(), root.getUniqueId());
         userFiles.put(this, file);
-        if (file.isEmpty()) userData = new UserData();
-        else userData = KnightzAPI.gson.fromJson(file.getParsed(), UserData.class);
-        userData.addTemporaryData("falldamage", true);
+        UserData tempData = KnightzAPI.gson.fromJson(file.getParsed(), UserData.class);
+        if (tempData == null) tempData = new UserData();
+        userData = tempData;
+
+        userData.addPersistentData("falldamage", true);
         userData.addTemporaryData("scoreboard", true);
+
         if (file.isEmpty()) {
             save(file);
             file.reload();
         }
+        users.put(root, this);
         Listeners.registerOnce(this, KnightzAPI.getP());
     }
 
@@ -93,13 +103,11 @@ public class User implements Listener {
      * @return the corresponding User for the given OfflinePlayer, if none is currently loaded, a new one is loaded
      */
     public static User valueOf(@NotNull OfflinePlayer root) {
-        for (Map.Entry<OfflinePlayer, User> entry : users.entrySet()) {
-            if (entry == null) continue;
-            if (entry.getKey().equals(root)) {
-                return entry.getValue();
-            }
+        User u = users.get(root);
+        if (u == null) {
+            u = new User(root);
         }
-        return new User(root);
+        return u;
     }
 
     /**
@@ -134,7 +142,7 @@ public class User implements Listener {
     }
 
     private void save(JsonFile f) {
-        f.setParsed(KnightzAPI.gson.toJsonTree(userData));
+        f.setParsed(KnightzAPI.gson.toJsonTree(userData, UserData.class));
         f.save();
     }
 
@@ -208,7 +216,30 @@ public class User implements Listener {
         if (root.isOnline()) {
             ChallengeCompleteEvent event = new ChallengeCompleteEvent(getRoot().getPlayer(), c);
             Bukkit.getPluginManager().callEvent(event);
-            c.getOnComplete().accept(event);
+            if (!event.isCancelled()) {
+                c.getOnComplete().accept(event);
+                challengeData.complete(c);
+                root.getPlayer().sendMessage(ChatColor.GREEN + "Challenge " + c.getName() + " Complete!\n" + c.toFriendlyString(this));
+            }
         }
+    }
+
+    public Menu getChallengeMenu() {
+        Set<Challenge> allTaken = Challenges.getAllChallenges();
+        allTaken.removeIf(c -> !getChallengeData().hasTakenOrCompleted(c));
+        return CollectionToMenuAdapter.generateMenu(allTaken, CollectionToMenuAdapter.Option.<Challenge>builder()
+                .manualItemStackFunction(c -> {
+                    if (challengeData.hasCompleted(c)) return new ItemStack(EMERALD_BLOCK);
+                    else return new ItemStack(REDSTONE_BLOCK);
+                })
+                .addManualObjectParser(ChallengeObjective.class, co -> {
+                    return co.toNaturalString();
+//                    ItemBuilder builder = new ItemBuilder();
+//                    builder.setType(challengeData.hasCompleted(co) ? EMERALD : REDSTONE);
+//                    builder.setName(co.getType().toFriendlyString());
+//                    builder.setLore(Collections.singletonList(co.toNaturalString()));
+//                    return builder.build();
+                })
+                .build());
     }
 }

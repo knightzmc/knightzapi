@@ -25,12 +25,12 @@
 package uk.knightz.knightzapi.files;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.internal.Streams;
-import com.google.gson.stream.JsonWriter;
+import com.google.gson.stream.JsonReader;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
+import uk.knightz.knightzapi.KnightzAPI;
 
 import java.io.*;
 import java.util.UUID;
@@ -95,7 +95,7 @@ public class JsonFile {
      */
     public JsonFile(JavaPlugin plugin, UUID playerUUID) {
         this.plugin = plugin;
-        this.file = new File(plugin.getDataFolder().getParent() + File.separator + "KnightzAPI" + File.separator + "userdata" + File.separator + playerUUID + ".yml");
+        this.file = new File(plugin.getDataFolder().getParent() + File.separator + "KnightzAPI" + File.separator + "userdata" + File.separator + playerUUID + ".json");
         reload();
     }
 
@@ -108,7 +108,6 @@ public class JsonFile {
      */
     public void reload() {
         load();
-
     }
 
     private void load() {
@@ -130,8 +129,7 @@ public class JsonFile {
                 file.createNewFile();
             }
             FileReader reader = new FileReader(file);
-            JsonParser parser = new JsonParser();
-            parsed = parser.parse(reader);
+            parsed = Streams.parse(new JsonReader(reader));
         } catch (IOException e) {
             e.printStackTrace();
             plugin.getLogger().severe("Error while loading file " + file.getName());
@@ -143,12 +141,13 @@ public class JsonFile {
      */
     public void save() {
         try {
-            if (!file.exists())
+            if (!file.exists()) {
                 file.createNewFile();
+            }
             FileWriter writer = new FileWriter(file);
-            JsonWriter jw = new JsonWriter(writer);
-            jw.setLenient(true);
-            Streams.write(parsed, jw);
+            writer.write(KnightzAPI.gson.toJson(parsed));
+            writer.flush();
+            writer.close();
         } catch (IOException exception) {
             exception.printStackTrace();
             plugin.getLogger().severe("Error while saving file " + file.getName());

@@ -24,6 +24,8 @@
 
 package uk.knightz.knightzapi.challenge;
 
+import uk.knightz.knightzapi.user.User;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -31,11 +33,17 @@ import java.util.function.Consumer;
 public interface Challenge {
 
 
-    static Challenge newChallenge(Consumer<ChallengeCompleteEvent> onComplete, ChallengeObjective... objectives) {
-        return new SimpleChallenge(Arrays.asList(objectives), onComplete);
+    static Challenge newChallenge(String name, Consumer<ChallengeCompleteEvent> onComplete, ChallengeObjective... objectives) {
+        return new SimpleChallenge(name, Arrays.asList(objectives), onComplete);
     }
+
+    String getName();
 
     List<ChallengeObjective> getObjectives();
 
     Consumer<ChallengeCompleteEvent> getOnComplete();
+
+    String toFriendlyString();
+
+    String toFriendlyString(User u);
 }

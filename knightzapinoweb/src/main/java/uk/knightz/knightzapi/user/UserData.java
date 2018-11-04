@@ -37,7 +37,7 @@ public class UserData {
     /**
      * Non-Persistent data that will be erased after a reload. Good for temporary data.
      */
-    private final Map<String, Object> temporaryData = new HashMap<>();
+    private transient final Map<String, Object> temporaryData = new HashMap<>();
     /**
      * Persistent data that won't be erased after a reload and is stored to the User's data file.
      */
@@ -50,9 +50,11 @@ public class UserData {
     public Object getTemporaryData(String s) {
         return temporaryData.get(s);
     }
-    public void addTemporaryData(String s, Object o){
-        temporaryData.put(s,o);
+
+    public void addTemporaryData(String s, Object o) {
+        temporaryData.put(s, o);
     }
+
     public Object getPersistentData(String s) {
         return persistentData.get(s);
     }
