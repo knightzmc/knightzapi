@@ -51,7 +51,17 @@
                 <version>3.0.1</version>
                 <configuration>
                     <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
-                    <quiet>true</quiet>
+                    <!--<quiet>true</quiet>-->
+                    <tags>
+                        <tag>
+                            <name>apiNote</name>
+                            <placement>a</placement>
+                            <head>API Note:</head>
+                        </tag>
+                    </tags>
+                    <links>
+                        <link>https://hub.spigotmc.org/javadocs/spigot/</link>
+                    </links>
                 </configuration>
                 <executions>
                     <execution>
@@ -149,16 +159,16 @@
         <!--<scope>provided</scope>-->
         <!--</dependency>-->
         <dependency>
-        <groupId>org.spigotmc</groupId>
-        <artifactId>spigot-api</artifactId>
-        <version>1.12.2-R0.1-SNAPSHOT</version>
-        <scope>provided</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-            </exclusion>
-        </exclusions>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>org.spigotmc</groupId>-->
@@ -182,10 +192,10 @@
             <version>1.6</version>
             <scope>provided</scope>
             <exclusions>
-            <exclusion>
-                <groupId>org.bukkit</groupId>
-                <artifactId>bukkit</artifactId>
-            </exclusion>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

@@ -29,14 +29,17 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.EventExecutor;
@@ -44,7 +47,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
+import uk.knightz.knightzapi.challenge.Challenge;
 import uk.knightz.knightzapi.challenge.ObjectiveListener;
+import uk.knightz.knightzapi.challenge.SimpleObjective;
 import uk.knightz.knightzapi.event.Events;
 import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.HelpBuilder;
@@ -63,8 +68,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.bukkit.entity.EntityType.CHICKEN;
+import static uk.knightz.knightzapi.challenge.ObjectiveType.BREAK_BLOCK;
+import static uk.knightz.knightzapi.challenge.ObjectiveType.CREATURE_KILL;
 
 public class KnightzAPI extends JavaPlugin implements Listener {
     public static final Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
@@ -198,35 +208,37 @@ public class KnightzAPI extends JavaPlugin implements Listener {
         User.saveData();
     }
 
-//
-//    @EventHandler
-//    public void onShift(PlayerToggleSneakEvent e) {
-//        if (e.isSneaking()) {
-//            User u = User.valueOf(e.getPlayer());
-//            if (u.getChallengeData().getChallengesInProgress().isEmpty()) {
-//                Challenge challenge = Challenge.newChallenge("Test", ex -> System.out.println("complete"),
-//                        new SimpleObjective(CREATURE_KILL, 2,
-//                                new HashMap<String, Object>() {{
-//                                    put(CREATURE_KILL.getDataKey(), CHICKEN);
-//                                }}),
-//                        new SimpleObjective(BREAK_BLOCK, 5,
-//                                new HashMap<String, Object>() {{
-//                                    put(BREAK_BLOCK.getDataKey(), Material.STONE);
-//                                }}));
-//                u.getChallengeData().startChallenge(challenge);
-//
-//            } else {
-//                u.getChallengeData().clear();
-//            }
-//        }
-//    }
-//
-//    @EventHandler
-//    public void onChat(AsyncPlayerChatEvent e) {
-//        if (e.getMessage().equals("menu")) {
-//            User.valueOf(e.getPlayer()).getChallengeMenu().open(e.getPlayer());
-//        }
-//    }
+
+    @EventHandler
+    public void onShift(PlayerToggleSneakEvent e) {
+        if (e.isSneaking()) {
+            User u = User.valueOf(e.getPlayer());
+            if (u.getChallengeData().getChallengesInProgress().isEmpty()) {
+                Challenge challenge = Challenge.newChallenge("Test", ex -> System.out.println("complete"),
+                        new SimpleObjective(CREATURE_KILL, 2,
+                                new HashMap<String, Object>() {{
+                                    put(CREATURE_KILL.getDataKey(), CHICKEN);
+                                }}),
+                        new SimpleObjective(BREAK_BLOCK, 5,
+                                new HashMap<String, Object>() {{
+                                    put(BREAK_BLOCK.getDataKey(), Material.STONE);
+                                }}));
+                u.getChallengeData().startChallenge(challenge);
+                e.getPlayer().sendMessage("on");
+
+            } else {
+                u.getChallengeData().clear();
+                e.getPlayer().sendMessage("off");
+            }
+        }
+    }
+
+    @EventHandler
+    public void onChat(AsyncPlayerChatEvent e) {
+        if (e.getMessage().equals("menu")) {
+            User.valueOf(e.getPlayer()).getChallengeMenu().open(e.getPlayer());
+        }
+    }
 
     public Economy getEconomy() {
         return economy;

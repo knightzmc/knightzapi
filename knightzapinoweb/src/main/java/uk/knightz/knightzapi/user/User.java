@@ -46,6 +46,7 @@ import uk.knightz.knightzapi.challenge.Challenges;
 import uk.knightz.knightzapi.files.JsonFile;
 import uk.knightz.knightzapi.menu.CollectionToMenuAdapter;
 import uk.knightz.knightzapi.menu.Menu;
+import uk.knightz.knightzapi.reflect.ReflectionOptions;
 import uk.knightz.knightzapi.utils.Listeners;
 
 import java.io.File;
@@ -227,11 +228,12 @@ public class User implements Listener {
     public Menu getChallengeMenu() {
         Set<Challenge> allTaken = Challenges.getAllChallenges();
         allTaken.removeIf(c -> !getChallengeData().hasTakenOrCompleted(c));
-        return CollectionToMenuAdapter.generateMenu(allTaken, CollectionToMenuAdapter.Option.<Challenge>builder()
+        return CollectionToMenuAdapter.generateMenu(allTaken, ReflectionOptions.<Challenge>builder()
                 .manualItemStackFunction(c -> {
                     if (challengeData.hasCompleted(c)) return new ItemStack(EMERALD_BLOCK);
                     else return new ItemStack(REDSTONE_BLOCK);
                 })
+                .addMethodToIgnore("getOnComplete")
                 .addManualObjectParser(ChallengeObjective.class, co -> {
                     return co.toNaturalString();
 //                    ItemBuilder builder = new ItemBuilder();

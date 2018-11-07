@@ -24,16 +24,14 @@
 
 package uk.knightz.knightzapi.lang.fancy;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -42,6 +40,8 @@ import java.util.*;
 @Data
 public class SuperFancyMessage {
 
+    @NonNull
+    @NotNull
     private final UUID uuid;
     @Getter
     private final LinkedList<MessagePart> parts = new LinkedList<>();
@@ -85,8 +85,12 @@ public class SuperFancyMessage {
             builder.append(part.getId()).append("{\"").append(part.getText());
             for (LinkMessage link : part.getLinks()) {
                 builder.append("[").append("\"").append(link.getText()).append("\", ");
-                if (link.getLinksTo() != null) builder.append("U").append(link.getLinksTo().getUuid());
-                else builder.append(link.getSimpleLinksTo().getId());
+
+                if (link.getLinksTo() != null) {
+                    builder.append("U").append(link.getLinksTo().getUuid());
+                } else if (link.getSimpleLinksTo() != null) {
+                    builder.append(link.getSimpleLinksTo().getId());
+                } else throw new NullPointerException("LinkMessage does not have any links (both are null)");
                 builder.append("]");
             }
             builder.append("\"}");
@@ -141,11 +145,16 @@ public class SuperFancyMessage {
             cb.append(message.getText());
             StringBuilder commandBuilder = new StringBuilder();
             commandBuilder.append("/").append(FancyCommand.COMMAND).append(" ");
+
             if (message.getLinksTo() != null) {
                 commandBuilder.append(message.getLinksTo().getUuid()).append(" ").append(-1);
-            } else {
+            } else if (message.getSimpleLinksTo() != null) {
+                //noinspection ConstantConditions if the message part links to nothing a default NPE will be thrown
                 commandBuilder.append(message.getSimpleLinksTo().getId()).append(" ").append(SuperFancyMessages.getInstance().withMessagePart(message.getSimpleLinksTo()).getUuid());
+            } else {
+                throw new NullPointerException("LinkMessage does not have any links (both are null)");
             }
+
             cb.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandBuilder.toString()));
         }
         return cb.create();

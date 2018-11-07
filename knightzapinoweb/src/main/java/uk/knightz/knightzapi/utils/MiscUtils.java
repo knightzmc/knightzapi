@@ -43,7 +43,7 @@ public class MiscUtils {
     /**
      * List of Materials that have corresponding armors
      */
-    private static final Set<Material> ARMORTYPES = Collections.unmodifiableSet(EnumSet.of(
+    private static final Set<Material> ARMOR_TYPES = Collections.unmodifiableSet(EnumSet.of(
             LEATHER, IRON_INGOT, GOLD_INGOT, DIAMOND, FIREBALL));
     /**
      * List of all Armor materials
@@ -67,7 +67,7 @@ public class MiscUtils {
      * @return The corresponding Armor matching the Material type and Armor slot, or null if there is no match.
      */
     public static Material armorOfMaterial(Material type, ArmorID id) {
-        if (ARMORTYPES.contains(type)) {
+        if (ARMOR_TYPES.contains(type)) {
             String s = type.name();
             if (type == FIREBALL) {
                 s = "CHAINMAIL";
@@ -181,7 +181,6 @@ public class MiscUtils {
         item.setItemMeta(meta);
         return item;
     }
-
 
 
     public enum ArmorID {

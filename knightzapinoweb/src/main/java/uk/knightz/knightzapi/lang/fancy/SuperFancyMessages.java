@@ -29,6 +29,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
 import uk.knightz.knightzapi.utils.EnumUtils;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -37,22 +38,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SuperFancyMessages {
     @Getter
     private static final SuperFancyMessages instance = new SuperFancyMessages();
-    private static final Map<Class, ChatColor> colorsOfClasses = new ConcurrentHashMap<>();
     private final Set<SuperFancyMessage> allMessages = ConcurrentHashMap.newKeySet();
 
     private SuperFancyMessages() {
-    }
-
-    public static ChatColor colorOfClass(Class clazz) {
-        colorsOfClasses.putIfAbsent(clazz, EnumUtils.getRandom(ChatColor.class,
-                ChatColor.BOLD,
-                ChatColor.BLACK,
-                ChatColor.MAGIC,
-                ChatColor.ITALIC,
-                ChatColor.UNDERLINE,
-                ChatColor.STRIKETHROUGH
-        ));
-        return colorsOfClasses.get(clazz);
     }
 
     public void registerMessage(SuperFancyMessage f) {
@@ -70,15 +58,13 @@ public class SuperFancyMessages {
     }
 
     /**
-     * @param p
-     * @return
+     * Find the first SuperFancyMessage that has the given MessagePart
+     *
+     * @param p The MessagePart to search for
+     * @return The first SuperFancyMessage containing the given MessagePart
      */
+    @Nullable
     public SuperFancyMessage withMessagePart(SuperFancyMessage.MessagePart p) {
-        for (SuperFancyMessage allMessage : allMessages) {
-            if (allMessage.getParts().contains(p)) {
-                return allMessage;
-            }
-        }
-        return null;
+        return allMessages.stream().filter(allMessage -> allMessage.getParts().contains(p)).findFirst().orElse(null);
     }
 }

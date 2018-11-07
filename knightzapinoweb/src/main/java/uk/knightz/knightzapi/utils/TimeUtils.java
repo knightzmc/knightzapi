@@ -22,15 +22,7 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.utils;/*
- *
- * This file is generated under this project, "open-commons-core".
- *
- * Date  : 2018. 1. 9
- *
- * Author: Park_Jun_Hong_(fafanmama_at_naver_com)
- *
- */
+package uk.knightz.knightzapi.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,21 +101,6 @@ public class TimeUtils {
     private TimeUtils() {
     }
 
-    public static void main(String[] args) {
-
-        long[] times = new long[]{60, 3600, 24000};
-        for (long time : times) {
-            System.out.println(String.format("%20s %-2s -> %s", String.format("%,d", time), "ms", toFormattedString(time, TimeUnit.SECONDS)));
-        }
-
-        System.out.println("=================================");
-
-//        long time = 50428677591L;
-//        for (TimeUnitInfo tui : TIME_UNIT_INFO) {
-//            System.out.println(String.format("%20s %-2s -> %s", String.format("%,d", time), tui.unitStr, toFormattedString(time, tui.unit)));
-//        }
-    }
-
     private static long mod(long time, TimeUnit unit) {
         switch (unit) {
             case NANOSECONDS: // to nanosecond
@@ -143,22 +120,6 @@ public class TimeUtils {
         }
     }
 
-    /**
-     * <br>
-     *
-     * <pre>
-     * [ê°œì •ì�´ë ¥]
-     *      ë‚ ì§œ      | ìž‘ì„±ìž�   |   ë‚´ìš©
-     * ------------------------------------------
-     * 2018. 1. 9.      ë°•ì¤€í™�         ìµœì´ˆ ìž‘ì„±
-     * </pre>
-     *
-     * @param timeBuf
-     * @param time
-     * @param unit
-     * @author Park_Jun_Hong_(fafanmama_at_naver_com)
-     * @since 2018. 1. 9.
-     */
     private static void prependTimeAndUnit(StringBuffer timeBuf, long time, String unit) {
         if (time < 1) {
             return;
@@ -179,7 +140,7 @@ public class TimeUtils {
      *
      * @param time     time value.
      * @param timeUnit a unit of input time value.
-     * @return
+     * @return A formatted string of the time
      * @since 2018. 1. 9.
      */
     public static String toFormattedString(long time, TimeUnit timeUnit) {
@@ -191,7 +152,7 @@ public class TimeUtils {
 
         StringBuffer timeBuf = new StringBuffer();
 
-        long mod = 0L;
+        long mod;
         long up = time;
 
         for (TimeUnitInfo unit : FN_TIME_UNITS.apply(timeUnit)) {
@@ -213,7 +174,7 @@ public class TimeUtils {
     private static long up(long time, TimeUnit unit) {
         switch (unit) {
             case NANOSECONDS: // to microsecond & above
-            case MILLISECONDS: // to millsecond & above
+            case MILLISECONDS: // to millisecond & above
             case MICROSECONDS: // to second & above
                 return time / 1000;
             case SECONDS: // to minute & above

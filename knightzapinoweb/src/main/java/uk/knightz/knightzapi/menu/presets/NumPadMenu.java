@@ -15,6 +15,10 @@ import java.util.function.BiConsumer;
 public class NumPadMenu extends Menu {
     private final LinkedList<Integer> numberList = new LinkedList<>();
 
+    //FOR CACHING
+    private boolean listHasChanged = true;
+    private String fullNum;
+
     public NumPadMenu(String title, BiConsumer<Player, BigInteger> onSubmit) {
         super(title, 9);
         setBackgroundItem(new ItemBuilder().setType(Material.STAINED_GLASS_PANE).setData((short) 7).build());
@@ -31,6 +35,7 @@ public class NumPadMenu extends Menu {
                         .build()
                 , e -> {
             numberList.pollLast();
+            listHasChanged = true;
             updateInfo();
         }));
         updateInfo();
@@ -41,9 +46,12 @@ public class NumPadMenu extends Menu {
                         .build()
                 , e -> {
             String s = getFullNumber();
-            onSubmit.accept(e.getWhoClicked(), new BigInteger(s));
-            numberList.clear();
-            updateInfo();
+            if (!s.isEmpty()) {
+                onSubmit.accept(e.getWhoClicked(), new BigInteger(s));
+                numberList.clear();
+                listHasChanged = true;
+                updateInfo();
+            }
         }));
     }
 
@@ -60,15 +68,20 @@ public class NumPadMenu extends Menu {
 
 
     private String getFullNumber() {
-        StringBuilder builder = new StringBuilder();
-        for (Integer i : numberList) {
-            builder.append(i);
+        if (listHasChanged) {
+            StringBuilder builder = new StringBuilder();
+            for (Integer i : numberList) {
+                builder.append(i);
+            }
+            listHasChanged = false;
+            return fullNum = builder.toString();
         }
-        return builder.toString();
+        return fullNum;
     }
 
     private void appendNumber(int number) {
         numberList.add(number);
+        listHasChanged = true;
         updateInfo();
     }
 
@@ -81,13 +94,21 @@ public class NumPadMenu extends Menu {
         }
 
         public NumberButton(Material m, NumPadMenu menu, int number) {
-            super(new ItemBuilder().setType(m).setName(String.valueOf(number)).setAmount(number == 0 ? 1 : number).build(), e -> menu.appendNumber(number));
+            super(new ItemBuilder().setType(m).setName(String.valueOf(number)).setAmount(number == 0 ? 1 : number).build(), e -> {
+                String fullNumber = menu.getFullNumber();
+                if (fullNumber.isEmpty() || Integer.parseInt(fullNumber) < 1000000)
+                    menu.appendNumber(number);
+            });
             this.menu = menu;
             this.number = number;
         }
 
         public NumberButton(ItemStack itemStack, NumPadMenu menu, int number) {
-            super(new ItemBuilder(itemStack).setName(String.valueOf(number)).setAmount(number == 0 ? 1 : number).build(), e -> menu.appendNumber(number));
+            super(new ItemBuilder(itemStack).setName(String.valueOf(number)).setAmount(number == 0 ? 1 : number).build(), e -> {
+                String fullNumber = menu.getFullNumber();
+                if (fullNumber.isEmpty() || Integer.parseInt(fullNumber) < 1000000)
+                    menu.appendNumber(number);
+            });
             this.menu = menu;
             this.number = number;
         }

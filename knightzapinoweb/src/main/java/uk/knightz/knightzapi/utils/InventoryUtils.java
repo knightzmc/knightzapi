@@ -135,7 +135,7 @@ public class InventoryUtils {
 	 *
 	 * @param inv The Inventory to get the button from
 	 * @param it  The ItemStack to find
-	 * @return The first slot containing the given ItemStack, or -1 if it doesn't exist or an exception occurs in Reflection(unlikely)
+	 * @return The first slot containing the given ItemStack, or -1 if it doesn't exist or an exception occurs in BasecomponentReflection(unlikely)
 	 */
 	public static int firstIgnoreAmount(Inventory inv, ItemStack it) {
 		try {

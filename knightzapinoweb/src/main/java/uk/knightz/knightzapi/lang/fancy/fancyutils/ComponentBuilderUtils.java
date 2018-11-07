@@ -36,17 +36,17 @@ public class ComponentBuilderUtils {
     public static ComponentBuilder append(ComponentBuilder builder, BaseComponent[] components, ComponentBuilder.FormatRetention retention) {
         Preconditions.checkArgument(components.length != 0, "No components to append");
 
-        List<BaseComponent> parts = Reflection.partsOf(builder);
-        BaseComponent previous = Reflection.currentOf(builder);
+        List<BaseComponent> parts = BasecomponentReflection.partsOf(builder);
+        BaseComponent previous = BasecomponentReflection.currentOf(builder);
         BaseComponent current = previous.duplicate();
 
         for (BaseComponent component : components) {
             parts.add(component);
-            Reflection.setParts(builder, parts);
+            BasecomponentReflection.setParts(builder, parts);
 
-            Reflection.setCurrent(builder, component.duplicate());
+            BasecomponentReflection.setCurrent(builder, component.duplicate());
             if (VersionUtil.isNewerThan(VersionUtil.Version.v1_8)) {
-                Reflection.currentOf(builder).copyFormatting(previous, retention, false);
+                BasecomponentReflection.currentOf(builder).copyFormatting(previous, retention, false);
             }
         }
         return builder;

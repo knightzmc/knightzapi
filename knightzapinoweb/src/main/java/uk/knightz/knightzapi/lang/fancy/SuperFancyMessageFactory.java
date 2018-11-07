@@ -27,6 +27,8 @@ package uk.knightz.knightzapi.lang.fancy;
 import lombok.val;
 import net.md_5.bungee.api.ChatColor;
 import uk.knightz.knightzapi.lang.fancy.SuperFancyMessage.LinkMessage;
+import uk.knightz.knightzapi.reflect.Reflection;
+import uk.knightz.knightzapi.reflect.ReflectionOptions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,16 +37,14 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static uk.knightz.knightzapi.lang.fancy.SuperFancyMessage.MessagePart;
-import static uk.knightz.knightzapi.lang.fancy.SuperFancyMessages.colorOfClass;
-import static uk.knightz.knightzapi.menu.CollectionToMenuAdapter.Option;
-import static uk.knightz.knightzapi.menu.CollectionToMenuAdapter.Reflection;
+import static uk.knightz.knightzapi.reflect.Reflection.colorOfClass;
 
 /**
  * Couldn't really think of a more appropriate name - this class takes one or more Objects
- * and uses Reflection and Spigot's JSON Message API to convert the Object(s)'s data into
+ * and uses BasecomponentReflection and Spigot's JSON Message API to convert the Object(s)'s data into
  * a clickable chat menu which can be navigated by clicking on links
  * <p>
- * NOTE: This generates a secret randomly generated COMMAND which is the only way to have clickable navigation
+ * NOTE: This generates a secret randomly generated command which is the only way to have clickable navigation
  */
 public class SuperFancyMessageFactory {
     private static final String FORMAT = "%s - %s";
@@ -112,7 +112,7 @@ public class SuperFancyMessageFactory {
         }, Map.class),
         DATA_OBJECT(true, (s, o) -> {
             val mainMessage = new SuperFancyMessage();
-            Reflection.getAllNamesAndValuesOfObject(o, Option.EMPTY).forEach((s1, o1) -> {
+            Reflection.getAllNamesAndValuesOfObject(o, ReflectionOptions.EMPTY).forEach((s1, o1) -> {
                 MessagePart mainSimplePart = mainMessage.addSimplePart(String.format(FORMAT, colorOfClass(o1.getClass()) + s1, ""));
                 mainSimplePart.setColor(colorOfClass(o1.getClass()));
                 SuperFancyMessage linksTo = generate(o1);
@@ -132,10 +132,12 @@ public class SuperFancyMessageFactory {
         }
 
         public static SuperFancyMessage generate(Object o) {
-            val allNamesAndValues = Reflection.getAllNamesAndValuesOfObject(o, Option.EMPTY);
             SuperFancyMessage main = new SuperFancyMessage();
+
+            val allNamesAndValues = Reflection.getAllNamesAndValuesOfObject(o, ReflectionOptions.EMPTY);
             for (Map.Entry<String, Object> e : allNamesAndValues.entrySet()) {
                 Type of = typeOf(e.getValue());
+
                 main.append(of.generate(e.getKey(), e.getValue()));
             }
             return main;
