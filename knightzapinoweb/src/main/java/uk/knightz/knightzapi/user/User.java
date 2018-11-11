@@ -44,7 +44,7 @@ import uk.knightz.knightzapi.challenge.ChallengeCompleteEvent;
 import uk.knightz.knightzapi.challenge.ChallengeObjective;
 import uk.knightz.knightzapi.challenge.Challenges;
 import uk.knightz.knightzapi.files.JsonFile;
-import uk.knightz.knightzapi.menu.CollectionToMenuAdapter;
+import uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter;
 import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.reflect.ReflectionOptions;
 import uk.knightz.knightzapi.utils.Listeners;

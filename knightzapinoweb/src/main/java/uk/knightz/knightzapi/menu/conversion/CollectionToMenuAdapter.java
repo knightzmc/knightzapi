@@ -1,4 +1,28 @@
-package uk.knightz.knightzapi.menu;
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 Alexander Leslie John Wood
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package uk.knightz.knightzapi.menu.conversion;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -6,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
+import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.menu.button.MenuButtonBuilder;
 import uk.knightz.knightzapi.reflect.Reflection;
@@ -17,8 +42,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
 
-import static uk.knightz.knightzapi.menu.CollectionToMenuAdapter.Type.BuildingUtils.tryToSetAmount;
-import static uk.knightz.knightzapi.menu.CollectionToMenuAdapter.Type.BuildingUtils.tryToSetMaterial;
+import static uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter.Type.BuildingUtils.tryToSetAmount;
+import static uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter.Type.BuildingUtils.tryToSetMaterial;
 import static uk.knightz.knightzapi.reflect.Reflection.colorOfClass;
 
 

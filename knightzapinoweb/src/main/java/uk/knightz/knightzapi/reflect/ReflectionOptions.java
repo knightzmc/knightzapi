@@ -5,6 +5,7 @@ import lombok.NonNull;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Wrapper class defining a number of Reflexive operation options that are used in any automatic generation classes such as {@link uk.knightz.knightzapi.menu.CollectionToMenuAdapter} and {@link uk.knightz.knightzapi.lang.fancy.SuperFancyMessageFactory}
+ * Wrapper class defining a number of Reflexive operation options that are used in any automatic generation classes such as {@link CollectionToMenuAdapter} and {@link uk.knightz.knightzapi.lang.fancy.SuperFancyMessageFactory}
  * The {@link ReflectionOptions#methodsToIgnore} is also used when collecting a Set of Getters in {@link Reflection#getUserFriendlyPublicGetters(Class, ReflectionOptions)}
  *
  * @param <T>
