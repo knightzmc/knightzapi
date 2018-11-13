@@ -26,15 +26,22 @@ package uk.knightz.knightzapi.menu.conversion;
 
 import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.reflect.Reflection;
+import uk.knightz.knightzapi.utils.TripleStruct;
 
 /**
  * An ObjectToButton adapter that assumes that the given object is a simple type
  */
 public class SimpleObjectToButton implements ObjectToButtonAdapter<Object> {
-    @Override
     public MenuButton ofObject(Object o) {
         if (!Reflection.isSimpleType(o)) {
             throw new IllegalArgumentException("Object is not a simple type!");
         }
+
+        return null;
+    }
+
+    @Override
+    public MenuButton ofObject(Object o, TripleStruct data) {
+        return null;
     }
 }

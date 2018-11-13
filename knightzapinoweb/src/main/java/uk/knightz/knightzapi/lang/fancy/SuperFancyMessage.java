@@ -25,12 +25,12 @@
 package uk.knightz.knightzapi.lang.fancy;
 
 import lombok.*;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,7 +139,7 @@ public class SuperFancyMessage {
         MessagePart part = parts.get(page); //get the page we are converting
         ComponentBuilder cb = new ComponentBuilder(part.getText()); //instantiate Json message builder with part's default text
         if (part.getColor() != null) {
-            cb.color(part.getColor()); //append optional color
+            cb.color(part.getColor().asBungee()); //append optional color
         }
         for (LinkMessage message : part.getLinks()) { //loop through links, appending text and setting the command for the link
             cb.append(message.getText());

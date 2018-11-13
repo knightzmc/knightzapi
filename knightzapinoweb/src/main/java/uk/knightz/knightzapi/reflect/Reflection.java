@@ -14,7 +14,6 @@ public class Reflection {
 
     public static final Class[] simpleTypes = {Double.class, Float.class, Long.class, Integer.class, Short.class, Character.class, Byte.class, Boolean.class, Enum.class, String.class};
     private static final Map<Class, Set<Method>> cache = new WeakHashMap<>();
-    private static final Map<Class, ChatColor> colorsOfClasses = new ConcurrentHashMap<>();
 
     /**
      * Get all of the public Getter Methods of a Class that are deemed to be friendly to expose to the User
@@ -108,15 +107,4 @@ public class Reflection {
         return ourMap;
     }
 
-    public static ChatColor colorOfClass(Class clazz) {
-        colorsOfClasses.putIfAbsent(clazz, EnumUtils.getRandom(ChatColor.class,
-                ChatColor.BOLD,
-                ChatColor.BLACK,
-                ChatColor.MAGIC,
-                ChatColor.ITALIC,
-                ChatColor.UNDERLINE,
-                ChatColor.STRIKETHROUGH
-        ));
-        return colorsOfClasses.get(clazz);
-    }
 }

@@ -24,6 +24,7 @@
 package uk.knightz.knightzapi.utils;
 
 import org.apache.commons.lang.StringUtils;
+
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -45,12 +46,13 @@ public class EnumUtils {
     @SafeVarargs
     public static <T extends Enum<T>> T getRandom(Class<? extends T> enm, T... exclude) {
         T[] tEnum = enm.getEnumConstants();
+        Arrays.sort(tEnum, Comparator.naturalOrder());
         int size = tEnum.length;
-        List<T> exclusions = Arrays.asList(exclude);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         T t;
         while (true) {
-            if (!exclusions.contains(t = tEnum[random.nextInt(0, tEnum.length)])) break;
+            if (Arrays.binarySearch(tEnum, (t = tEnum[random.nextInt(0, tEnum.length)])) > 0) break;
+//            if (!exclusions.contains(t = tEnum[random.nextInt(0, tEnum.length)])) break;
         }
         return t;
     }

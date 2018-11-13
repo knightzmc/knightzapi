@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static uk.knightz.knightzapi.lang.fancy.SuperFancyMessage.MessagePart;
-import static uk.knightz.knightzapi.reflect.Reflection.colorOfClass;
+import static uk.knightz.knightzapi.utils.ColorUtils.colorOfClass;
 
 /**
  * Couldn't really think of a more appropriate name - this class takes one or more Objects

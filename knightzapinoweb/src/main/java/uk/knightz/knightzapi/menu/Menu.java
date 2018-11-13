@@ -74,7 +74,6 @@ public class Menu {
     private Inventory inv;
     private Sound onClick;
     private MenuButton backgroundItem;
-    private int pagesAmount = 1;
     @Setter
     private Consumer<MenuCloseEvent> onClose;
     /**

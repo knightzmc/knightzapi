@@ -25,8 +25,9 @@
 package uk.knightz.knightzapi.menu.conversion;
 
 import uk.knightz.knightzapi.menu.button.MenuButton;
+import uk.knightz.knightzapi.utils.TripleStruct;
 
 public interface ObjectToButtonAdapter<T> {
 
-    MenuButton ofObject(T t);
+    MenuButton ofObject(T t, TripleStruct data);
 }

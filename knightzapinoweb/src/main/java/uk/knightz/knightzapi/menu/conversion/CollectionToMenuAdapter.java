@@ -41,10 +41,10 @@ import uk.knightz.knightzapi.utils.TripleStruct;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-import static uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter.Type.BuildingUtils.tryToSetAmount;
-import static uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter.Type.BuildingUtils.tryToSetMaterial;
-import static uk.knightz.knightzapi.reflect.Reflection.colorOfClass;
+import static uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter.Type.BuildingUtils.*;
+import static uk.knightz.knightzapi.utils.ColorUtils.colorOfClass;
 
 
 /**
@@ -108,12 +108,12 @@ public class CollectionToMenuAdapter {
             i = new ItemBuilder(options.getManualItemStackFunction().apply(o));
         } else {
             i = new ItemBuilder();
-//            Stream<Map.Entry<String, Object>> materialStream = returns.entrySet().stream().filter(o1 -> tryToSetMaterial(o1.getValue()) != null);
-//            if (materialStream.count() > 0) {
-//                materialStream.forEach(m -> i.setType((Material) m.getValue()));
-//            } else {
-//                i.setType(Material.STONE);
-//            }
+            Stream<Material> materialStream = returns.entrySet().stream().map(o1 -> attemptParseMaterial(o1.getValue())).filter(Objects::nonNull);
+            if (materialStream.count() > 0) {
+                materialStream.forEach(i::setType);
+            } else {
+                i.setType(Material.STONE);
+            }
         }
 
 
@@ -218,6 +218,16 @@ public class CollectionToMenuAdapter {
                     }
                 }
                 return b;
+            }
+
+            static Material attemptParseMaterial(Object o) {
+                if (o instanceof Material) return (Material) o;
+                if (o instanceof String) {
+                    val material = Material.matchMaterial(((String) o).toUpperCase());
+                    if (material != null)
+                        return material;
+                }
+                return null;
             }
 
             static MenuButtonBuilder tryToSetAmount(MenuButtonBuilder b, Object o) {

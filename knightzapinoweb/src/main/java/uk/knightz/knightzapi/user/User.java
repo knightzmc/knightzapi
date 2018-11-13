@@ -27,6 +27,7 @@ import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -36,7 +37,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.challenge.Challenge;
@@ -44,17 +44,15 @@ import uk.knightz.knightzapi.challenge.ChallengeCompleteEvent;
 import uk.knightz.knightzapi.challenge.ChallengeObjective;
 import uk.knightz.knightzapi.challenge.Challenges;
 import uk.knightz.knightzapi.files.JsonFile;
-import uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter;
+import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.reflect.ReflectionOptions;
+import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.utils.Listeners;
+import uk.knightz.knightzapi.utils.MathUtils;
 
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
-
-import static org.bukkit.Material.EMERALD_BLOCK;
-import static org.bukkit.Material.REDSTONE_BLOCK;
 
 /**
  * A Player Wrapper class that stores various pieces of data
@@ -228,20 +226,38 @@ public class User implements Listener {
     public Menu getChallengeMenu() {
         Set<Challenge> allTaken = Challenges.getAllChallenges();
         allTaken.removeIf(c -> !getChallengeData().hasTakenOrCompleted(c));
-        return CollectionToMenuAdapter.generateMenu(allTaken, ReflectionOptions.<Challenge>builder()
-                .manualItemStackFunction(c -> {
-                    if (challengeData.hasCompleted(c)) return new ItemStack(EMERALD_BLOCK);
-                    else return new ItemStack(REDSTONE_BLOCK);
-                })
-                .addMethodToIgnore("getOnComplete")
-                .addManualObjectParser(ChallengeObjective.class, co -> {
-                    return co.toNaturalString();
-//                    ItemBuilder builder = new ItemBuilder();
-//                    builder.setType(challengeData.hasCompleted(co) ? EMERALD : REDSTONE);
-//                    builder.setName(co.getType().toFriendlyString());
-//                    builder.setLore(Collections.singletonList(co.toNaturalString()));
-//                    return builder.build();
-                })
-                .build());
+        Menu m = new Menu(ChatColor.GOLD + "Challenges", MathUtils.roundUp(allTaken.size()));
+        allTaken.forEach(c -> {
+            ItemBuilder ofChallenge = new ItemBuilder();
+            ofChallenge.setName(c.getName());
+            ofChallenge.setType(challengeData.hasCompleted(c) ? Material.EMERALD : Material.REDSTONE);
+            ofChallenge.addLore(ChatColor.GREEN + "Objectives:");
+            c.getObjectives().forEach(o -> {
+                String s = (challengeData.hasCompleted(o) ? ChatColor.GREEN : ChatColor.RED) +
+                        o.toNaturalString() + ' ' +
+                        (challengeData.hasCompleted(o) ? '✔' : '✖');
+
+                ofChallenge.addLore(s);
+            });
+            m.addButton(new MenuButton(ofChallenge.build(), Menu.cancel));
+//            m.addButton(new MenuButton(
+//            ));
+        });
+        return m;
+//        return CollectionToMenuAdapter.generateMenu(allTaken, ReflectionOptions.<Challenge>builder()
+//                .manualItemStackFunction(c -> {
+//                    if (challengeData.hasCompleted(c)) return new ItemStack(EMERALD_BLOCK);
+//                    else return new ItemStack(REDSTONE_BLOCK);
+//                })
+//                .addMethodToIgnore("getOnComplete")
+//                .addManualObjectParser(ChallengeObjective.class, co -> {
+//                    return co.toNaturalString();
+////                    ItemBuilder builder = new ItemBuilder();
+////                    builder.setType(challengeData.hasCompleted(co) ? EMERALD : REDSTONE);
+////                    builder.setName(co.getType().toFriendlyString());
+////                    builder.setLore(Collections.singletonList(co.toNaturalString()));
+////                    return builder.build();
+//                })
+//                .build());
     }
 }

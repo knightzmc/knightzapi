@@ -46,7 +46,7 @@ public final class MathUtils {
      * Rounds the given int up to the nearest multiple ofGlobal 9. Used for generating dynamic inventory sizes
      *
      * @param n The given int to round up
-     * @return The rounded up multiple ofGlobal 9
+     * @return The rounded up multiple of 9
      */
     public static int roundUp(int n) {
         return (n + 8) / 9 * 9;
