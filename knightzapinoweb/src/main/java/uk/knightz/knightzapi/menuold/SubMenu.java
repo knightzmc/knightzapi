@@ -21,15 +21,27 @@
  *
  */
 
-package uk.knightz.knightzapi.ui.wizard.triggers;
+package uk.knightz.knightzapi.menuold;
 
-import uk.knightz.knightzapi.menuold.MenuCloseEvent;
+import lombok.Getter;
 
-public class MenuCloseEventTrigger extends EventTrigger<MenuCloseEvent> {
-	private MenuCloseEventTrigger(boolean putInMap) {
-		super(MenuCloseEvent.class, MenuCloseEvent::getWhoClosed, putInMap);
-	}
-	public static MenuCloseEventTrigger newExclusiveConditions() {
-		return new MenuCloseEventTrigger(false);
-	}
+/**
+ * A child Menu that is usually opened by a parent Menu
+ */
+@Getter
+public class SubMenu extends Menu {
+    private final Menu parent;
+
+    /**
+     * Create a new SubMenu
+     *
+     * @param rows   The amount of rows in this SubMenu
+     * @param title  The title of this SubMenu
+     * @param parent The parent Menu of this SubMenu
+     */
+    public SubMenu(String title, int rows, Menu parent) {
+        super(title, rows);
+        this.parent = parent;
+        parent.addSubMenu(this);
+    }
 }

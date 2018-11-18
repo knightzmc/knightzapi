@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.menuold;
 
 import lombok.Data;
 import org.apache.commons.lang.RandomStringUtils;

@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold.button;
 
 import java.util.HashMap;
 import java.util.List;

@@ -22,24 +22,12 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold.conversion;
 
-import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import uk.knightz.knightzapi.menuold.button.MenuButton;
+import uk.knightz.knightzapi.utils.TripleStruct;
 
-import java.util.function.Consumer;
+public interface ObjectToButtonAdapter<T> {
 
-/**
- * A MenuButton that has compatibility for toggling a Boolean on and off upon clicking, changing the ItemStack if wanted.
- */
-public class ToggleButton extends MenuButton {
-	/**
-	 * Create a new MenuButton
-	 *
-	 * @param itemStack The ItemStack that will be added to a menu.
-	 * @param onClick   A consumer that will be called when the MenuButton is clicked by a user.
-	 */
-	public ToggleButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
-		super(itemStack, onClick);
-	}
+    MenuButton ofObject(T t, TripleStruct data);
 }

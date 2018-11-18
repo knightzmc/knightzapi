@@ -22,12 +22,10 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.conversion;
+package uk.knightz.knightzapi.menuold.conversion;
 
-import uk.knightz.knightzapi.menu.button.MenuButton;
-import uk.knightz.knightzapi.utils.TripleStruct;
-
-public interface ObjectToButtonAdapter<T> {
-
-    MenuButton ofObject(T t, TripleStruct data);
+/**
+ * The Object adapter can take two forms - conversion to a MenuButton or to a String to appear in lore.
+ */
+public class ObjectInfo {
 }

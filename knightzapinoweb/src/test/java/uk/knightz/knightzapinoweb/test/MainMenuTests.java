@@ -36,9 +36,9 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.menu.MenuListener;
-import uk.knightz.knightzapi.menu.button.MenuButton;
+import uk.knightz.knightzapi.menuold.Menu;
+import uk.knightz.knightzapi.menuold.MenuListener;
+import uk.knightz.knightzapi.menuold.button.MenuButton;
 
 import java.util.logging.Logger;
 

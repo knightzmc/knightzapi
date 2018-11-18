@@ -1,10 +1,10 @@
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold.button;
 
 import lombok.experimental.Accessors;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import uk.knightz.knightzapi.menuold.Menu;
+import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
 import java.util.function.Consumer;
 

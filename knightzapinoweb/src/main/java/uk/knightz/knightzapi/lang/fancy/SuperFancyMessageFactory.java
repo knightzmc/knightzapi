@@ -42,7 +42,7 @@ import static uk.knightz.knightzapi.utils.ColorUtils.colorOfClass;
 /**
  * Couldn't really think of a more appropriate name - this class takes one or more Objects
  * and uses BasecomponentReflection and Spigot's JSON Message API to convert the Object(s)'s data into
- * a clickable chat menu which can be navigated by clicking on links
+ * a clickable chat menuold which can be navigated by clicking on links
  * <p>
  * NOTE: This generates a secret randomly generated command which is the only way to have clickable navigation
  */

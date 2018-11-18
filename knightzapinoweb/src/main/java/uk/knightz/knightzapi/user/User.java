@@ -45,8 +45,8 @@ import uk.knightz.knightzapi.challenge.ChallengeObjective;
 import uk.knightz.knightzapi.challenge.Challenges;
 import uk.knightz.knightzapi.files.JsonFile;
 import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.menu.button.MenuButton;
+import uk.knightz.knightzapi.menuold.Menu;
+import uk.knightz.knightzapi.menuold.button.MenuButton;
 import uk.knightz.knightzapi.utils.Listeners;
 import uk.knightz.knightzapi.utils.MathUtils;
 

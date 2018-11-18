@@ -21,15 +21,20 @@
  *
  */
 
-package uk.knightz.knightzapi.ui.wizard.triggers;
+package uk.knightz.knightzapi.menuold.button;
 
-import uk.knightz.knightzapi.menuold.MenuCloseEvent;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.menuold.SubMenu;
 
-public class MenuCloseEventTrigger extends EventTrigger<MenuCloseEvent> {
-	private MenuCloseEventTrigger(boolean putInMap) {
-		super(MenuCloseEvent.class, MenuCloseEvent::getWhoClosed, putInMap);
-	}
-	public static MenuCloseEventTrigger newExclusiveConditions() {
-		return new MenuCloseEventTrigger(false);
-	}
+@Data
+@EqualsAndHashCode(callSuper = true)
+public final class OpenSubMenuButton extends MenuButton {
+    private SubMenu toOpen;
+
+    public OpenSubMenuButton(ItemStack itemStack, SubMenu toOpen) {
+        super(itemStack, e -> toOpen.open(e.getWhoClicked()));
+        this.toOpen = toOpen;
+    }
 }

@@ -1,4 +1,4 @@
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.menuold;
 
 public class Page extends SubMenu {
     /**

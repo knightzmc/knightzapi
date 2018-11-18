@@ -21,33 +21,34 @@
  *
  */
 
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.menuold.button;
 
-import lombok.Getter;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.InventoryView;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.item.ItemBuilder;
+import uk.knightz.knightzapi.menuold.ClickEventAliases;
+import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
-@Getter
-public class MenuCloseEvent extends InventoryCloseEvent implements MenuEvent {
-	private final Menu menu;
-	private boolean cancelled = false;
+import java.util.function.Consumer;
 
-	public Player getWhoClosed() {
-		return (Player) transaction.getPlayer();
-	}
-	public MenuCloseEvent(InventoryView transaction, Menu menu) {
-		super(transaction);
-		this.menu = menu;
-	}
+/**
+ * A MenuButton that closes the user's current Menu upon click.
+ */
+public final class CloseButton extends MenuButton {
+	private static final ItemStack DEFAULT = new ItemBuilder().setType(Material.REDSTONE_BLOCK).setName("&c&lClose")
+			.setUnbreakable(true).build();
 
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
+	private static final Consumer<MenuClickEvent> onClick = e -> e.getWhoClicked().closeInventory();
+
+	static {
+		ClickEventAliases.getInstance().add("close", onClick);
 	}
 
-	@Override
-	public void setCancelled(boolean b) {
-		this.cancelled = b;
+	public CloseButton() {
+		this(DEFAULT);
+	}
+
+	public CloseButton(ItemStack itemStack) {
+		super(itemStack, onClick);
 	}
 }

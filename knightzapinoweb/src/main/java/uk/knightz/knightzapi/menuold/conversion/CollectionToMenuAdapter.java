@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.conversion;
+package uk.knightz.knightzapi.menuold.conversion;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -30,9 +30,9 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.menu.button.MenuButton;
-import uk.knightz.knightzapi.menu.button.MenuButtonBuilder;
+import uk.knightz.knightzapi.menuold.Menu;
+import uk.knightz.knightzapi.menuold.button.MenuButton;
+import uk.knightz.knightzapi.menuold.button.MenuButtonBuilder;
 import uk.knightz.knightzapi.reflect.Reflection;
 import uk.knightz.knightzapi.reflect.ReflectionOptions;
 import uk.knightz.knightzapi.utils.MathUtils;
@@ -43,7 +43,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter.Type.BuildingUtils.*;
+import static uk.knightz.knightzapi.menuold.conversion.CollectionToMenuAdapter.Type.BuildingUtils.*;
 import static uk.knightz.knightzapi.utils.ColorUtils.colorOfClass;
 
 
@@ -120,7 +120,6 @@ public class CollectionToMenuAdapter {
         if (options.hasManualNameFunction()) {
             i.setName(options.getManualNameFunction().apply(o));
         } else {
-            getters.forEach(g -> System.out.println(g.getName()));
             Optional<Method> getNameMethodOptional = getters.stream().filter(m -> m.getName().equals("getName") && String.class.isAssignableFrom(m.getReturnType())).findAny();
             if (getNameMethodOptional.isPresent()) {
                 Method any = getNameMethodOptional.get();
@@ -138,7 +137,6 @@ public class CollectionToMenuAdapter {
                 String parse = options.parse(value.getClass(), value);
                 if (parse != null)
                     value = parse;
-                System.out.println(value);
                 String loreData = "&a" +
                         StringUtils.capitalize(m.getName().replace("get", ""))
                         + "&6: &7"

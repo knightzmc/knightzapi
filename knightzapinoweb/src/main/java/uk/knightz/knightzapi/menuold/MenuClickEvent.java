@@ -21,20 +21,29 @@
  *
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.menu.SubMenu;
+import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import uk.knightz.knightzapi.menuold.button.MenuButton;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-public final class OpenSubMenuButton extends MenuButton {
-    private SubMenu toOpen;
+@Getter
+public class MenuClickEvent extends InventoryClickEvent implements MenuEvent {
 
-    public OpenSubMenuButton(ItemStack itemStack, SubMenu toOpen) {
-        super(itemStack, e -> toOpen.open(e.getWhoClicked()));
-        this.toOpen = toOpen;
-    }
+	private final Menu menu;
+	private final boolean subMenu;
+
+	private final MenuButton clicked;
+	public MenuClickEvent(InventoryClickEvent e, Menu clicked, MenuButton clickedButton) {
+		super(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction());
+		this.menu = clicked;
+		this.clicked = clickedButton;
+		subMenu = this.menu instanceof SubMenu;
+	}
+
+	@Override
+	public Player getWhoClicked() {
+		return (Player) super.getWhoClicked();
+	}
 }

@@ -24,46 +24,52 @@
 
 package uk.knightz.knightzapi.menu;
 
-import com.google.common.collect.ImmutableBiMap;
 import lombok.Getter;
+import lombok.val;
+import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.item.ItemBuilder;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-/**
- * Manages mapping of a MenuClickEvent to a string
- */
-public class ClickEventAliases {
-    @Getter
-    private static final ClickEventAliases instance = new ClickEventAliases();
+@Getter
+public class MenuButton {
 
+    private final Consumer<MenuClickEvent> onClick;
+    private final Map<String, Object> injectedData = new HashMap<>();
+    private final ItemStack item;
 
-    private final Map<String, Consumer<MenuClickEvent>> mapToEvent = new ConcurrentHashMap<>();
-
-    private ClickEventAliases() {
+    public MenuButton(ItemStack item, Consumer<MenuClickEvent> onClick) {
+        this.item = item;
+        this.onClick = onClick;
     }
 
-
-    public void add(String s, Consumer<MenuClickEvent> e) {
-        mapToEvent.put(s, e);
+    public MenuButton addDataToInject(String key, Object value) {
+        injectedData.put(key, value);
+        return this;
     }
 
-    public void remove(String s) {
-        mapToEvent.remove(s);
+    public void injectDataFrom(MenuButton b) {
+        injectDataFrom(b.injectedData);
     }
 
+    public void injectDataFrom(Map<String, Object> map) {
+        ItemBuilder builder = new ItemBuilder(item);
+        builder.setName(parse(map, builder.getName()));
 
-    public Consumer<MenuClickEvent> get(String alias) {
-        return mapToEvent.get(alias);
+
+        val lore = builder.getLore();
+        builder.getLore().clear();
+        lore.forEach(s -> builder.addLore(parse(map, s)));
+        item.setItemMeta(builder.build().getItemMeta());
     }
 
-    /**
-     * Get all the aliases registered
-     *
-     * @return an immutable copy of the aliases Map
-     */
-    public Map<String, Consumer<MenuClickEvent>> getMapToEvent() {
-        return ImmutableBiMap.copyOf(mapToEvent);
+    private String parse(Map<String, Object> data, String s) {
+        AtomicReference<String> str = new AtomicReference<>(s);
+        data.forEach((k, v) -> str.set(str.get().replace(k, v.toString())));
+        return str.get();
     }
+
 }

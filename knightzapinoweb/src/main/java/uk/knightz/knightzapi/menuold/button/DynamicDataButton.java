@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold.button;
 
 import lombok.Setter;
 import lombok.val;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.lang.placeholder.Placeholder;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public class DynamicDataButton extends MenuButton {
 	/**
 	 * Create a new MenuButton that has its Metadata generated dynamically when an Inventory is rendered
 	 *
-	 * @param defaultValue The default value of the ItemStack that will be added to a menu.
+	 * @param defaultValue The default value of the ItemStack that will be added to a menuold.
 	 *                     Typically, this has an ItemMeta using {@link String#format(String, Object...)}
 	 *                     compatible values, so they can be easily edited in {@link DynamicDataButton#editItem}
 	 * @param onClick      A consumer that will be called when the MenuButton is clicked by a user.

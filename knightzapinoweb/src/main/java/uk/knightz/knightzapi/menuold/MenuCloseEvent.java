@@ -21,10 +21,33 @@
  *
  */
 
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.menuold;
 
-import org.bukkit.event.Cancellable;
+import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.InventoryView;
 
-public interface MenuEvent extends Cancellable {
-	Menu getMenu();
+@Getter
+public class MenuCloseEvent extends InventoryCloseEvent implements MenuEvent {
+	private final Menu menu;
+	private boolean cancelled = false;
+
+	public Player getWhoClosed() {
+		return (Player) transaction.getPlayer();
+	}
+	public MenuCloseEvent(InventoryView transaction, Menu menu) {
+		super(transaction);
+		this.menu = menu;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean b) {
+		this.cancelled = b;
+	}
 }

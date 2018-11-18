@@ -40,16 +40,15 @@ public class VersionUtil {
      * @return The current server version
      */
     public static Version getVersion() {
-        return Version.v1_12;
-//        String name = Bukkit.getServer().getClass().getPackage().getName();
-//        String versionPackage = name.substring(name.lastIndexOf(46) + 1) + ".";
-//        Version[] var2 = Version.values();
-//        for (Version version : var2) {
-//            if (version.matchesPackageName(versionPackage)) {
-//                return version;
-//            }
-//        }
-//        throw new RuntimeException("Unsupported Minecraft Version! KnightzAPI supports 1.8-1.12.2");
+        String name = Bukkit.getServer().getClass().getPackage().getName();
+        String versionPackage = name.substring(name.lastIndexOf(46) + 1) + ".";
+        Version[] var2 = Version.values();
+        for (Version version : var2) {
+            if (version.matchesPackageName(versionPackage)) {
+                return version;
+            }
+        }
+        throw new RuntimeException("Unsupported Minecraft Version! KnightzAPI supports 1.8-1.12.2");
     }
 
     /**
@@ -95,6 +94,22 @@ public class VersionUtil {
 
         public boolean matchesPackageName(String name) {
             return name.contains(name());
+        }
+
+        public String toString() {
+            switch (this) {
+                case v1_8:
+                    return "1.8";
+                case v1_9:
+                    return "1.9";
+                case v1_10:
+                    return "1.10";
+                case v1_11:
+                    return "1.11";
+                case v1_12:
+                    return "1.12";
+            }
+            return null;
         }
     }
 }

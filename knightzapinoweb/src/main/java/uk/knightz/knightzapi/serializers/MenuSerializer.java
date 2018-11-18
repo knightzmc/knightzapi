@@ -31,10 +31,10 @@ import lombok.Data;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.KnightzAPI;
-import uk.knightz.knightzapi.menu.ClickEventAliases;
-import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.menu.SubMenu;
-import uk.knightz.knightzapi.menu.button.MenuButton;
+import uk.knightz.knightzapi.menuold.ClickEventAliases;
+import uk.knightz.knightzapi.menuold.Menu;
+import uk.knightz.knightzapi.menuold.SubMenu;
+import uk.knightz.knightzapi.menuold.button.MenuButton;
 
 import java.io.IOException;
 import java.util.Arrays;

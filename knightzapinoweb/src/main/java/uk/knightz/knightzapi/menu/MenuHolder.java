@@ -22,35 +22,21 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menu;
 
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.ClickEventAliases;
-import uk.knightz.knightzapi.menu.MenuButton;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import lombok.Getter;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
-import java.util.function.Consumer;
-
-/**
- * A MenuButton that closes the user's current Menu upon click.
- */
-public final class CloseButton extends MenuButton {
-    private static final ItemStack DEFAULT = new ItemBuilder().setType(Material.REDSTONE_BLOCK).setName("&c&lClose")
-            .setUnbreakable(true).build();
-
-    private static final Consumer<MenuClickEvent> onClick = e -> e.getWhoClicked().closeInventory();
-
-    static {
-        ClickEventAliases.getInstance().add("close", onClick);
+public class MenuHolder implements InventoryHolder {
+    @Getter
+    private final Menu menu;
+    public MenuHolder(Menu menu) {
+        this.menu = menu;
     }
 
-    public CloseButton() {
-        this(DEFAULT);
-    }
-
-    public CloseButton(ItemStack itemStack) {
-        super(itemStack, onClick);
+    @Override
+    public Inventory getInventory() {
+        return menu.inventory;
     }
 }

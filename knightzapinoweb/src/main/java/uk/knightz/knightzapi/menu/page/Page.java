@@ -22,26 +22,19 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.conversion;
+package uk.knightz.knightzapi.menu.page;
 
-import uk.knightz.knightzapi.menu.button.MenuButton;
-import uk.knightz.knightzapi.reflect.Reflection;
-import uk.knightz.knightzapi.utils.TripleStruct;
+import lombok.Getter;
+import uk.knightz.knightzapi.menu.Menu;
 
-/**
- * An ObjectToButton adapter that assumes that the given object is a simple type
- */
-public class SimpleObjectToButton implements ObjectToButtonAdapter<Object> {
-    public MenuButton ofObject(Object o) {
-        if (!Reflection.isSimpleType(o)) {
-            throw new IllegalArgumentException("Object is not a simple type!");
-        }
+@Getter
+public class Page extends Menu {
 
-        return null;
-    }
+    private final Menu parent;
 
-    @Override
-    public MenuButton ofObject(Object o, TripleStruct data) {
-        return null;
+    public Page(int rows, String title, Menu parent) {
+        super(title, rows);
+        this.parent = parent;
+        if (rows > 9) throw new IndexOutOfBoundsException("Page rows cannot be more than 9");
     }
 }

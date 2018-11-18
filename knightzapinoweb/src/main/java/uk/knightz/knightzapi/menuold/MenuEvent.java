@@ -21,27 +21,10 @@
  *
  */
 
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.menuold;
 
-import lombok.Getter;
+import org.bukkit.event.Cancellable;
 
-/**
- * A child Menu that is usually opened by a parent Menu
- */
-@Getter
-public class SubMenu extends Menu {
-    private final Menu parent;
-
-    /**
-     * Create a new SubMenu
-     *
-     * @param rows   The amount of rows in this SubMenu
-     * @param title  The title of this SubMenu
-     * @param parent The parent Menu of this SubMenu
-     */
-    public SubMenu(String title, int rows, Menu parent) {
-        super(title, rows);
-        this.parent = parent;
-        parent.addSubMenu(this);
-    }
+public interface MenuEvent extends Cancellable {
+	Menu getMenu();
 }

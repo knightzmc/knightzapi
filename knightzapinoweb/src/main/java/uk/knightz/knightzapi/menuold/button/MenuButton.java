@@ -21,15 +21,49 @@
  *
  */
 
-package uk.knightz.knightzapi.ui.wizard.triggers;
+package uk.knightz.knightzapi.menuold.button;
 
+import lombok.Data;
+import lombok.NonNull;
+import org.bukkit.Sound;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
-public class MenuClickEventTrigger extends EventTrigger<MenuClickEvent> {
-	private MenuClickEventTrigger(boolean putInMap) {
-		super(MenuClickEvent.class, MenuClickEvent::getWhoClicked,putInMap);
+import java.util.function.Consumer;
+
+/**
+ * An button that can be added to a {@link uk.knightz.knightzapi.menuold.Menu}
+ */
+@Data
+public class MenuButton {
+	@NonNull
+	private final ItemStack itemStack;
+	public String onClickAlias;
+	@NonNull
+	private transient Consumer<MenuClickEvent> onClick;
+	private Sound onClickSound;
+	@Nullable
+	private String permission;
+
+	/**
+	 * Create a new MenuButton
+	 *
+	 * @param itemStack The ItemStack that will be added to a menuold.
+	 * @param onClick   A consumer that will be called when the MenuButton is clicked by a user.
+	 */
+	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
+		this.itemStack = itemStack;
+		this.onClick = onClick;
 	}
-	public static MenuClickEventTrigger newExclusiveConditions() {
-		return new MenuClickEventTrigger(false);
+
+
+	public void onClick(MenuClickEvent e) {
+		if (e == null) return;
+		onClick.accept(e);
+	}
+
+	public boolean hasPermission() {
+		return permission != null;
 	}
 }

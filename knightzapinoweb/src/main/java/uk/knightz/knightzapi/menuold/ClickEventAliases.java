@@ -21,30 +21,47 @@
  *
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold;
 
-import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.menu.ClickEventAliases;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
-import uk.knightz.knightzapi.menu.SubMenu;
+import com.google.common.collect.ImmutableBiMap;
+import lombok.Getter;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * A MenuButton that brings the user back to their previous menu in the hierarchy.
+ * Manages mapping of a MenuClickEvent to a str
  */
-public class BackMenuButton extends MenuButton {
-    private static final Consumer<MenuClickEvent> onClick = e -> {
-        if (e.isSubMenu()) {
-            ((SubMenu) e.getMenu()).getParent().open(e.getWhoClicked());
-        }
-    };
+public class ClickEventAliases {
+	@Getter
+	private static final ClickEventAliases instance = new ClickEventAliases();
 
-    static {
-        ClickEventAliases.getInstance().add("back", onClick);
-    }
 
-    public BackMenuButton(ItemStack itemStack) {
-        super(itemStack, onClick);
-    }
+	private final Map<String, Consumer<MenuClickEvent>> mapToEvent = new ConcurrentHashMap<>();
+
+	private ClickEventAliases() {
+	}
+
+
+	public void add(String s, Consumer<MenuClickEvent> e) {
+		mapToEvent.put(s, e);
+	}
+
+	public void remove(String s) {
+		mapToEvent.remove(s);
+	}
+
+
+	public Consumer<MenuClickEvent> get(String alias) {
+        return mapToEvent.get(alias);
+	}
+	/**
+	 * Get all the aliases registered
+	 *
+	 * @return an immutable copy ofGlobal the aliases Map
+	 */
+	public Map<String, Consumer<MenuClickEvent>> getMapToEvent() {
+		return ImmutableBiMap.copyOf(mapToEvent);
+	}
 }

@@ -21,49 +21,30 @@
  *
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold.button;
 
-import lombok.Data;
-import lombok.NonNull;
-import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import uk.knightz.knightzapi.menuold.ClickEventAliases;
+import uk.knightz.knightzapi.menuold.MenuClickEvent;
+import uk.knightz.knightzapi.menuold.SubMenu;
 
 import java.util.function.Consumer;
 
 /**
- * An button that can be added to a {@link uk.knightz.knightzapi.menu.Menu}
+ * A MenuButton that brings the user back to their previous menuold in the hierarchy.
  */
-@Data
-public class MenuButton {
-	@NonNull
-	private final ItemStack itemStack;
-	public String onClickAlias;
-	@NonNull
-	private transient Consumer<MenuClickEvent> onClick;
-	private Sound onClickSound;
-	@Nullable
-	private String permission;
+public class BackMenuButton extends MenuButton {
+    private static final Consumer<MenuClickEvent> onClick = e -> {
+        if (e.isSubMenu()) {
+            ((SubMenu) e.getMenu()).getParent().open(e.getWhoClicked());
+        }
+    };
 
-	/**
-	 * Create a new MenuButton
-	 *
-	 * @param itemStack The ItemStack that will be added to a menu.
-	 * @param onClick   A consumer that will be called when the MenuButton is clicked by a user.
-	 */
-	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
-		this.itemStack = itemStack;
-		this.onClick = onClick;
-	}
+    static {
+        ClickEventAliases.getInstance().add("back", onClick);
+    }
 
-
-	public void onClick(MenuClickEvent e) {
-		if (e == null) return;
-		onClick.accept(e);
-	}
-
-	public boolean hasPermission() {
-		return permission != null;
-	}
+    public BackMenuButton(ItemStack itemStack) {
+        super(itemStack, onClick);
+    }
 }

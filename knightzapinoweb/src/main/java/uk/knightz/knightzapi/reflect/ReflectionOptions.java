@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.menu.conversion.CollectionToMenuAdapter;
+import uk.knightz.knightzapi.menuold.conversion.CollectionToMenuAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;

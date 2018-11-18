@@ -22,35 +22,24 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.button;
+package uk.knightz.knightzapi.menuold.button;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.item.ItemBuilder;
-import uk.knightz.knightzapi.menu.ClickEventAliases;
-import uk.knightz.knightzapi.menu.MenuButton;
-import uk.knightz.knightzapi.menu.MenuClickEvent;
+import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
 import java.util.function.Consumer;
 
 /**
- * A MenuButton that closes the user's current Menu upon click.
+ * A MenuButton that has compatibility for toggling a Boolean on and off upon clicking, changing the ItemStack if wanted.
  */
-public final class CloseButton extends MenuButton {
-    private static final ItemStack DEFAULT = new ItemBuilder().setType(Material.REDSTONE_BLOCK).setName("&c&lClose")
-            .setUnbreakable(true).build();
-
-    private static final Consumer<MenuClickEvent> onClick = e -> e.getWhoClicked().closeInventory();
-
-    static {
-        ClickEventAliases.getInstance().add("close", onClick);
-    }
-
-    public CloseButton() {
-        this(DEFAULT);
-    }
-
-    public CloseButton(ItemStack itemStack) {
-        super(itemStack, onClick);
-    }
+public class ToggleButton extends MenuButton {
+	/**
+	 * Create a new MenuButton
+	 *
+	 * @param itemStack The ItemStack that will be added to a menuold.
+	 * @param onClick   A consumer that will be called when the MenuButton is clicked by a user.
+	 */
+	public ToggleButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
+		super(itemStack, onClick);
+	}
 }
