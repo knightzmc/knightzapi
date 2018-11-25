@@ -2,5 +2,7 @@ name: KnightzAPI
 version: 1.0
 main: uk.knightz.knightzapi.KnightzAPI
 depend: [Vault]
-softdepend: [zdwdqdw]
-#Cheeky little Bukkit Explot ;)
+author: Knightz
+website: http://bristermitten.me
+#Cheeky little Bukkit Exploit to make sure the plugin loads last ;)
+softdepend: [Essentials, thisdoesntexist]
