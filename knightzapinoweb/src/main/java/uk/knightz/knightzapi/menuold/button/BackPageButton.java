@@ -38,7 +38,7 @@ public final class BackPageButton extends MenuButton {
         if (e.getMenu() instanceof Page) {
             Menu toOpen;
             Page current = (Page) e.getMenu();
-            System.out.println(KnightzAPI.gson.toJson(current));
+            System.out.println(KnightzAPI.GSON.toJson(current));
             int indexOf = e.getMenu().getPages().indexOf(current);
             if (indexOf == -1) {
                 toOpen = current.getParent();

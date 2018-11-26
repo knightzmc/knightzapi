@@ -25,6 +25,7 @@
 package uk.knightz.knightzapi.menu;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.val;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
@@ -37,8 +38,12 @@ import java.util.function.Consumer;
 @Getter
 public class MenuButton {
 
-    private final Consumer<MenuClickEvent> onClick;
+    @NonNull
+    private final transient Consumer<MenuClickEvent> onClick;
+    @NonNull
     private final Map<String, Object> injectedData = new HashMap<>();
+
+    @NonNull
     private final ItemStack item;
 
     public MenuButton(ItemStack item, Consumer<MenuClickEvent> onClick) {

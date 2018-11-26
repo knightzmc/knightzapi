@@ -145,7 +145,7 @@ public class JsonFile {
                 file.createNewFile();
             }
             FileWriter writer = new FileWriter(file);
-            writer.write(KnightzAPI.gson.toJson(parsed));
+            writer.write(KnightzAPI.GSON.toJson(parsed));
             writer.flush();
             writer.close();
         } catch (IOException exception) {

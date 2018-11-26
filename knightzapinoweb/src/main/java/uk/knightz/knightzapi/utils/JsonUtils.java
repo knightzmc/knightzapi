@@ -46,7 +46,7 @@ public class JsonUtils {
 	 */
 	public static String prettifyJson(String json) {
 		Validate.notNull(json, "String cannot be null");
-		return KnightzAPI.gson.toJson(parser.parse(json));
+		return KnightzAPI.GSON.toJson(parser.parse(json));
 
 	}
 }

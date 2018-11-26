@@ -31,10 +31,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import uk.knightz.knightzapi.KnightzAPI;
+import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.utils.Listeners;
 
 /**
- * An event called when a player moves, but only if they have moved to a different block from their previous one.
+ * An cancelEvent called when a player moves, but only if they have moved to a different block from their previous one.
  */
 public class PlayerBlockMoveEvent extends PlayerMoveEvent {
     /**
@@ -53,21 +54,24 @@ public class PlayerBlockMoveEvent extends PlayerMoveEvent {
      * Will not register more than once
      */
     public static void init() {
-//        TODO Disabled as interferes with JRebel, should be enabled in production
         Listeners.registerOnce(new MoveListener(), KnightzAPI.getP());
     }
 
     private static class MoveListener implements Listener {
         @EventHandler(priority = EventPriority.MONITOR)
         public void onMove(PlayerMoveEvent ex) {
+            long startTime = System.currentTimeMillis();
             if (ex instanceof PlayerBlockMoveEvent) {
                 return;
             }
             Location f = ex.getFrom();
             Location t = ex.getTo();
             if (!f.getBlock().getLocation().equals(t.getBlock().getLocation())) {
-                Bukkit.getPluginManager().callEvent(new PlayerBlockMoveEvent(ex.getPlayer(), ex.getFrom(), ex.getTo()));
+                Bukkit.getPluginManager().callEvent(new PlayerBlockMoveEvent(ex.getPlayer(), f, t));
             }
+            long endTime = System.currentTimeMillis();
+
+            Log.debug((endTime - startTime) + "ms for PlayerBlockMoveEvent");
         }
     }
 }

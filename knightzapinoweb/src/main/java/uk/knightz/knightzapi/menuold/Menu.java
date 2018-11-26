@@ -303,18 +303,18 @@ public class Menu {
             return;
         }
         if (size >= MAX_SIZE) {
-            val menu = indexOf(size);
+            Menu menu = indexOf(size);
             menu.adjustSize(localize(size, menu));
             return;
         }
         if (size > inv.getSize()) {
-            val tempInv = Bukkit.createInventory(null, MathUtils.roundUp(size), inv.getTitle());
+            Inventory tempInv = Bukkit.createInventory(null, MathUtils.roundUp(size), inv.getTitle());
             tempInv.setContents(inv.getContents());
             inv.setMaxStackSize(inv.getMaxStackSize());
             inv = tempInv;
             addBackgroundItems();
         } else {
-            val tempInv = Bukkit.createInventory(null, MathUtils.roundUp(size), inv.getTitle());
+            Inventory tempInv = Bukkit.createInventory(null, MathUtils.roundUp(size), inv.getTitle());
             tempInv.setContents(Arrays.copyOf(inv.getContents(), size));
             inv.setMaxStackSize(inv.getMaxStackSize());
             inv = tempInv;
@@ -350,9 +350,9 @@ public class Menu {
     }
 
     /**
-     * Set the Event listener for a certain slot. This can override the event handler of a button
+     * Set the Event listener for a certain slot. This can override the cancelEvent handler of a button
      *
-     * @param slot The slot to bind the event to
+     * @param slot The slot to bind the cancelEvent to
      * @param e    Called when the slot is clicked on by a player
      */
     public void mapButton(int slot, Consumer<MenuClickEvent> e) {

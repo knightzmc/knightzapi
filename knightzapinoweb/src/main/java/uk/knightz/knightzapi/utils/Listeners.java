@@ -38,7 +38,7 @@ public class Listeners {
     }
 
     /**
-     * Register a listener if it is not already registered, to prevent duplicate event registering
+     * Register a listener if it is not already registered, to prevent duplicate cancelEvent registering
      *
      * @param listener The listener to register
      * @param p The plugin that should register this listener

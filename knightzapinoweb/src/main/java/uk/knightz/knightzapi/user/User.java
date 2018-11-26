@@ -37,6 +37,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.challenge.Challenge;
@@ -80,7 +81,7 @@ public class User implements Listener {
 
         JsonFile file = new JsonFile(KnightzAPI.getP(), root.getUniqueId());
         userFiles.put(this, file);
-        UserData tempData = KnightzAPI.gson.fromJson(file.getParsed(), UserData.class);
+        UserData tempData = KnightzAPI.GSON.fromJson(file.getParsed(), UserData.class);
         if (tempData == null) tempData = new UserData();
         userData = tempData;
 
@@ -109,6 +110,7 @@ public class User implements Listener {
         return u;
     }
 
+
     /**
      * Save all User's data to their corresponding file.
      */
@@ -116,6 +118,10 @@ public class User implements Listener {
         userFiles.forEach(User::save);
     }
 
+    /**
+     * @deprecated Unused
+     */
+    @Deprecated
     public static Set<StatsContainer> getAllUsers() {
         File usersDir = new File(KnightzAPI.getP().getDataFolder() + File.separator + "userdata" + File.separator);
         Set<StatsContainer> temp = new HashSet<>();
@@ -141,8 +147,12 @@ public class User implements Listener {
     }
 
     private void save(JsonFile f) {
-        f.setParsed(KnightzAPI.gson.toJsonTree(userData, UserData.class));
+        f.setParsed(KnightzAPI.GSON.toJsonTree(userData, UserData.class));
         f.save();
+    }
+
+    public void save() {
+        save(userFiles.get(this));
     }
 
     public int getKills() {
@@ -175,10 +185,14 @@ public class User implements Listener {
         userData.death(e);
     }
 
+    @EventHandler
+    public void leave(PlayerQuitEvent e) {
+        User.valueOf(e.getPlayer()).save();
+    }
+
     public OfflinePlayer getRoot() {
         return root;
     }
-
 
     public int getTokens() {
         return userData.getTokens();
@@ -189,7 +203,11 @@ public class User implements Listener {
     }
 
     public boolean shouldCancel(Class<? extends PlayerEvent> event) {
-        return getDeniedEvents().contains(event);
+        return deniedEvents.contains(event);
+    }
+
+    public void denyEvent(Class<? extends PlayerEvent> eventClass) {
+        deniedEvents.add(eventClass);
     }
 
     public void playerAction(PlayerEvent p) {
@@ -240,10 +258,11 @@ public class User implements Listener {
                 ofChallenge.addLore(s);
             });
             m.addButton(new MenuButton(ofChallenge.build(), Menu.cancel));
-//            m.addButton(new MenuButton(
-//            ));
         });
         return m;
+
+
+        //Old implementation
 //        return CollectionToMenuAdapter.generateMenu(allTaken, ReflectionOptions.<Challenge>builder()
 //                .manualItemStackFunction(c -> {
 //                    if (challengeData.hasCompleted(c)) return new ItemStack(EMERALD_BLOCK);
@@ -252,12 +271,13 @@ public class User implements Listener {
 //                .addMethodToIgnore("getOnComplete")
 //                .addManualObjectParser(ChallengeObjective.class, co -> {
 //                    return co.toNaturalString();
-////                    ItemBuilder builder = new ItemBuilder();
-////                    builder.setType(challengeData.hasCompleted(co) ? EMERALD : REDSTONE);
-////                    builder.setName(co.getType().toFriendlyString());
-////                    builder.setLore(Collections.singletonList(co.toNaturalString()));
-////                    return builder.build();
+//                    ItemBuilder builder = new ItemBuilder();
+//                    builder.setType(challengeData.hasCompleted(co) ? EMERALD : REDSTONE);
+//                    builder.setName(co.getType().toFriendlyString());
+//                    builder.setLore(Collections.singletonList(co.toNaturalString()));
+//                    return builder.build();
 //                })
 //                .build());
     }
+
 }

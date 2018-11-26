@@ -23,6 +23,7 @@
 
 package uk.knightz.knightzapi.user;
 
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -38,35 +39,39 @@ import java.util.stream.Collectors;
 
 /**
  * In charge of handling user events.
- * Can also provide a Set of all Bukkit event classes {@link EventManager#getEventClasses()}
+ * Can also provide a Set of all Bukkit event classes {@link EventManager#getBukkitEventClasses()}
  */
 public class EventManager implements Listener {
     public static final EventManager inst = new EventManager();
-
-    public static Set<Class<? extends Event>> eventClasses;
-
-    static {
-        Reflections reflections = new Reflections("org.bukkit.event");
-        eventClasses = reflections.getSubTypesOf(Event.class).stream().filter(c ->
-                ReflectionUtil.classHasMethod(c, "getHandlerList")).collect(Collectors.toSet());
-        EventExecutor executor = (listener, event) -> {
-            PlayerEvent p = (PlayerEvent) event;
-            User.valueOf(p.getPlayer()).playerAction(p);
-        };
-        eventClasses.stream().filter(PlayerEvent.class::isAssignableFrom)
-                .filter(e -> ReflectionUtil.classHasMethod(e, "getHandlerList")).forEach(e ->
-                Bukkit.getPluginManager().registerEvent(e, inst, EventPriority.LOWEST, executor, KnightzAPI.getP()));
-    }
-
+    public static final String EVENT_PACKAGE = "org.bukkit.event";
+    public static final String HANDLER_LIST_METHOD = "getHandlerList";
+    public static final EventExecutor CANCEL_EXECUTOR = (listener, event) -> {
+        PlayerEvent p = (PlayerEvent) event;
+        User.valueOf(p.getPlayer()).playerAction(p);
+    };
+    /**
+     * An immutable Set of all Classes that are part of Bukkit's Event API, and are valid (that is, have a getHandlerList method and are not abstract)
+     */
+    public static Set<Class<? extends Event>> bukkitEventClasses;
 
     private EventManager() {
+        Reflections reflections = new Reflections(EVENT_PACKAGE);
+        bukkitEventClasses = ImmutableSet.copyOf(reflections.getSubTypesOf(Event.class).stream().filter(c ->
+                ReflectionUtil.classHasMethod(c, HANDLER_LIST_METHOD)).collect(Collectors.toSet()
+        ));
+
+
     }
 
-    public static EventManager getInst() {
-        return EventManager.inst;
+    public static Set<Class<? extends Event>> getBukkitEventClasses() {
+        return bukkitEventClasses;
     }
 
-    public static Set<Class<? extends Event>> getEventClasses() {
-        return EventManager.eventClasses;
+    public void addClassToBlock(Class<? extends PlayerEvent> clazz) {
+        registerBlockedEvent(clazz);
+    }
+
+    private void registerBlockedEvent(Class<? extends PlayerEvent> clazz) {
+        Bukkit.getPluginManager().registerEvent(clazz, inst, EventPriority.LOWEST, CANCEL_EXECUTOR, KnightzAPI.getP());
     }
 }

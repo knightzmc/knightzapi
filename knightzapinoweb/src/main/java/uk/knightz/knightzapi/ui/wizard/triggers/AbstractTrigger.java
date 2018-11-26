@@ -31,59 +31,64 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public abstract class AbstractTrigger<T> implements Trigger<T> {
-	/**
-	 * A List of conditions that must be fulfilled on the set event's execution in order for this EventTrigger to trigger
-	 * <p>
-	 * {@link EventTrigger#ofGlobal(Class)} returns the "global" EventTrigger class, which shares conditions, potentially causing
-	 * events to not be triggered when they should. To counter this, use {@link EventTrigger#ofExclusiveConditions(Class)}
-	 * which will always return a new instance of {@link EventTrigger}
-	 */
-	protected final List<Function<T, Boolean>> conditions = new ArrayList<>();
+    /**
+     * A List of conditions that must be fulfilled on the set cancelEvent's execution in order for this EventTrigger to trigger
+     * <p>
+     * {@link EventTrigger#ofGlobal(Class)} returns the "global" EventTrigger class, which shares conditions, potentially causing
+     * events to not be triggered when they should. To counter this, use {@link EventTrigger#ofExclusiveConditions(Class)}
+     * which will always return a new instance of {@link EventTrigger}
+     */
+    protected final List<Function<T, Boolean>> conditions = new ArrayList<>();
 
-	private final Set<Step> steps = Sets.newSetFromMap(new ConcurrentHashMap<>());
-	private final Class<? extends T> clazz;
-	protected AbstractTrigger(Class<? extends T> clazz) {
-		this.clazz = clazz;
-	}
-	public void bind(Step w) {
-		steps.add(w);
-	}
+    private final Set<Step> steps = Sets.newConcurrentHashSet();
+    private final Class<? extends T> clazz;
 
-	@Override
-	public Class<? extends T> getClazz() {
-		return clazz;
-	}
-	@Override
-	public void trigger(T t) {
-		if (validateConditions(t)) {
-			for (Step step : steps) {
-				if (validate(step)) {
-					execute(t, step);
-				}
-			}
-		}
-	}
-	protected abstract void execute(T t, Step step);
-	/**
-	 * Validate that a given Step should be valid to execute.
-	 * This is determined by if the Step has not been completed, and its trigger matches the current one executing the method
-	 *
-	 * @param w the Step to validate
-	 * @return if the Step is valid and should be executed
-	 */
-	protected boolean validate(Step w) {
-		if (w.isCompleted()) {
-			return false;
-		}
-		return Objects.equals(w.getTrigger(), this) && w.getWizard().currentStep().equals(w);
-	}
-	private boolean validateConditions(T t) {
-		for (val c : conditions)
-			if (!c.apply(t)) return false;
-		return true;
-	}
+    protected AbstractTrigger(Class<? extends T> clazz) {
+        this.clazz = clazz;
+    }
+
+    public void bind(Step w) {
+        steps.add(w);
+    }
+
+    @Override
+    public Class<? extends T> getClazz() {
+        return clazz;
+    }
+
+    @Override
+    public void trigger(T t) {
+        if (validateConditions(t)) {
+            for (Step step : steps) {
+                if (validate(step)) {
+                    execute(t, step);
+                }
+            }
+        }
+    }
+
+    protected abstract void execute(T t, Step step);
+
+    /**
+     * Validate that a given Step should be valid to execute.
+     * This is determined by if the Step has not been completed, and its trigger matches the current one executing the method
+     *
+     * @param w the Step to validate
+     * @return if the Step is valid and should be executed
+     */
+    protected boolean validate(Step w) {
+        if (w.isCompleted()) {
+            return false;
+        }
+        return Objects.equals(w.getTrigger(), this) && w.getWizard().currentStep().equals(w);
+    }
+
+    private boolean validateConditions(T t) {
+        for (val c : conditions)
+            if (!c.apply(t)) return false;
+        return true;
+    }
 }

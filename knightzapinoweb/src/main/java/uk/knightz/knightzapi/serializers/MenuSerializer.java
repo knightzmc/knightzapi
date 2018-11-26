@@ -57,7 +57,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 			return;
 		}
 		out.name("inventory");
-		KnightzAPI.gson.getAdapter(Inventory.class)
+		KnightzAPI.GSON.getAdapter(Inventory.class)
 				.write(out, menu.getInv());
 
 		out.name("buttons").beginArray();
@@ -66,7 +66,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 				out.beginObject();
 				out.name("slot").value(integer);
 				out.name("button");
-				KnightzAPI.gson.getAdapter(ItemStack.class).write(out, menuButton.getItemStack());
+				KnightzAPI.GSON.getAdapter(ItemStack.class).write(out, menuButton.getItemStack());
 				if (ClickEventAliases.getInstance().getMapToEvent().containsKey(menuButton.getOnClickAlias()))
 					out.name("alias").value(menuButton.getOnClickAlias());
 				out.endObject();
@@ -96,7 +96,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 		while (in.hasNext()) {
 			switch (in.nextName()) {
 				case "inventory":
-					Inventory read = KnightzAPI.gson.getAdapter(Inventory.class).read(in);
+					Inventory read = KnightzAPI.GSON.getAdapter(Inventory.class).read(in);
 					menu.setInv(read);
 					break;
 				case "buttons":
@@ -113,7 +113,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 									slot = in.nextInt();
 									break;
 								case "button":
-									stack = KnightzAPI.gson.getAdapter(ItemStack.class).read(in);
+									stack = KnightzAPI.GSON.getAdapter(ItemStack.class).read(in);
 									break;
 								case "alias":
 									String tempAlias = in.nextString();
@@ -143,7 +143,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
 					in.endArray();
 					break;
 				case "children":
-					Menu[] menus = KnightzAPI.gson.fromJson(in, new TypeToken<Menu[]>() {
+					Menu[] menus = KnightzAPI.GSON.fromJson(in, new TypeToken<Menu[]>() {
 					}.getRawType());
 					Arrays.stream(menus).map(m -> (SubMenu) m).forEach(menu::addSubMenu);
 					break;

@@ -24,13 +24,15 @@
 
 package uk.knightz.knightzapi.annotation;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PACKAGE;
 
 /**
  * Indicates that this feature of the API is dangerous and can break various things if used without knowing what you're doing
  */
-@Target({ElementType.METHOD})
+@Target({METHOD, PACKAGE})
 public @interface Dangerous {
-	String reason() default "";
+    String reason() default "";
 }

@@ -24,7 +24,6 @@
 
 package uk.knightz.knightzapi.menu;
 
-import com.google.common.collect.Iterators;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -37,10 +36,7 @@ import uk.knightz.knightzapi.menu.button.NextPageButton;
 import uk.knightz.knightzapi.menu.page.Page;
 import uk.knightz.knightzapi.utils.MathUtils;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Menu {
 
@@ -105,15 +101,19 @@ public class Menu {
     }
 
     public void trim() {
-        int maxItemsRows = MathUtils.roundUp(Iterators.getLast(getButtons().keySet().iterator())) / 9;
-        resize(maxItemsRows);
+        if (inventory.firstEmpty() == 0) //if the inventory is empty do nothing
+            return;
+        int lastItemSlot = getButtons().entrySet().stream().map(Map.Entry::getKey).max(Integer::compare).get();
+        resize(lastItemSlot);
     }
 
-    public void resize(int rows) {
+    public void resize(int size) {
         Inventory old = inventory;
-        Inventory newInv = Bukkit.createInventory(old.getHolder(), rows * 9, old.getTitle());
-        newInv.setContents(old.getContents());
+        Inventory newInv = Bukkit.createInventory(old.getHolder(), MathUtils.roundUp(size), old.getTitle());
+        newInv.setMaxStackSize(old.getMaxStackSize());
+        newInv.setContents(Arrays.copyOf(old.getContents(), size));
         this.inventory = newInv;
+        inventory.getViewers().forEach(h -> ((Player) h).updateInventory());
     }
 
     public void removeButton(int slot) {

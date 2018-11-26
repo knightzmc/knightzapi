@@ -68,7 +68,7 @@ class EventTriggerListener implements Listener {
 		if (!registered.contains(c)) {
 			if (!customEvents.contains(c)) {
 				if (!ReflectionUtil.classHasMethod(c, "getHandlerList")) {
-					throw new IllegalArgumentException("Given event is invalid!");
+					throw new IllegalArgumentException("Given cancelEvent is invalid!");
 				}
 				customEvents.add(c);
 				Bukkit.getPluginManager().registerEvent(c, inst, NORMAL, ex, KnightzAPI.getP());
@@ -77,9 +77,9 @@ class EventTriggerListener implements Listener {
 	}
 
 	/**
-	 * Called on an undetermined event's execution and then passes it to any respective EventTrigger
+	 * Called on an undetermined cancelEvent's execution and then passes it to any respective EventTrigger
 	 *
-	 * @param e The executed event
+	 * @param e The executed cancelEvent
 	 */
 	public void onEvent(Event e) {
 		listenFor.stream().filter(t -> t.getTriggerEvent() == e.getClass()).forEach(t -> t.trigger(e));
