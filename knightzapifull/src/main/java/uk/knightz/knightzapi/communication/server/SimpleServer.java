@@ -25,7 +25,6 @@ package uk.knightz.knightzapi.communication.server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import org.apache.commons.lang.Validate;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -52,7 +51,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static uk.knightz.knightzapi.communication.rsa.RSA.*;
+import static uk.knightz.knightzapi.communication.encrypt.RSA.*;
 
 /**
  * Implementation of {@link Server}

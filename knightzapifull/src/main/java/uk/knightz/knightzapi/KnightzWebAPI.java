@@ -24,6 +24,7 @@
 package uk.knightz.knightzapi;
 
 import co.aikar.commands.BukkitCommandManager;
+import lombok.Getter;
 import spark.Spark;
 import uk.knightz.knightzapi.communication.server.*;
 import uk.knightz.knightzapi.communication.server.authorisation.AuthMethod;
@@ -34,52 +35,59 @@ import uk.knightz.knightzapi.module.ModuleManager;
  * Addon to KnightzAPI in charge of handling web communication API
  */
 public class KnightzWebAPI {
-	/**
-	 * An instance of WebServer, running the main Spark server.
-	 *
-	 * @see Webserver
-	 * @see Spark
-	 */
-	private static Webserver server;
-	/**
-	 * Instance of ServerManager used for managing the WebServer
-	 *
-	 * @see ServerManager
-	 */
-	private static ServerManager manager;
-	/**
-	 * The YAML file containing all configuration for the local web server
-	 */
-	private static PluginFile webserverFile;
-	private static KnightzWebAPI webAPI;
+    private static final String CONFIG_FILENAME = "webserver.yml";
+    /**
+     * An instance of WebServer, running the main Spark server.
+     *
+     * @see Webserver
+     * @see Spark
+     */
+    @Getter
+    private static Webserver server;
+    /**
+     * Instance of ServerManager used for managing the WebServer
+     *
+     * @see ServerManager
+     */
+    @Getter
+    private static ServerManager manager;
+    /**
+     * The YAML file containing all configuration for the local web server
+     */
+    private static PluginFile webserverFile;
+    @Getter
+    private static KnightzWebAPI webAPI;
 
 
-	private KnightzWebAPI() {
-	}
-	public static PluginFile getWebserverFile() {
-		return webserverFile;
-	}
-	/**
-	 * Initialize the Web API
-	 * Called by {@link KnightzAPI#onEnable()}, shouldn't be needed again
-	 */
-	public static void init() {
-		webAPI = new KnightzWebAPI();
-		new BukkitCommandManager(KnightzAPI.getP()).registerCommand(new FakeRequestCommand());
-		ModuleManager.init(webAPI);
-		webserverFile = new PluginFile(KnightzAPI.getP(), "webserver.yml", "webserver.yml");
-		manager = ServerManager.getInstance();
-		server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));
-		ServerFactory.FactoryStorage.setInstance(address -> {
-			try {
-				return new SimpleServer(address);
-			} catch (NotAServerException e) {
-				e.printStackTrace();
-			}
-			return null;
-		});
-	}
-	public static void onDisable() {
-		manager.shutdown();
-	}
+    private KnightzWebAPI() {
+    }
+
+    public static PluginFile getWebserverFile() {
+        return webserverFile;
+    }
+
+    /**
+     * Initialize the Web API
+     * Called by {@link KnightzAPI#onEnable()}, shouldn't be needed again
+     */
+    public static void init() {
+        webAPI = new KnightzWebAPI();
+        new BukkitCommandManager(KnightzAPI.getP()).registerCommand(new FakeRequestCommand());
+        ModuleManager.init(webAPI);
+        webserverFile = new PluginFile(KnightzAPI.getP(), CONFIG_FILENAME, CONFIG_FILENAME);
+        manager = ServerManager.getInstance();
+        server = manager.initServer(AuthMethod.valueOf(webserverFile.getString("authtype")));
+        ServerFactory.FactoryStorage.setInstance(address -> {
+            try {
+                return new SimpleServer(address);
+            } catch (NotAServerException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
+    }
+
+    public static void onDisable() {
+        manager.shutdown();
+    }
 }

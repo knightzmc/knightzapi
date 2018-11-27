@@ -22,7 +22,7 @@
  *
  */
 
-package uk.knightz.knightzapi.communication.rsa;
+package uk.knightz.knightzapi.communication.encrypt;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.File;

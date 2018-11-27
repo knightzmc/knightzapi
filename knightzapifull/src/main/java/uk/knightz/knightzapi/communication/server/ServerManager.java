@@ -53,8 +53,7 @@ public class ServerManager {
 	}
 
 	public void shutdown() {
-		webserver
-				.shutdown();
+		webserver.shutdown();
 		webserver = null;
 	}
 }

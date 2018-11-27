@@ -32,20 +32,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <powermock.version>1.7.1</powermock.version>
-    </properties>
+
     <artifactId>knightzapinoweb</artifactId>
     <build>
         <finalName>knightzapinoweb</finalName>
     </build>
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>com.google.guava</groupId>-->
-            <!--<artifactId>guava</artifactId>-->
-            <!--<version>20.0</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
@@ -58,17 +50,6 @@
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4-legacy</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 </project>

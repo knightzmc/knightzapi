@@ -25,7 +25,7 @@ package uk.knightz.knightzapi.module;
 
 import spark.Request;
 import spark.Response;
-import uk.knightz.knightzapi.communication.rsa.RSA;
+import uk.knightz.knightzapi.communication.encrypt.RSA;
 import uk.knightz.knightzapi.communication.server.Webserver;
 
 import java.util.Base64;

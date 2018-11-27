@@ -21,7 +21,7 @@
  *
  */
 
-package uk.knightz.knightzapi.communication.rsa;
+package uk.knightz.knightzapi.communication.encrypt;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

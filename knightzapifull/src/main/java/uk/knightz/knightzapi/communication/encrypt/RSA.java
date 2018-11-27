@@ -21,7 +21,7 @@
  *
  */
 
-package uk.knightz.knightzapi.communication.rsa;
+package uk.knightz.knightzapi.communication.encrypt;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -35,8 +35,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
-
-import static uk.knightz.knightzapi.communication.rsa.RSA.*;
 
 /**
  * Static RSA utility methods for encrypting and decrypting blocks of information.
