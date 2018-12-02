@@ -28,6 +28,7 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import spark.Spark;
 import uk.knightz.knightzapi.KnightzAPI;
@@ -177,10 +178,10 @@ public class Webserver extends Thread {
         before(new AuthFilter());
         WebModule.getAllModules().forEach(WebModule::exec);
 
-//        Bukkit.getScheduler().runTaskAsynchronously(KnightzAPI.getP(), ()->{
-//            Spark.awaitInitialization();
-//            Log.normal("Webserver successfully started up! Running on port " + port());
-//        });
+        Bukkit.getScheduler().runTaskAsynchronously(KnightzAPI.getP(), () -> {
+            Spark.awaitInitialization();
+            Log.normal("Webserver successfully started up! Running on port " + port());
+        });
     }
 
 
@@ -227,7 +228,7 @@ public class Webserver extends Thread {
      * Webserver is a singleton, so equality can be checked with a simple instanceof check
      *
      * @param o An object
-     * @return If the given object is equal to this webserver
+     * @return If the given object is equal to this Webserver
      */
     public boolean equals(Object o) {
         return o instanceof Webserver;
