@@ -67,14 +67,13 @@ import static uk.knightz.knightzapi.communication.server.authorisation.AuthMetho
  */
 @Getter
 public class Webserver extends Thread {
+    public static final File SECURE_DIR = new File(KnightzAPI.getP().getDataFolder(), "/secure");
     private static final String README_FILENAME = "README.txt";
     private static final List<String> README_LINES = Arrays.asList(
             "This folder contains your public and private keys for encrypting and decrypting data",
             "as said in the name, the private key SHOULD BE KEPT PRIVATE AT ALL TIMES!",
             "exposing it in ANY way will pose a security risk as any data sent to your server can be easily decrypted and read as plain text.",
             "If you have lost yours or suspect it has been discovered, immediately delete public.key and private.key, and restart your server");
-
-
     private static Webserver instance;
     private static boolean isInitialised = false;
     private final Set<Module> modules;
@@ -82,8 +81,6 @@ public class Webserver extends Thread {
     private final KeyStore keyStore;
     private final AuthMethod auth;
     private Whitelist whitelist;
-
-    public static final File SECURE_DIR =new File(KnightzAPI.getP().getDataFolder(), "/secure");
 
 
     private Webserver(AuthMethod auth) {
@@ -134,17 +131,17 @@ public class Webserver extends Thread {
         }
 
 
-        KeyStore keyStore = loadKeystore();
+        KeyStore keyStore = loadKeystore(pair);
         return new Struct<>(pair, keyStore);
 
 
     }
 
-    private KeyStore loadKeystore() {
+    private KeyStore loadKeystore(KeyPair pair) {
         val config = KnightzWebAPI.getWebserverFile();
         KeyStore keyStore;
         char[] keystorePass = getKeystorePassword(config);
-        keyStore = KeyStoreGen.generate(keystorePass);
+        keyStore = KeyStoreGen.generate(keystorePass, pair);
         return keyStore;
     }
 
@@ -174,13 +171,16 @@ public class Webserver extends Thread {
         //Allow Spark to load static files from Bukkit
         setContextClassLoader(KnightzWebAPI.class.getClassLoader());
 
-        Spark.secure("/secure/keystore.jks", new String(getKeystorePassword()), null, null);
+        Spark.secure(Webserver.SECURE_DIR.getPath() + "/keystore.jks", new String(getKeystorePassword()), null, null);
         staticFiles.location("/public");
         post("/requests", new MainRoute());
         before(new AuthFilter());
         WebModule.getAllModules().forEach(WebModule::exec);
-        Spark.init();
-        Log.normal("Webserver successfully started up! Running on port " + port());
+
+//        Bukkit.getScheduler().runTaskAsynchronously(KnightzAPI.getP(), ()->{
+//            Spark.awaitInitialization();
+//            Log.normal("Webserver successfully started up! Running on port " + port());
+//        });
     }
 
 

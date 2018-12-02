@@ -38,6 +38,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.knightz.knightzapi.challenge.ObjectiveListener;
 import uk.knightz.knightzapi.event.Events;
@@ -91,6 +92,13 @@ public class KnightzAPI extends JavaPlugin implements Listener {
         if (plugin == null)
             throw new NullPointerException("KnightzAPI instance is null! A plugin has tried to reference it before it's been loaded in");
         return plugin;
+    }
+
+    public static void dependWebAPI(Plugin p) {
+        if (!plugin.webAPIEnabled) {
+            p.getPluginLoader().disablePlugin(p);
+            throw new UnknownDependencyException(p.getName() + " depends on KnightzWebAPI!");
+        }
     }
 
     @Override
@@ -172,8 +180,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
     }
-
-
 
     //========================
     //    VAULT SETUP
