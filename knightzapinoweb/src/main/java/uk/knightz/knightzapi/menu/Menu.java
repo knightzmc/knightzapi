@@ -103,7 +103,8 @@ public class Menu {
     public void trim() {
         if (inventory.firstEmpty() == 0) //if the inventory is empty do nothing
             return;
-        int lastItemSlot = getButtons().entrySet().stream().map(Map.Entry::getKey).max(Integer::compare).get();
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
+        int lastItemSlot = getButtons().keySet().stream().max(Integer::compare).get();
         resize(lastItemSlot);
     }
 
