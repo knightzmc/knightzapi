@@ -22,9 +22,13 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.adapter.token;
+package uk.knightz.knightzapi.menu.adapter.tests;
 
-public class TokenFactory {
+public class DummyMenu {
 
+    private final DummyButton[] buttons;
 
+    public DummyMenu(int size) {
+        this.buttons = new DummyButton[size];
+    }
 }

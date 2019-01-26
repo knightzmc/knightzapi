@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,47 +22,21 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu.adapter.token;
+package uk.knightz.knightzapi.menu.adapter.tests;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
+import lombok.Data;
+import uk.knightz.knightzapi.menu.adapter.token.ObjectToken;
+import uk.knightz.knightzapi.menu.adapter.token.factory.TokenFactory;
 
-/**
- * Data class to represent the field structure and values of an object in a serializing friendly way
- * An example data class:
- * {
- * name: "Steve",
- * age: 27
- * }
- * would be converted to an ObjectToken looking like this:
- * {
- * tokens:
- * [
- * FieldToken<String>
- * {
- * name.field,"Steve"
- * },
- * FieldToken<Integer>
- * {
- * age.field, 27
- * }
- * ]
- * }
- *
- *
- *
- *
- *
- */
-public class ObjectToken<T> implements Token<Object> {
+public class TokenTester {
+    public static void main(String[] args) {
+        DataTest dataTest = new DataTest("Steve", 27);
+        ObjectToken<DataTest> generate = new TokenFactory().generate(dataTest, null);
+    }
 
-    private final List<FieldToken> fieldTokens;
-
-    private final List<MethodToken> methodTokens;
-
-    public ObjectToken(List<Method> fieldTokens, List<Field> methodTokens) {
-        this.fieldTokens = fieldTokens;
-        this.methodTokens = methodTokens;
+    @Data
+    public static class DataTest {
+        private final String name;
+        private final int age;
     }
 }

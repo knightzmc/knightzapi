@@ -51,7 +51,7 @@ public class FlickerlessScoreboard {
 		this.tracks = tracks;
 		this.sb = sb;
 
-		Objective obj = this.sb.registerNewObjective(ChatColor.stripColor(name), "dummy");
+		Objective obj = this.sb.registerNewObjective(ChatColor.stripColor(name), "tests");
 		obj.setDisplaySlot(ds);
 		obj.setDisplayName(name);
 

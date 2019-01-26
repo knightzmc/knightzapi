@@ -1,14 +1,11 @@
 package uk.knightz.knightzapi.reflect;
 
 import lombok.SneakyThrows;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
-import uk.knightz.knightzapi.utils.EnumUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Reflection {
 
@@ -34,7 +31,7 @@ public class Reflection {
      * @param clazz   The Class to retrieve public, user-friendly Getters of
      * @param options Includes a list of Methods to ignore, which will be removed from the Set. No other fields of {@link ReflectionOptions} are used
      * @return A sometimes empty Set of all of the Class's getters
-     * @apiNote Caching is in place to speed up the otherwise slow Reflexive operations, so if any dynamic class modification is done at runtime, it is not guaranteed to update. Alternatively, the WeakReferences to the Class may be destroyed upon modification, causing new Getter generation
+     * @apiNote Caching is in place to speed up the otherwise slow reflexive operations, so if any dynamic class modification is done at runtime, it is not guaranteed to update. Alternatively, the WeakReferences to the Class may be destroyed upon modification, causing new Getter generation
      */
     public static <T> Set<Method> getUserFriendlyPublicGetters(Class<T> clazz, ReflectionOptions<T> options) {
         if (cache.containsKey(clazz)) {
@@ -42,6 +39,7 @@ public class Reflection {
         }
 
         //Class classes cause StackOverflow errors because of getClassLoader()
+        //and any stored class probably shouldn't be exposed anyway
         if (clazz.equals(Class.class)) {
             return Collections.emptySet();
         }

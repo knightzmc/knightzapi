@@ -25,12 +25,16 @@
 package uk.knightz.knightzapi.menu.adapter;
 
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.menu.adapter.token.factory.TokenFactory;
 
-import java.util.function.Function;
+public class ObjectToItemStackAdapter {
+    public <T> ItemStack adapt(T o) {
+        return adapt(o, Options.defaultOptions);
+    }
 
-public class ObjectToItemStackAdapter implements Function<Object, ItemStack> {
-    @Override
-    public ItemStack apply(Object o) {
+    public <T> ItemStack adapt(T t, Options options) {
+        TokenFactory<T> factory = new TokenFactory<>();
+        factory.generate(t, options);
         return null;
     }
 }

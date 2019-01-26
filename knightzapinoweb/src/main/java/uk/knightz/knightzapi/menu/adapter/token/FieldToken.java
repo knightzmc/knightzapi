@@ -24,18 +24,13 @@
 
 package uk.knightz.knightzapi.menu.adapter.token;
 
-import lombok.Getter;
-import uk.knightz.knightzapi.utils.Struct;
+import lombok.Data;
 
 import java.lang.reflect.Field;
 
-public class FieldToken<T> extends Struct<Field, T> {
+@Data
+public class FieldToken<V> implements Token<Field> {
 
-    @Getter
-    private final Class<T> type;
-
-    public FieldToken(Field field, T t) {
-        super(field, t);
-        this.type = (Class<T>) t.getClass();
-    }
+    private final Field field;
+    private V value;
 }
