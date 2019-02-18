@@ -27,6 +27,8 @@ package uk.knightz.knightzapi.menu.page;
 import lombok.Getter;
 import uk.knightz.knightzapi.menu.Menu;
 
+import java.util.List;
+
 @Getter
 public class Page extends Menu {
 
@@ -35,6 +37,16 @@ public class Page extends Menu {
     public Page(int rows, String title, Menu parent) {
         super(title, rows);
         this.parent = parent;
-        if (rows > 9) throw new IndexOutOfBoundsException("Page rows cannot be more than 9");
+        if (rows > 6) throw new IndexOutOfBoundsException("Page rows cannot be more than 6");
+    }
+
+    @Override
+    public List<Page> getPages() {
+        return parent.getPages();
+    }
+
+    @Override
+    public int firstEmpty() {
+        return inventory.firstEmpty();
     }
 }

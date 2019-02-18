@@ -31,7 +31,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import uk.knightz.knightzapi.KnightzAPI;
-import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.utils.Listeners;
 
 /**
@@ -60,7 +59,6 @@ public class PlayerBlockMoveEvent extends PlayerMoveEvent {
     private static class MoveListener implements Listener {
         @EventHandler(priority = EventPriority.MONITOR)
         public void onMove(PlayerMoveEvent ex) {
-            long startTime = System.currentTimeMillis();
             if (ex instanceof PlayerBlockMoveEvent) {
                 return;
             }
@@ -69,9 +67,6 @@ public class PlayerBlockMoveEvent extends PlayerMoveEvent {
             if (!f.getBlock().getLocation().equals(t.getBlock().getLocation())) {
                 Bukkit.getPluginManager().callEvent(new PlayerBlockMoveEvent(ex.getPlayer(), f, t));
             }
-            long endTime = System.currentTimeMillis();
-
-            Log.debug((endTime - startTime) + "ms for PlayerBlockMoveEvent");
         }
     }
 }

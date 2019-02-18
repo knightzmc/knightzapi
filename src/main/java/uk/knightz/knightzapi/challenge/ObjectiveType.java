@@ -28,7 +28,6 @@ import lombok.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.jetbrains.annotations.Nullable;
 import uk.knightz.knightzapi.event.CreatureKilledEvent;
 import uk.knightz.knightzapi.user.User;
 
@@ -40,12 +39,11 @@ public class ObjectiveType<T> {
     public static final ObjectiveType<CreatureKilledEvent> CREATURE_KILL = new ObjectiveType<>(CreatureKilledEvent.class, "EntityType");
     public static final ObjectiveType<BlockBreakEvent> BREAK_BLOCK = new ObjectiveType<>(BlockBreakEvent.class, "BlockType");
 
-    @Nullable
     private final Class<? extends Event> forTrigger;
 
     private final String dataKey;
 
-    private ObjectiveType(@Nullable Class<? extends Event> forTrigger, String dataKey) {
+    private ObjectiveType(Class<? extends Event> forTrigger, String dataKey) {
         this.forTrigger = forTrigger;
         this.dataKey = dataKey;
     }

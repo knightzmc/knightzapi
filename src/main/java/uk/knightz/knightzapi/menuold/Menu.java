@@ -35,7 +35,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.annotation.Dangerous;
 import uk.knightz.knightzapi.lang.Chat;
-import uk.knightz.knightzapi.menuold.button.BackPageButton;
 import uk.knightz.knightzapi.menuold.button.DynamicDataButton;
 import uk.knightz.knightzapi.menuold.button.MenuButton;
 import uk.knightz.knightzapi.menuold.button.NextPageButton;
@@ -332,7 +331,7 @@ public class Menu {
         lastInv.addButton(lastInv.getSize() - 1, new NextPageButton());
 
         Page newPage = new Page(this);
-        newPage.addButton(new BackPageButton());
+//        newPage.addButton(new BackPageButton());
         if (copyOldButton != null) {
             newPage.addButton(copyOldButton);
         }

@@ -24,119 +24,89 @@
 
 package uk.knightz.knightzapi.menu.adapter;
 
-import lombok.Data;
-import lombok.experimental.var;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Lists;
+import lombok.SneakyThrows;
+import uk.knightz.knightzapi.menu.adapter.iface.UnfriendlyFilter;
+import uk.knightz.knightzapi.menu.adapter.options.Options;
 import uk.knightz.knightzapi.utils.Struct;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.List;
 
-@Data
+import static com.google.common.cache.CacheBuilder.newBuilder;
+
+/**
+ * Class responsible for searching a given Class and constructing a List of Field and Method objects that it has
+ */
 public class ClassSearcher {
 
-    private static final Map<Class, Struct<List<Method>, List<Field>>> cache = new WeakHashMap<>();
-    private static final Map<Class, Struct<List<Method>, List<Field>>> friendlyCache = new WeakHashMap<>();
-    private boolean friendly;
+    /**
+     * Cache of all the data of a Class
+     * That is, all declared methods, and all declared fields
+     */
+    private static final LoadingCache<Class, Struct<List<Method>, List<Field>>> CACHE;
+    /**
+     * Cache of friendly data of a Class
+     * This is data we assume we are allowed to see, usually has no fields as they're all encapsulated,
+     * and any getters are included
+     */
+    private static final Cache<Class, Struct<List<Method>, List<Field>>> FRIENDLY_CACHE;
 
-    public Struct<List<Method>, List<Field>> dataOfClass(Class c, Options o) {
-        this.friendly = o.isFriendly();
-        var struct = allDataOfClass(c, o);
-        if (friendly) {
-            var friendlyStruct = friendlyCache.get(c);
-            if (friendlyStruct != null) struct = friendlyStruct;
+    static {
+        CACHE = newBuilder()
+                .weakKeys().weakValues()
+                .build(new CacheLoader<Class, Struct<List<Method>, List<Field>>>() {
+                    public Struct<List<Method>, List<Field>> load(Class key) {
+                        return new Struct<>(methodsOfClass(key), fieldsOfClass(key));
+                    }
+                });
 
-            else {
-                struct = removeUnfriendly(struct, o);
-                friendlyCache.put(c, struct);
-            }
+        FRIENDLY_CACHE = newBuilder()
+                .weakKeys().weakValues()
+                .build();
+    }
+
+
+    private ClassSearcher() {
+    }
+
+    @SneakyThrows
+    public static Struct<List<Method>, List<Field>> dataOfClass(Class c, Options o) {
+        if (o.isUnfriendly()) {
+            return allDataOfClass(c);
         }
-        return struct;
+        return FRIENDLY_CACHE.get(c, () -> removeUnfriendly(allDataOfClass(c), o));
     }
 
     /**
      * Remove any Methods or Fields from a given Struct that is deemed unfriendly to be shown to the end user.
-     * The implementation of this method can be found in {@link ClassSearcher#filterMethods(List, Options)} and {@link ClassSearcher#filterFields(List, Options)}
+     * The implementation of this method can be found in {@link UnfriendlyFilter#filterMethods(List, Options)} and {@link UnfriendlyFilter#filterFields(List, Options)}
      *
      * @param struct A Struct containing a List<Method> to filter and a List<Field> to filter
      * @return A filtered Struct
      */
-    private Struct<List<Method>, List<Field>> removeUnfriendly(Struct<List<Method>, List<Field>> struct, Options o) {
-
-        struct.setA(filterMethods(struct.getA(), o));
+    private static Struct<List<Method>, List<Field>> removeUnfriendly(Struct<List<Method>, List<Field>> struct, Options o) {
+        struct.setA(o.getFilter().filterMethods(struct.getA(), o));
         if (o.isIncludeFields())
-            struct.setB(filterFields(struct.getB(), o));
+            struct.setB(o.getFilter().filterFields(struct.getB(), o));
+        else struct.setB(null);
         return struct;
     }
 
-    /**
-     * Remove any Method objects from a given List of Method objects that is deemed unfriendly to be shown to the end user
-     * <p>
-     * A Method is deemed friendly if it doesn't supply all of the following conditions:
-     * <p>
-     * 1) The name of the Method contains "get" to mark it as a Getter (which typically signifies that the information is safe to be viewed)
-     * 2) The method returns something other than void
-     * 3) The method's access modifier is public - if it is not, the data it returns is assumed to be for internal use, hence the encapsulation
-     * 4) The method must have a parameter count of 0
-     * 5) The method must not be "getClass", as Class objects are deemed unfriendly, and can cause StackOverflowError due to {@link Class#getClassLoader()}
-     *
-     * @param a A list of Method object to filter
-     * @param o The Options to use
-     * @return A filtered list of Method objects
-     */
-    private List<Method> filterMethods(List<Method> a, Options o) {
-        a.removeIf(m -> !m.getName().contains("get"));
-        a.removeIf(m -> m.getReturnType().equals(Void.class));
-        a.removeIf(m -> !Modifier.isPublic(m.getModifiers()));
-        a.removeIf(m -> m.getParameterCount() > 0);
-        a.removeIf(m -> m.getName().equals("getClass"));
-        a.removeIf(m -> (o.getModifierBlacklist() & m.getModifiers()) != 0);
-        return a;
+
+    private static Struct<List<Method>, List<Field>> allDataOfClass(Class c) {
+        return CACHE.getUnchecked(c);
     }
 
-    /**
-     * Remove any Field objects from a given List of Field objects that is deemed unfriendly to be shown to the end user.
-     * <p>
-     * Most fields of a class are usually encapsulated, so it's unlikely that any will be included.
-     * Because of the unlikelihood of a public field, fields aren't scanned unless the given {@link Options} class has
-     * {@link Options#isIncludeFields()} set to true
-     * <p>
-     * A Field is deemed unfriendly if it doesn't supply all of the following conditions.
-     * 1) The Field must be public
-     * 2) The Field must not be static, as this usually indicates a constant.
-     * 3) The Field must not be transient
-     *
-     * @param a A List of Field objects to be filtered
-     * @param o The Options to use
-     * @return A filtered List of Field objects
-     */
-    private List<Field> filterFields(List<Field> a, Options o) {
-        a.removeIf(f -> !Modifier.isPublic(f.getModifiers()));
-        a.removeIf(f -> Modifier.isStatic(f.getModifiers()));
-        a.removeIf(f -> Modifier.isTransient(f.getModifiers()));
-        a.removeIf(f -> (o.getModifierBlacklist() & f.getModifiers()) != 0);
-        return a;
+    private static List<Field> fieldsOfClass(Class c) {
+        return Lists.newArrayList(c.getDeclaredFields());
     }
 
-
-    private Struct<List<Method>, List<Field>> allDataOfClass(Class c, Options options) {
-        var cached = cache.get(c);
-        if (cached == null) {
-            cached = new Struct<>(null, null);
-            cached.setA(methodsOfClass(c));
-            if (options.isIncludeFields())
-                cached.setB(fieldsOfClass(c));
-            cache.put(c, cached);
-        }
-        return cached;
-    }
-
-    private List<Field> fieldsOfClass(Class c) {
-        return new ArrayList<>(Arrays.asList(c.getDeclaredFields()));
-    }
-
-    private List<Method> methodsOfClass(Class c) {
-        return new ArrayList<>(Arrays.asList(c.getDeclaredMethods()));
+    private static List<Method> methodsOfClass(Class c) {
+        return Lists.newArrayList(c.getDeclaredMethods());
     }
 }

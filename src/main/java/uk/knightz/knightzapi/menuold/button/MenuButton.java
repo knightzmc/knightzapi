@@ -27,7 +27,6 @@ import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
 import java.util.function.Consumer;
@@ -37,33 +36,32 @@ import java.util.function.Consumer;
  */
 @Data
 public class MenuButton {
-	@NonNull
-	private final ItemStack itemStack;
-	public String onClickAlias;
-	@NonNull
-	private transient Consumer<MenuClickEvent> onClick;
-	private Sound onClickSound;
-	@Nullable
-	private String permission;
+    @NonNull
+    private final ItemStack itemStack;
+    public String onClickAlias;
+    @NonNull
+    private transient Consumer<MenuClickEvent> onClick;
+    private Sound onClickSound;
+    private String permission;
 
-	/**
-	 * Create a new MenuButton
-	 *
-	 * @param itemStack The ItemStack that will be added to a menuold.
-	 * @param onClick   A consumer that will be called when the MenuButton is clicked by a user.
-	 */
-	public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
-		this.itemStack = itemStack;
-		this.onClick = onClick;
-	}
+    /**
+     * Create a new MenuButton
+     *
+     * @param itemStack The ItemStack that will be added to a menuold.
+     * @param onClick   A consumer that will be called when the MenuButton is clicked by a user.
+     */
+    public MenuButton(ItemStack itemStack, Consumer<MenuClickEvent> onClick) {
+        this.itemStack = itemStack;
+        this.onClick = onClick;
+    }
 
 
-	public void onClick(MenuClickEvent e) {
-		if (e == null) return;
-		onClick.accept(e);
-	}
+    public void onClick(MenuClickEvent e) {
+        if (e == null) return;
+        onClick.accept(e);
+    }
 
-	public boolean hasPermission() {
-		return permission != null;
-	}
+    public boolean hasPermission() {
+        return permission != null;
+    }
 }

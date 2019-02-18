@@ -93,18 +93,19 @@ public class Reflection {
      */
     @SneakyThrows
     public static Map<String, Object> getAllNamesAndValuesOfObject(Object o, ReflectionOptions options) {
-        Map<String, Object> ourMap = new HashMap<>();
+        Map<String, Object> namesAndValuesMap = new HashMap<>();
         Set<Method> getters = getUserFriendlyPublicGetters(o.getClass(), options);
         for (Method g : getters) {
             if (!options.getMethodsToIgnore().contains(g)) {
                 Object invoke = g.invoke(o);
-                ourMap.put(StringUtils.capitalize(g.getName().replace("get", "")), invoke);
+                if (invoke != null)
+                    namesAndValuesMap.put(StringUtils.capitalize(g.getName().replace("get", "")), invoke);
 //                    if (!isSimpleType(invoke)) {
-//                        ourMap.putAll(getAllNamesAndValuesOfObject(invoke, options));
+//                        namesAndValuesMap.putAll(getAllNamesAndValuesOfObject(invoke, options));
 //                    }
             }
         }
-        return ourMap;
+        return namesAndValuesMap;
     }
 
     public static <V> V callMethod(Method method, Object object, Object... args) {

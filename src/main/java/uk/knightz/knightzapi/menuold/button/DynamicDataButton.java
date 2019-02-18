@@ -24,6 +24,7 @@
 
 package uk.knightz.knightzapi.menuold.button;
 
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
 import org.bukkit.entity.Player;
@@ -31,8 +32,6 @@ import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.lang.placeholder.Placeholder;
 import uk.knightz.knightzapi.menuold.MenuClickEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -41,56 +40,57 @@ import java.util.stream.Collectors;
 
 public class DynamicDataButton extends MenuButton {
 
-	private final ItemStack defaultValue;
-	@Nonnull
-	private final List<Placeholder> placeholdersForItem = new ArrayList<>();
+    private final ItemStack defaultValue;
+    @NonNull
+    private final List<Placeholder> placeholdersForItem = new ArrayList<>();
 
-	@Nonnull
-	private final List<BiFunction<Player, String, String>> contextualPlaceholders = new ArrayList<>();
-	@Nullable
-	@Setter
-	private BiFunction<Player, ItemStack, ItemStack> editItem;
-	/**
-	 * Create a new MenuButton that has its Metadata generated dynamically when an Inventory is rendered
-	 *
-	 * @param defaultValue The default value of the ItemStack that will be added to a menuold.
-	 *                     Typically, this has an ItemMeta using {@link String#format(String, Object...)}
-	 *                     compatible values, so they can be easily edited in {@link DynamicDataButton#editItem}
-	 * @param onClick      A consumer that will be called when the MenuButton is clicked by a user.
-	 */
-	public DynamicDataButton(ItemStack defaultValue, Consumer<MenuClickEvent> onClick) {
-		super(defaultValue, onClick);
-		this.defaultValue = defaultValue;
-	}
+    @NonNull
+    private final List<BiFunction<Player, String, String>> contextualPlaceholders = new ArrayList<>();
+    @Setter
+    private BiFunction<Player, ItemStack, ItemStack> editItem;
+
+    /**
+     * Create a new MenuButton that has its Metadata generated dynamically when an Inventory is rendered
+     *
+     * @param defaultValue The default value of the ItemStack that will be added to a menuold.
+     *                     Typically, this has an ItemMeta using {@link String#format(String, Object...)}
+     *                     compatible values, so they can be easily edited in {@link DynamicDataButton#editItem}
+     * @param onClick      A consumer that will be called when the MenuButton is clicked by a user.
+     */
+    public DynamicDataButton(ItemStack defaultValue, Consumer<MenuClickEvent> onClick) {
+        super(defaultValue, onClick);
+        this.defaultValue = defaultValue;
+    }
 
 
-	public ItemStack applyDynData(Player menuUser, Object... format) {
-		ItemStack temp = new ItemStack(getItemStack());
-		if (editItem != null) {
-			temp = editItem.apply(menuUser, getItemStack());
-		}
-		val meta = getItemStack().getItemMeta();
-		contextualPlaceholders.forEach(f -> {
-			meta.setDisplayName(f.apply(menuUser, meta.getDisplayName()));
-			meta.setLore(meta.getLore().stream().map(s -> s = f.apply(menuUser, s)).collect(Collectors.toList()));
+    public ItemStack applyDynData(Player menuUser, Object... format) {
+        ItemStack temp = new ItemStack(getItemStack());
+        if (editItem != null) {
+            temp = editItem.apply(menuUser, getItemStack());
+        }
+        val meta = getItemStack().getItemMeta();
+        contextualPlaceholders.forEach(f -> {
+            meta.setDisplayName(f.apply(menuUser, meta.getDisplayName()));
+            meta.setLore(meta.getLore().stream().map(s -> s = f.apply(menuUser, s)).collect(Collectors.toList()));
 
-		});
-		placeholdersForItem.forEach(p -> {
-			meta.setDisplayName(String.format(p.replace(meta.getDisplayName()), format));
-			val tempList = meta.getLore().stream()
-					.map(p::replace)
-					.map(s1 -> String.format(s1, format))
-					.collect(Collectors.toList());
-			meta.setLore(tempList);
-		});
-		temp.setItemMeta(meta);
-		return temp;
-	}
+        });
+        placeholdersForItem.forEach(p -> {
+            meta.setDisplayName(String.format(p.replace(meta.getDisplayName()), format));
+            val tempList = meta.getLore().stream()
+                    .map(p::replace)
+                    .map(s1 -> String.format(s1, format))
+                    .collect(Collectors.toList());
+            meta.setLore(tempList);
+        });
+        temp.setItemMeta(meta);
+        return temp;
+    }
 
-	public void addPlaceholder(Placeholder p) {
-		placeholdersForItem.add(p);
-	}
-	public void addContextualPlaceholder(BiFunction<Player, String, String> s) {
-		contextualPlaceholders.add(s);
-	}
+    public void addPlaceholder(Placeholder p) {
+        placeholdersForItem.add(p);
+    }
+
+    public void addContextualPlaceholder(BiFunction<Player, String, String> s) {
+        contextualPlaceholders.add(s);
+    }
 }

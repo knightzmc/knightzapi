@@ -91,8 +91,8 @@ public class PluginFile extends YamlConfiguration {
      */
     public PluginFile(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.defaults = "src/main/resources/config.yml";
-        this.file = new File(plugin.getDataFolder().getParent() + File.separator + plugin.getName() + File.separator + "src/main/resources/config.yml");
+        this.defaults = "config.yml";
+        this.file = new File(plugin.getDataFolder(), "config.yml");
         reload();
     }
 

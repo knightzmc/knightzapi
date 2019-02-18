@@ -63,6 +63,7 @@ public class NumberBuilder {
         return this;
     }
 
+
     public long toLong() {
         StringBuilder buffer = new StringBuilder();
         for (Number number : numbers) {

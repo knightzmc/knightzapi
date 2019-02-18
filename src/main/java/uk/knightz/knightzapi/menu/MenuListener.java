@@ -42,18 +42,24 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e instanceof MenuClickEvent) {
+        if (e instanceof MenuClickEvent || !(e.getClickedInventory().getHolder() instanceof MenuHolder)) {
             return;
         }
-        if (e.getClickedInventory().getHolder() instanceof MenuHolder) {
-            MenuClickEvent me = convert(e);
 
-            if (me.getClickedButton() != null && me.getClickedButton().getOnClick() != null)
-                me.getClickedButton().getOnClick().accept(me);
-            Bukkit.getPluginManager().callEvent(me);
+        MenuClickEvent me = convert(e);
 
-            if (me.isCancelled()) e.setCancelled(true);
+        Bukkit.getPluginManager().callEvent(me);
+
+        if (me.isCancelled()) {
+            e.setCancelled(true);
+            return;
         }
+        if (me.getClickedButton() == null) {
+            return;
+        }
+
+        me.getClickedButton().getOnClick().accept(me);
+
     }
 
     private MenuClickEvent convert(InventoryClickEvent e) {

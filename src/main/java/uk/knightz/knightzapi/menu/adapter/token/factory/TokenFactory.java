@@ -25,30 +25,43 @@
 package uk.knightz.knightzapi.menu.adapter.token.factory;
 
 import uk.knightz.knightzapi.menu.adapter.ClassSearcher;
-import uk.knightz.knightzapi.menu.adapter.Options;
-import uk.knightz.knightzapi.menu.adapter.token.FieldToken;
-import uk.knightz.knightzapi.menu.adapter.token.MethodToken;
-import uk.knightz.knightzapi.menu.adapter.token.ObjectToken;
-import uk.knightz.knightzapi.menu.adapter.token.Tokenizer;
+import uk.knightz.knightzapi.menu.adapter.options.Options;
+import uk.knightz.knightzapi.menu.adapter.token.*;
+import uk.knightz.knightzapi.reflect.Reflection;
 import uk.knightz.knightzapi.utils.Struct;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class TokenFactory<T> {
+
+    public ObjectToken<T> generate(T t) {
+        return generate(t, Options.defaultOptions);
+    }
 
     public ObjectToken<T> generate(T t, Options options) {
         return generate(t, (Class<T>) t.getClass(), options);
     }
 
+    public ObjectToken<T>[] generate(Collection<T> ts, Options options) {
+        ObjectToken<T>[] arr = new ObjectToken[ts.size()];
+        Iterator<T> tIterator = ts.iterator();
+        for (int i = 0, tsLength = ts.size(); i < tsLength; i++) {
+            T t = tIterator.next();
+            arr[i] = generate(t, options);
+        }
+        return arr;
+    }
+
     private ObjectToken<T> generate(T t, Class<T> tClass, Options options) {
-        ClassSearcher searcher = new ClassSearcher();
-        searcher.setFriendly(options.isFriendly());
-        Struct<List<Method>, List<Field>> data = searcher.dataOfClass(tClass, options);
-
+        if (Reflection.isSimpleType(tClass)) {
+            return new PrimitiveToken(t);
+        }
+        Struct<List<Method>, List<Field>> data = ClassSearcher.dataOfClass(tClass, options);
         Struct<List<MethodToken>, List<FieldToken>> tokenStruct = Tokenizer.convert(data, t);
-
         return new ObjectToken<>(tokenStruct.getB(), tokenStruct.getA());
     }
 }

@@ -25,12 +25,28 @@
 package uk.knightz.knightzapi.menu.adapter.token;
 
 import lombok.Data;
+import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
 
 import java.lang.reflect.Field;
 
 @Data
-public class FieldToken<V> implements Token<Field> {
+public class FieldToken<V> implements DataToken<Field, V> {
 
     private final Field field;
     private V value;
+
+    @Override
+    public String getFriendlyDataName() {
+        return getDataName();
+    }
+
+    @Override
+    public String getDataName() {
+        return field.getName();
+    }
+
+    @Override
+    public Class<V> getType() {
+        return (Class<V>) value.getClass();
+    }
 }

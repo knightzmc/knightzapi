@@ -25,20 +25,14 @@ package uk.knightz.knightzapi.user;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.jetbrains.annotations.NotNull;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.challenge.Challenge;
 import uk.knightz.knightzapi.challenge.ChallengeCompleteEvent;
@@ -51,9 +45,10 @@ import uk.knightz.knightzapi.menuold.button.MenuButton;
 import uk.knightz.knightzapi.utils.Listeners;
 import uk.knightz.knightzapi.utils.MathUtils;
 
-import java.io.File;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * A Player Wrapper class that stores various pieces of data
@@ -65,11 +60,9 @@ public class User implements Listener {
     private static final Map<User, JsonFile> userFiles = new HashMap<>();
 
     private final OfflinePlayer root;
+
     private final ChallengeData challengeData = new ChallengeData();
     private final UserData userData;
-    private Consumer<Player> onConfirmAction;
-    private Consumer<Player> onDenyAction;
-    private Set<Class<? extends PlayerEvent>> deniedEvents = new HashSet<>();
 
     /**
      * Initialise a new User for the given "root" player
@@ -81,12 +74,9 @@ public class User implements Listener {
 
         JsonFile file = new JsonFile(KnightzAPI.getP(), root.getUniqueId());
         userFiles.put(this, file);
-        UserData tempData = KnightzAPI.GSON.fromJson(file.getParsed(), UserData.class);
-        if (tempData == null) tempData = new UserData();
-        userData = tempData;
-
-        userData.addPersistentData("falldamage", true);
-        userData.addTemporaryData("scoreboard", true);
+        UserData userData = KnightzAPI.GSON.fromJson(file.getParsed(), UserData.class);
+        if (userData == null) userData = new UserData();
+        this.userData = userData;
 
         if (file.isEmpty()) {
             save(file);
@@ -102,7 +92,7 @@ public class User implements Listener {
      * @param root The root OfflinePlayer
      * @return the corresponding User for the given OfflinePlayer, if none is currently loaded, a new one is loaded
      */
-    public static User valueOf(@NotNull OfflinePlayer root) {
+    public static User valueOf(@NonNull OfflinePlayer root) {
         User u = users.get(root);
         if (u == null) {
             u = new User(root);
@@ -118,34 +108,6 @@ public class User implements Listener {
         userFiles.forEach(User::save);
     }
 
-    /**
-     * @deprecated Unused
-     */
-    @Deprecated
-    public static Set<StatsContainer> getAllUsers() {
-        File usersDir = new File(KnightzAPI.getP().getDataFolder() + File.separator + "userdata" + File.separator);
-        Set<StatsContainer> temp = new HashSet<>();
-        Set<String> added = new HashSet<>();
-        for (User user : users.values()) {
-            temp.add(new StatsContainer(user.getKills(), user.getDeaths(), user.getRoot().getName()));
-            added.add(user.getRoot().getName());
-        }
-        File[] files = usersDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-                if (added.contains(Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName())) {
-                    continue;
-                }
-                int kills = yamlConfiguration.getInt("kills");
-                int deaths = yamlConfiguration.getInt("deaths");
-                temp.add(new StatsContainer(kills, deaths, Bukkit.getOfflinePlayer(UUID.fromString(file.getName().replace(".yml", ""))).getName()));
-            }
-
-        }
-        return temp;
-    }
-
     private void save(JsonFile f) {
         f.setParsed(KnightzAPI.GSON.toJsonTree(userData, UserData.class));
         f.save();
@@ -155,36 +117,6 @@ public class User implements Listener {
         save(userFiles.get(this));
     }
 
-    public int getKills() {
-        return userData.getKills();
-    }
-
-    public void setKills(int kills) {
-        userData.setKills(kills);
-    }
-
-    public int getDeaths() {
-        return userData.getDeaths();
-    }
-
-    public void setDeaths(int deaths) {
-        userData.setDeaths(deaths);
-    }
-
-    public float getKD() {
-        return userData.getKD();
-    }
-
-    @EventHandler
-    public void kill(EntityDeathEvent e) {
-        userData.kill(e);
-    }
-
-    @EventHandler
-    public void death(PlayerDeathEvent e) {
-        userData.death(e);
-    }
-
     @EventHandler
     public void leave(PlayerQuitEvent e) {
         User.valueOf(e.getPlayer()).save();
@@ -192,32 +124,6 @@ public class User implements Listener {
 
     public OfflinePlayer getRoot() {
         return root;
-    }
-
-    public int getTokens() {
-        return userData.getTokens();
-    }
-
-    public void setTokens(int tokens) {
-        userData.setTokens(tokens);
-    }
-
-    public boolean shouldCancel(Class<? extends PlayerEvent> event) {
-        return deniedEvents.contains(event);
-    }
-
-    public void denyEvent(Class<? extends PlayerEvent> eventClass) {
-        deniedEvents.add(eventClass);
-    }
-
-    public void playerAction(PlayerEvent p) {
-        if (p != null) {
-            if (p instanceof Cancellable) {
-                if (shouldCancel(p.getClass())) {
-                    ((Cancellable) p).setCancelled(true);
-                }
-            }
-        }
     }
 
     public void completeChallengeObjective(ChallengeObjective objective) {
@@ -260,24 +166,6 @@ public class User implements Listener {
             m.addButton(new MenuButton(ofChallenge.build(), Menu.cancel));
         });
         return m;
-
-
-        //Old implementation
-//        return CollectionToMenuAdapter.generateMenu(allTaken, ReflectionOptions.<Challenge>builder()
-//                .manualItemStackFunction(c -> {
-//                    if (challengeData.hasCompleted(c)) return new ItemStack(EMERALD_BLOCK);
-//                    else return new ItemStack(REDSTONE_BLOCK);
-//                })
-//                .addMethodToIgnore("getOnComplete")
-//                .addManualObjectParser(ChallengeObjective.class, co -> {
-//                    return co.toNaturalString();
-//                    ItemBuilder builder = new ItemBuilder();
-//                    builder.setType(challengeData.hasCompleted(co) ? EMERALD : REDSTONE);
-//                    builder.setName(co.getType().toFriendlyString());
-//                    builder.setLore(Collections.singletonList(co.toNaturalString()));
-//                    return builder.build();
-//                })
-//                .build());
     }
 
 }

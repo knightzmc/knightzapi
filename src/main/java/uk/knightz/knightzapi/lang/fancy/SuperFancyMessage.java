@@ -24,24 +24,24 @@
 
 package uk.knightz.knightzapi.lang.fancy;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 @AllArgsConstructor
-@Data
+@EqualsAndHashCode
 public class SuperFancyMessage {
 
-    @NonNull
-    @NotNull
+    @Getter
     private final UUID uuid;
     @Getter
     private final LinkedList<MessagePart> parts = new LinkedList<>();
@@ -93,6 +93,9 @@ public class SuperFancyMessage {
                 } else throw new NullPointerException("LinkMessage does not have any links (both are null)");
                 builder.append("]");
             }
+            if (part.color != null) {
+                builder.append(", ").append(part.color.getChar());
+            }
             builder.append("\"}");
             if (parts.size() > 1 && i != parts.size() - 1) {
                 if (prettyPrinting) builder.append(", \n");
@@ -110,7 +113,6 @@ public class SuperFancyMessage {
         for (int i = 0; i < parts.size(); i++) {
             BaseComponent[] texts = toBukkitText(i);
             for (BaseComponent component : texts) {
-                System.out.println(component.toPlainText());
                 if (component instanceof TextComponent) {
                     TextComponent text = (TextComponent) component;
                     cb.append(text.getText());
@@ -178,6 +180,7 @@ public class SuperFancyMessage {
     /**
      * Plain Text part of a FancyMessage.
      * For serialization purposes, this class does not contain a reference to any SuperFancyMessage objects that it belongs to
+     * or a StackOverflowException is thrown
      * As such, use {@link SuperFancyMessages#withMessagePart(MessagePart)} to get the first SuperFancyMessage with this part in
      */
     @Data
@@ -186,6 +189,11 @@ public class SuperFancyMessage {
         private final int id;
         private final List<LinkMessage> links = new ArrayList<>();
         private ChatColor color;
+
+        public MessagePart(String text, int id) {
+            this.text = text;
+            this.id = id;
+        }
 
         public MessagePart addLink(LinkMessage m) {
             links.add(m);
@@ -200,15 +208,13 @@ public class SuperFancyMessage {
         }
     }
 
-    @SuppressWarnings("NullableProblems")
     @EqualsAndHashCode(exclude = {"linksTo", "simpleLinksTo"})
+    @Getter
     public static class LinkMessage {
         /*
         Either linksTo or simpleLinksTo will be null, but never both
          */
-        @Nullable
         private final SuperFancyMessage linksTo;
-        @Nullable
         private final MessagePart simpleLinksTo;
         private final String text;
 
@@ -224,20 +230,6 @@ public class SuperFancyMessage {
             this.linksTo = linksTo;
             this.simpleLinksTo = null;
             this.text = text;
-        }
-
-        @Nullable
-        public SuperFancyMessage getLinksTo() {
-            return this.linksTo;
-        }
-
-        @Nullable
-        public MessagePart getSimpleLinksTo() {
-            return this.simpleLinksTo;
-        }
-
-        public String getText() {
-            return this.text;
         }
     }
 

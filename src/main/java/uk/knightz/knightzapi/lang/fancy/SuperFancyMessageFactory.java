@@ -41,8 +41,8 @@ import static uk.knightz.knightzapi.utils.ColorUtils.colorOfClass;
 
 /**
  * Couldn't really think of a more appropriate name - this class takes one or more Objects
- * and uses BasecomponentReflection and Spigot's JSON Message API to convert the Object(s)'s data into
- * a clickable chat menuold which can be navigated by clicking on links
+ * and uses BaseComponent Reflection and Spigot's JSON Message API to convert the Object(s)'s data into
+ * a clickable chat menu which can be navigated by clicking on links
  * <p>
  * NOTE: This generates a secret randomly generated command which is the only way to have clickable navigation
  */
@@ -51,9 +51,7 @@ public class SuperFancyMessageFactory {
 
     public <T> SuperFancyMessage generateMessages(Collection<T> objects) {
         SuperFancyMessage message = new SuperFancyMessage();
-        for (T object : objects) {
-            message.append(generateMessage(object));
-        }
+        objects.stream().sorted().map(this::generateMessage).forEachOrdered(message::append);
         return message;
     }
 
@@ -113,7 +111,10 @@ public class SuperFancyMessageFactory {
         DATA_OBJECT(true, (s, o) -> {
             val mainMessage = new SuperFancyMessage();
             Reflection.getAllNamesAndValuesOfObject(o, ReflectionOptions.EMPTY).forEach((s1, o1) -> {
-                MessagePart mainSimplePart = mainMessage.addSimplePart(String.format(FORMAT, colorOfClass(o1.getClass()) + s1, ""));
+                MessagePart mainSimplePart = mainMessage.addSimplePart(
+                        String.format(FORMAT,
+                                colorOfClass(o1.getClass()) +
+                                        s1, ""));
                 mainSimplePart.setColor(colorOfClass(o1.getClass()));
                 SuperFancyMessage linksTo = generate(o1);
                 LinkMessage link = new LinkMessage(linksTo, "Info");

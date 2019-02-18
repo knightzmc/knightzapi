@@ -24,7 +24,7 @@
 
 package uk.knightz.knightzapi.menu;
 
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 
 import java.util.Map;
@@ -32,12 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
- * Manages mapping of a MenuClickEvent to a string
+ * Manages mapping of a MenuClickEvent to a String
  */
 public class ClickEventAliases {
     @Getter
     private static final ClickEventAliases instance = new ClickEventAliases();
-
 
     private final Map<String, Consumer<MenuClickEvent>> mapToEvent = new ConcurrentHashMap<>();
 
@@ -64,6 +63,6 @@ public class ClickEventAliases {
      * @return an immutable copy of the aliases Map
      */
     public Map<String, Consumer<MenuClickEvent>> getMapToEvent() {
-        return ImmutableBiMap.copyOf(mapToEvent);
+        return ImmutableMap.copyOf(mapToEvent);
     }
 }

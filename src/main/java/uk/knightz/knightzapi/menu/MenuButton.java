@@ -38,18 +38,15 @@ import java.util.function.Consumer;
 @Getter
 public class MenuButton {
 
-    @NonNull
     private final transient Consumer<MenuClickEvent> onClick;
-    @NonNull
     private final Map<String, Object> injectedData = new HashMap<>();
-
-    @NonNull
     private final ItemStack item;
 
-    public MenuButton(ItemStack item, Consumer<MenuClickEvent> onClick) {
+    public MenuButton(@NonNull ItemStack item, @NonNull Consumer<MenuClickEvent> onClick) {
         this.item = item;
         this.onClick = onClick;
     }
+
 
     public MenuButton addDataToInject(String key, Object value) {
         injectedData.put(key, value);
@@ -63,7 +60,6 @@ public class MenuButton {
     public void injectDataFrom(Map<String, Object> map) {
         ItemBuilder builder = new ItemBuilder(item);
         builder.setName(parse(map, builder.getName()));
-
 
         val lore = builder.getLore();
         builder.getLore().clear();

@@ -13,3 +13,6 @@ author: Knightz
 website: http://bristermitten.me
 #Cheeky little Bukkit Exploit to make sure the plugin loads last ;)
 softdepend: [Essentials, thisdoesntexist]
+commands:
+  test:
+    description: "Test Command"

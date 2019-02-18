@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapinoweb.test;
+package uk.knightz.knightzapi.test;
 
 import com.google.gson.Gson;
 import org.junit.Test;

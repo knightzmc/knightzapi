@@ -41,6 +41,9 @@ public class VersionUtil {
      */
     public static Version getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
+        if (name.contains("knightzapi")) {
+            return Version.v1_12; //Testing
+        }
         String versionPackage = name.substring(name.lastIndexOf(46) + 1) + ".";
         Version[] var2 = Version.values();
         for (Version version : var2) {

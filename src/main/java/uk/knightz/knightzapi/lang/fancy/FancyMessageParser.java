@@ -26,6 +26,7 @@ package uk.knightz.knightzapi.lang.fancy;
 
 import com.google.common.primitives.Chars;
 import org.apache.commons.lang.CharUtils;
+import org.bukkit.ChatColor;
 import uk.knightz.knightzapi.lang.fancy.SuperFancyMessage.LinkMessage;
 import uk.knightz.knightzapi.utils.NumberBuilder;
 import uk.knightz.knightzapi.utils.TripleStruct;
@@ -72,6 +73,8 @@ public class FancyMessageParser {
         if (s.replaceAll("[^()]+", "").length() % 2 != 0) {
             throw new IllegalArgumentException("Imbalanced Brackets in FancyMessage " + s);
         }
+
+
         s = s.replace("\n", ""); //Support for pretty-printing
         UUID uuid = UUID.randomUUID();
         if (s.contains("(") && s.contains(")")) {
@@ -103,6 +106,7 @@ public class FancyMessageParser {
                 continue;
             }
             int elementId = NumberBuilder.ofString(element).toInt();
+            char color = '='; //use = as null, a ChatColor will never be this character
             String value = element.substring(3, element.length() - 2); //remove surrounding {} and "" leaving us with only the value
             ListIterator<Character> i = Chars.asList(value.toCharArray()).listIterator();
             int linksTo = -1;
@@ -122,7 +126,9 @@ public class FancyMessageParser {
                     while ((next = i.next()) != QUOTE) {
                         eventText.append(next);
                     }
+                    linkText = eventText.toString();
                     next = i.next();
+
                     if (next != COMMA) {
                         throw new IllegalArgumentException("FancyMessage Event does not have a comma after the Event text");
                     }
@@ -132,28 +138,33 @@ public class FancyMessageParser {
                     }
                     NumberBuilder numberBuilder = new NumberBuilder();
                     StringBuilder uuidBuilder = new StringBuilder();
-                    if (next == UUID_PROTOCOL) {
+                    if (next == UUID_PROTOCOL) { //if there is an external UUID link
                         while ((next = i.next()) != END) {
                             uuidBuilder.append(next);
                         }
                         linksToUUID = UUID.fromString(uuidBuilder.toString());
-                    } else {
+                    } else { //else assume it's an internal index link
                         while (CharUtils.isAsciiNumeric(next)) {
                             numberBuilder.append(CharUtils.toIntValue(next));
                             next = i.next();
                         }
                         linksTo = numberBuilder.toInt();
                     }
-                    linkText = eventText.toString();
                     if (next != END) {
                         throw new IllegalArgumentException("FancyMessage Event is never ended with ']'");
                     }
+                    color = getColor(color, i);
+                } else if (c == COMMA) {
+                    color = getColor(color, i);
                 } else {
                     normalText.append(c);
                 }
             }
             partList.sort(Comparator.comparingInt(MessagePart::getId));
             MessagePart part = new MessagePart(normalText.toString(), elementId);
+            if (color != '=') {
+                part.setColor(ChatColor.getByChar(color));
+            }
             partList.add(part);
             Object linkTo = null;
             if (linksToUUID != null)
@@ -177,6 +188,19 @@ public class FancyMessageParser {
         });
         System.gc(); //keep it clean!
         return message;
+    }
+
+    private static char getColor(char color, ListIterator<Character> i) {
+        if (i.hasNext()) {
+            if (i.next() == COMMA) {
+            }
+            Character next = i.next();
+            if (next == SPACE) { //Spaces are optional and will be ignored
+                next = i.next();
+            }
+            color = next;
+        }
+        return color;
     }
 
     private static boolean isNumber(char c) {

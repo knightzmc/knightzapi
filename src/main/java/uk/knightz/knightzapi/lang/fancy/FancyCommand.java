@@ -24,10 +24,12 @@
 
 package uk.knightz.knightzapi.lang.fancy;
 
+import com.google.common.collect.ImmutableList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public class FancyCommand extends BukkitCommand {
@@ -50,12 +52,17 @@ public class FancyCommand extends BukkitCommand {
             UUID messageUUID = UUID.fromString(args[0]);
             String page = args[1];
             SuperFancyMessage message = SuperFancyMessages.getInstance().fromUUID(messageUUID);
-            final int i = Integer.parseInt(page);
+            int i = Integer.parseInt(page);
             if (i == -1)
                 p.spigot().sendMessage(message.toBukkitText());
             else
                 p.spigot().sendMessage(message.toBukkitText(i));
         }
         return true;
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+        return ImmutableList.of();
     }
 }

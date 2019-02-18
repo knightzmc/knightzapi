@@ -25,12 +25,8 @@
 package uk.knightz.knightzapi.lang.fancy;
 
 import lombok.Getter;
-import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
-import uk.knightz.knightzapi.utils.EnumUtils;
 
-import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,7 +59,6 @@ public class SuperFancyMessages {
      * @param p The MessagePart to search for
      * @return The first SuperFancyMessage containing the given MessagePart
      */
-    @Nullable
     public SuperFancyMessage withMessagePart(SuperFancyMessage.MessagePart p) {
         return allMessages.stream().filter(allMessage -> allMessage.getParts().contains(p)).findFirst().orElse(null);
     }

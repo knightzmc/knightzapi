@@ -25,8 +25,21 @@
 package uk.knightz.knightzapi.menu.adapter.token;
 
 /**
- *
  * @param <O> The type of Token eg Object, Method, Field
  */
 public interface Token<O> {
+
+
+    interface DataToken<O, V> extends Token {
+
+
+        String getFriendlyDataName();
+
+        String getDataName();
+
+        Class<V> getType();
+
+        V getValue();
+    }
+
 }

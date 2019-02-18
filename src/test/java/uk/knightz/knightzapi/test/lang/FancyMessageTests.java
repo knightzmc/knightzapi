@@ -22,16 +22,14 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapinoweb.test.lang;
+package uk.knightz.knightzapi.test.lang;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.val;
 import org.junit.Test;
 import uk.knightz.knightzapi.lang.fancy.FancyMessageParser;
 import uk.knightz.knightzapi.lang.fancy.SuperFancyMessage;
-import uk.knightz.knightzapi.lang.fancy.SuperFancyMessage.LinkMessage;
 import uk.knightz.knightzapi.lang.fancy.SuperFancyMessageFactory;
+import uk.knightz.knightzapi.test.TestData;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,53 +39,33 @@ import static org.junit.Assert.assertEquals;
 
 public class FancyMessageTests {
 
+    public static final String EXAMPLE_MESSAGE = "FancyMessage(2f7dcb7b-a4f2-44fa-8bc9-70fc0655d165){1{\"Welcome\"}, 2{\"Click [\"here\", 3]\"}, 3{\"You've gone here! [\"one more?\", 4]\"}, 4{\"yay!\"}}";
+
     @Test
     public void testFancyMessageParse() {
-        final String example = "FancyMessage(2f7dcb7b-a4f2-44fa-8bc9-70fc0655d165){1{\"Welcome\"}, 2{\"Click [\"here\", 3]\"}, 3{\"You've gone here! [\"one more?\", 4]\"}, 4{\"yay!\"}}";
         UUID uuid = UUID.randomUUID();
         SuperFancyMessage message = new SuperFancyMessage(uuid);
         message.addSimplePart("Simple");
         val simple = message.getParts().get(0);
-        LinkMessage link = new LinkMessage(simple, "Link");
+        SuperFancyMessage.LinkMessage link = new SuperFancyMessage.LinkMessage(simple, "Link");
         simple.addLink(link);
 
         //Assert that simple message can be parsed from its own toString
         assertEquals(FancyMessageParser.parse(message.toString()), message);
         //Assert that the example can be parsed from its own toString
-        assertEquals(FancyMessageParser.parse(example).toString(false), example);
+        assertEquals(FancyMessageParser.parse(EXAMPLE_MESSAGE).toString(false), EXAMPLE_MESSAGE);
 
         //Test Collection generation from an example collection
-        Collection<TestObject> collection = Collections.singleton(new
-                TestObject("Alex", 27, new TestObject.TestObjectDeep(3)));
+        Collection<TestData> collection = Collections.singleton(new
+                TestData("Alex", 27, new TestData("Child", 2)));
 
         SuperFancyMessage x = new SuperFancyMessageFactory().generateMessages(collection);
 
-        //Assert that a linked, recursive fancymessage can be correctly parsed
-        final SuperFancyMessage parsed = FancyMessageParser.parse(x.toString());
-//        System.out.println("x.toString(true) = " + x.toString(true));
+//        Assert that a linked, recursive FancyMessage can be correctly parsed
+        SuperFancyMessage parsed = FancyMessageParser.parse(x.toString());
+
         assertEquals(x, parsed);
-//        CommandSender mocked = mock(Player.class);
-//        when(mocked.getName()).thenReturn("test");
-//        Player.Spigot mockedSpigot = mock(Player.Spigot.class);
-//        when(mocked.spigot()).thenReturn(mockedSpigot);
-//
-//        mocked.spigot().sendMessage(parsed.toBukkitText());
+
     }
 
-    @AllArgsConstructor
-    @Getter
-    public static class TestObject {
-        private final String name;
-        private final int age;
-        private final TestObjectDeep deep;
-
-        @AllArgsConstructor
-        public static class TestObjectDeep {
-            private final int access;
-
-            public int getAccess() {
-                return this.access;
-            }
-        }
-    }
 }

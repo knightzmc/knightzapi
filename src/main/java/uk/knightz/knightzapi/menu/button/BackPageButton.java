@@ -26,7 +26,6 @@ package uk.knightz.knightzapi.menu.button;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.ClickEventAliases;
 import uk.knightz.knightzapi.menu.Menu;
@@ -49,14 +48,14 @@ public final class BackPageButton extends MenuButton {
     /**
      * Create a new Back Page Button
      *
-     * @param itemStack The ItemStack that will be added to a menuold.
+     * @param itemStack The ItemStack that will be added to a Menu.
      */
     public BackPageButton(ItemStack itemStack) {
         super(itemStack, BackPageButton::accept);
     }
 
     /**
-     * Create a new Back Page Button with the default back button
+     * Create a new BackPageButton with the default back button ItemStack
      */
     public BackPageButton() {
         super(defaultItem, BackPageButton::accept);
@@ -66,7 +65,6 @@ public final class BackPageButton extends MenuButton {
         if (e.getMenu() instanceof Page) {
             Menu toOpen;
             Page current = (Page) e.getMenu();
-            System.out.println(KnightzAPI.GSON.toJson(current));
             int indexOf = e.getMenu().getPages().indexOf(current);
             if (indexOf == -1) {
                 toOpen = current.getParent();

@@ -50,9 +50,11 @@ public class Tokenizer {
         if (b == null) return new ArrayList<>();
         List<FieldToken> fieldTokens = new ArrayList<>();
         for (Field field : b) {
+            field.setAccessible(true);
             FieldToken e = new FieldToken(field);
             e.setValue(Reflection.valueOfField(field, retrieveValuesFrom));
-            fieldTokens.add(e);
+            if (e.getValue() != null)
+                fieldTokens.add(e);
         }
         return fieldTokens;
     }
@@ -60,9 +62,11 @@ public class Tokenizer {
     private static List<MethodToken> convertMethods(List<Method> a, Object retrieveValuesFrom) {
         List<MethodToken> methodTokens = new ArrayList<>();
         for (Method method : a) {
+            method.setAccessible(true);
             MethodToken e = new MethodToken(method);
             e.setValue(Reflection.callMethod(method, retrieveValuesFrom));
-            methodTokens.add(e);
+            if (e.getValue() != null)
+                methodTokens.add(e);
         }
         return methodTokens;
     }

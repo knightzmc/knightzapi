@@ -25,21 +25,27 @@
 package uk.knightz.knightzapi.menu.adapter;
 
 import org.bukkit.inventory.ItemStack;
+import uk.knightz.knightzapi.menu.adapter.options.Options;
 import uk.knightz.knightzapi.menu.adapter.token.ObjectToken;
 import uk.knightz.knightzapi.menu.adapter.token.factory.TokenFactory;
 
+import java.util.function.Function;
+
 /**
- * @deprecated Doesn't currently work, features not yet implemented
+ * A class that uses Reflection to convert all the public data of an object to an ItemStack
+ * Being an ItemStack, it has no interactivity and is only really suitable for displaying primitives
  */
-@Deprecated
-public class ObjectToItemStackAdapter {
-    public <T> ItemStack adapt(T o) {
+public class ObjectToItemStackAdapter<T> implements Function<T, ItemStack> {
+
+    public ItemStack apply(T o) {
         return adapt(o, Options.defaultOptions);
     }
 
-    public <T> ItemStack adapt(T t, Options options) {
+    public ItemStack adapt(T t, Options options) {
         TokenFactory<T> factory = new TokenFactory<>();
         ObjectToken<T> generate = factory.generate(t, options);
-        return null;
+
+        return options.getObjectTokenToItemStackAdapter().adapt(t, generate, null);
     }
+
 }

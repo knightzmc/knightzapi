@@ -24,28 +24,19 @@
 
 package uk.knightz.knightzapi.user;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserData {
+
     /**
-     * Non-Persistent data that will be erased after a reload. Good for temporary data.
+     * Non-Persistent data that will be erased after a reload.
      */
     private transient final Map<String, Object> temporaryData = new HashMap<>();
     /**
      * Persistent data that won't be erased after a reload and is stored to the User's data file.
      */
     private final Map<String, Object> persistentData = new HashMap<>();
-    private int tokens;
-    private int kills;
-    private int deaths;
-
 
     public Object getTemporaryData(String s) {
         return temporaryData.get(s);
@@ -63,48 +54,4 @@ public class UserData {
         persistentData.put(s, o);
     }
 
-    public int getKills() {
-        return kills;
-    }
-
-    public void setKills(int kills) {
-        Bukkit.getPluginManager().callEvent(new UserStatsChangeEvent(UserStatsChangeEvent.Type.KILLS, null));
-        this.kills = kills;
-    }
-
-    public int getDeaths() {
-        return deaths;
-    }
-
-    public void setDeaths(int deaths) {
-        Bukkit.getPluginManager().callEvent(new UserStatsChangeEvent(UserStatsChangeEvent.Type.DEATHS, null));
-        this.deaths = deaths;
-    }
-
-    public float getKD() {
-        return ((float) getKills()) / ((float) getDeaths());
-    }
-
-    public void kill(EntityDeathEvent e) {
-        if (e.getEntity() instanceof Player) {
-            User dead = User.valueOf((OfflinePlayer) e.getEntity());
-        }
-        if (e.getEntity().getKiller() != null) {
-            User user = User.valueOf(e.getEntity().getKiller());
-            user.setKills(user.getKills() + 1);
-        }
-    }
-
-    public void death(PlayerDeathEvent e) {
-        User user = User.valueOf(e.getEntity());
-        user.setDeaths(user.getDeaths() + 1);
-    }
-
-    public int getTokens() {
-        return tokens;
-    }
-
-    public void setTokens(int tokens) {
-        this.tokens = tokens;
-    }
 }

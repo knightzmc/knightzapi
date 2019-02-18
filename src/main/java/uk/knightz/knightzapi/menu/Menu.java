@@ -24,7 +24,6 @@
 
 package uk.knightz.knightzapi.menu;
 
-import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,18 +39,26 @@ import java.util.*;
 
 public class Menu {
 
-    @Getter
-    private final List<Page> pages = new LinkedList<>();
-    @Getter
+    private final LinkedList<Page> pages = new LinkedList<>();
     private final Map<Integer, MenuButton> buttons = new HashMap<>();
     protected Inventory inventory;
 
     public Menu(String title, int rows) {
-        inventory = Bukkit.createInventory(new MenuHolder(this), rows * 9, Chat.color(title));
+        if (rows <= 6) {
+            inventory = Bukkit.createInventory(new MenuHolder(this), rows * 9, Chat.color(title));
+        } else {
+            int extraRows = rows - 6;
+            inventory = Bukkit.createInventory(new MenuHolder(this), 6 * 9, Chat.color(title));
+            int extraPagesNeeded = extraRows % (54) + 1;
+            for (int i = 0; i < extraPagesNeeded; i++) {
+                addPage();
+            }
+        }
     }
 
 
     public void addButton(MenuButton b) {
+        if (b == null) return;
         addButton(firstEmpty(), b);
     }
 
@@ -85,13 +92,18 @@ public class Menu {
         return inventory.getSize() + pages.stream().mapToInt(Page::getSize).sum();
     }
 
-    private Page addPage() {
+    protected Page addPage() {
+        if (inventory.getSize() == 0) {
+            MenuHolder holder = (MenuHolder) inventory.getHolder();
+            holder.getMenu().open(Bukkit.getOnlinePlayers().iterator().next());
+        }
         Page p = new Page(inventory.getSize() / 9, ChatColor.GREEN + "Page " + pages.size(), this);
-
         p.addButton(new BackPageButton());
 
         Menu previous = pages.isEmpty() ? this : pages.get(0);
-        val lastButton = previous.getButtons().get(previous.firstEmpty());
+        int lastSlot = previous.inventory.firstEmpty();
+        if (lastSlot == -1) lastSlot = previous.inventory.getSize() - 1;
+        val lastButton = previous.getButtons().get(lastSlot);
         if (lastButton != null) {
             p.addButton(lastButton);
         }
@@ -101,11 +113,9 @@ public class Menu {
     }
 
     public void trim() {
-        if (inventory.firstEmpty() == 0) //if the inventory is empty do nothing
-            return;
-        @SuppressWarnings("OptionalGetWithoutIsPresent")
-        int lastItemSlot = getButtons().keySet().stream().max(Integer::compare).get();
-        resize(lastItemSlot);
+        Optional<Integer> max = getButtons().keySet().stream().max(Integer::compare);
+        if (!max.isPresent()) return; //if the inventory is empty do nothing
+        resize(max.get());
     }
 
     public void resize(int size) {
@@ -134,16 +144,25 @@ public class Menu {
 
     public int firstEmpty() {
         int firstEmpty = inventory.firstEmpty();
-        if (firstEmpty > 0 || pages.isEmpty()) return firstEmpty;
-
-        for (Page p : pages) {
-            firstEmpty = p.firstEmpty();
-            if (firstEmpty != -1) return firstEmpty;
+        if (firstEmpty != -1) return firstEmpty;
+        for (Page page : pages) {
+            if (page.firstEmpty() != -1)
+                return page.firstEmpty();
         }
-        return -1;
+        while ((firstEmpty = addPage().firstEmpty()) == -1) {
+        }
+        return firstEmpty;
     }
 
     public void open(Player whoClicked) {
         whoClicked.openInventory(inventory);
+    }
+
+    public List<Page> getPages() {
+        return this.pages;
+    }
+
+    public Map<Integer, MenuButton> getButtons() {
+        return this.buttons;
     }
 }

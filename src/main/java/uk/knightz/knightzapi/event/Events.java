@@ -27,7 +27,7 @@ package uk.knightz.knightzapi.event;
 public class Events {
     public static void init() {
         CreatureKilledEvent.init();
-        //This cancelEvent has a heavy toll on performance, and so must be manually initialized
+        //This event has a heavy toll on performance, and so must be manually initialized
         PlayerBlockMoveEvent.init();
     }
 }

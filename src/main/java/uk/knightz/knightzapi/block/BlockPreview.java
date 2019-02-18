@@ -49,8 +49,7 @@ public class BlockPreview {
 	 */
 	public BlockPreview(BlockState[] original, BlockState[] changeTo) {
 		if (original.length != changeTo.length) {
-			Log.warn("BlockPreview original and updated BlockState arrays are different sizes. This may be intentional" +
-					", but somewhat defeats the point of BlockPreview(s)");
+            Log.warn("BlockPreview original and updated BlockState arrays are different sizes. This may be intentiona, but somewhat defeats the point of BlockPreview(s)");
 		}
 		this.original = original;
 		this.changeTo = changeTo;
