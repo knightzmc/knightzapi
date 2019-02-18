@@ -33,7 +33,7 @@ public class Reflection {
      * @param clazz   The Class to retrieve public, user-friendly Getters of
      * @param options Includes a list of Methods to ignore, which will be removed from the Set. No other fields of {@link ReflectionOptions} are used
      * @return A sometimes empty Set of all of the Class's getters
-     * @apiNote Caching is in place to speed up the otherwise slow reflexive operations, so if any dynamic class modification is done at runtime, it is not guaranteed to update. Alternatively, the WeakReferences to the Class may be destroyed upon modification, causing new Getter generation
+     * @implNote Caching is in place to speed up the otherwise slow reflexive operations, so if any dynamic class modification is done at runtime, it is not guaranteed to update. Alternatively, the WeakReferences to the Class may be destroyed upon modification, causing new Getter generation
      */
     public static <T> Set<Method> getUserFriendlyPublicGetters(Class<T> clazz, ReflectionOptions<T> options) {
         if (cache.containsKey(clazz)) {

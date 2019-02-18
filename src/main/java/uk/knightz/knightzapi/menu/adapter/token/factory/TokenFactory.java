@@ -38,14 +38,6 @@ import java.util.List;
 
 public class TokenFactory<T> {
 
-    public ObjectToken<T> generate(T t) {
-        return generate(t, Options.defaultOptions);
-    }
-
-    public ObjectToken<T> generate(T t, Options options) {
-        return generate(t, (Class<T>) t.getClass(), options);
-    }
-
     public ObjectToken<T>[] generate(Collection<T> ts, Options options) {
         ObjectToken<T>[] arr = new ObjectToken[ts.size()];
         Iterator<T> tIterator = ts.iterator();
@@ -55,6 +47,15 @@ public class TokenFactory<T> {
         }
         return arr;
     }
+
+    public ObjectToken<T> generate(T t) {
+        return generate(t, Options.defaultOptions);
+    }
+
+    public ObjectToken<T> generate(T t, Options options) {
+        return generate(t, (Class<T>) t.getClass(), options);
+    }
+
 
     private ObjectToken<T> generate(T t, Class<T> tClass, Options options) {
         if (Reflection.isSimpleType(tClass)) {

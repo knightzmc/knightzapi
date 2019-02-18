@@ -55,6 +55,9 @@ public class CollectionToMenuAdapter<T> {
         Iterator<T> collectionIterator = collection.iterator();
 
         for (ObjectToken<T> token : generated) {
+            if(token.hasNoValues()){
+                continue;
+            }
             T t = collectionIterator.next();
             ItemStack adapted = adapter.adapt(t, token, null);
             if (Reflection.isSimpleType(t)) {
@@ -67,6 +70,15 @@ public class CollectionToMenuAdapter<T> {
         return menu;
     }
 
+    /**
+     * Create a new MenuButton that displays when clicked, opens a new Menu with information about a corresponding Object
+     *
+     * @param parentMenu
+     * @param adapted
+     * @param token
+     * @param t
+     * @return
+     */
     private MenuButton createDisplayButton(Menu parentMenu, ItemStack adapted, ObjectToken<T> token, T t) {
         if (adapted.hasItemMeta()) {
             ItemMeta itemMeta = adapted.getItemMeta();
@@ -74,17 +86,20 @@ public class CollectionToMenuAdapter<T> {
             adapted.setItemMeta(itemMeta);
         }
 
-        Menu displayMenu = createDisplayMenu(parentMenu, token, t);
-        if (displayMenu == null) return null;
         return new MenuButton(adapted, e -> {
             e.setCancelled(true);
+            Menu displayMenu = createDisplayMenu(parentMenu, token, t);
             displayMenu.open(e.getWhoClicked());
         });
     }
 
+
     private Menu createDisplayMenu(Menu parentMenu, ObjectToken<T> token, T t) {
+        if (t instanceof Collection) return adapt((Collection<T>) t, options);
         int size = token.getFieldTokens().size() + token.getMethodTokens().size();
-        if (size == 0) return null;
+        if (size == 0) {
+            size = 1;
+        }
         Menu menu = new Menu(String.format(VIEW_MORE_TITLE, t.getClass().getSimpleName()), MathUtils.roundUp(size) / 9);
 
         menu.addButton(new OpenMenuButton(parentMenu));

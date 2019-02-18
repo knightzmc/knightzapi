@@ -49,3 +49,7 @@ publishing {
         }
     }
 }
+
+task javadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+}
