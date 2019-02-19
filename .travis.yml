@@ -1,16 +1,17 @@
 language: java
 after_success:
-- echo "Building Javadocs"
-- ./gradlew javadoc
+  - echo "Building Javadocs"
+  - ./gradlew javadoc
+  - mv build/docs/javadoc docs
 jobs:
   include:
-  - script: echo "Deploying to GitHub Releases..."
-    deploy:
-      provider: releases
-      api_key: $GITHUB_OAUTH_TOKEN
-      file:
-        - "build/libs/knightzapi.jar"
-      skip_cleanup: true
-      on:
-        tags: true
-  - script: echo "Done."
+    - script: echo "Deploying to GitHub Releases..."
+      deploy:
+        provider: releases
+        api_key: $GITHUB_OAUTH_TOKEN
+        file:
+          - "build/libs/knightzapi.jar"
+        skip_cleanup: true
+        on:
+          tags: true
+    - script: echo "Done."
