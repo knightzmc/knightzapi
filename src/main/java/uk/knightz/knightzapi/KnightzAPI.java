@@ -1,24 +1,25 @@
 /*
- *     This file is part of KnightzAPI
+ * MIT License
  *
- *     KnightzAPI - A cross server communication library and general utility API for Minecraft Servers
- *     Copyright (C) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
- *     KnightzAPI is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *     KnightzAPI is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with KnightzAPI.  If not, see <https://www.gnu.org/licenses/>.
- *
- *     The author of this program, Alexander Leslie John Wood can be contacted at alexwood2403@gmail.com
- *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package uk.knightz.knightzapi;
@@ -33,7 +34,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -44,17 +44,15 @@ import uk.knightz.knightzapi.files.PluginFile;
 import uk.knightz.knightzapi.lang.HelpBuilder;
 import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.lang.fancy.FancyCommand;
+import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.menu.MenuListener;
-import uk.knightz.knightzapi.menu.adapter.CollectionToMenuAdapter;
-import uk.knightz.knightzapi.menuold.Menu;
 import uk.knightz.knightzapi.serializers.InventorySerializer;
 import uk.knightz.knightzapi.serializers.ItemStackJsonSerializer;
-import uk.knightz.knightzapi.serializers.MenuSerializer;
+import uk.knightz.knightzapi.menu.MenuSerializer;
 import uk.knightz.knightzapi.user.User;
 import uk.knightz.knightzapi.utils.VersionUtil;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 public class KnightzAPI extends JavaPlugin implements Listener {
     public static final Gson GSON = new GsonBuilder()
@@ -99,23 +97,29 @@ public class KnightzAPI extends JavaPlugin implements Listener {
         ConfigurationSerialization.registerClass(HelpBuilder.class);
         ConfigurationSerialization.registerClass(HelpBuilder.getHelpMessageClass());
 
-        /*
-        This method would register a Listener for every PlayerEvent class in the Classpath
-        obviously taking a heavy performance toll. Instead, they are registered on-demand
-
-        configureUserEventBlocker();
-        */
 
         configureVault();
         registerFancyMessagesCommand();
 
 
-        getCommand("test").setExecutor((sender, command, label, args) -> {
-            if (sender instanceof Player) {
-                new CollectionToMenuAdapter<Player>().adapt((Collection<Player>) Bukkit.getOnlinePlayers()).open((Player) sender);
-            }
-            return true;
-        });
+//        getCommand("test").setExecutor((sender, command, label, args) -> {
+//            if (sender instanceof Player) {
+//                CollectionToMenuAdapter<Player> adapter = new CollectionToMenuAdapter<>();
+//                Options options = new OptionsBuilder()
+//                        .objectTokenToItemStackAdapter(
+//                                (data, token, obtainedFromName) -> {
+//                                    if (data instanceof Player) {
+//                                        obtainedFromName = ((Player) data).getName();
+//                                    }
+//                                    return new DefaultObjectTokenToItemStackAdapter<>().adapt(data, token, obtainedFromName);
+//                                }
+//                        ).build();
+//                adapter
+//                        .adapt((Collection<Player>) Bukkit.getOnlinePlayers(), options)
+//                        .open((Player) sender);
+//            }
+//            return true;
+//        });
     }
 
     @Override

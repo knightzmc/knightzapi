@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,13 @@
 
 package uk.knightz.knightzapi.menu;
 
-import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import uk.knightz.knightzapi.menu.button.MenuButton;
 
-@Getter
+/**
+ * Subclass of InventoryClickEvent that is called when a Menu is clicked by a Player
+ */
 public class MenuClickEvent extends InventoryClickEvent {
     private final Menu menu;
     private final MenuButton clickedButton;
@@ -40,5 +42,17 @@ public class MenuClickEvent extends InventoryClickEvent {
         this.menu = menu;
         this.clickedButton = clickedButton;
         whoClicked = (Player) parent.getWhoClicked();
+    }
+
+    public Menu getMenu() {
+        return this.menu;
+    }
+
+    public MenuButton getClickedButton() {
+        return this.clickedButton;
+    }
+
+    public Player getWhoClicked() {
+        return this.whoClicked;
     }
 }

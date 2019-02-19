@@ -30,6 +30,11 @@ import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
 
 import java.lang.reflect.Method;
 
+/**
+ * Token that stores attributes about a Method, and a value of that Method
+ *
+ * @param <V> The type of Value (ie the type of the Method)
+ */
 @Data
 public class MethodToken<V> implements DataToken<Method, V> {
     private final MethodAttributes<V> method;

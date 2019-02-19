@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -71,7 +71,7 @@ public class SimpleChallenge implements Challenge {
         else sb.append(GOLD);
 
         sb.append(name);
-        if (complete) sb.append(" ✔");
+        if (complete) sb.append(" \u2714");
         sb.append('\n');
         objectives.forEach(o -> {
             boolean objectiveComplete = u.getChallengeData().hasCompleted(o);
@@ -82,8 +82,8 @@ public class SimpleChallenge implements Challenge {
 
             sb.append(o.toNaturalString()).append(' ');
 
-            if (objectiveComplete) sb.append('✔');
-            else sb.append('✖');
+            if (objectiveComplete) sb.append('\u2714');
+            else sb.append('\u2716');
             sb.append('\n');
         });
         sb.setLength(sb.length() - 1); //remove last \n

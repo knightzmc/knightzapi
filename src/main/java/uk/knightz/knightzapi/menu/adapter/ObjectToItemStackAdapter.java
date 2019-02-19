@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,11 +34,13 @@ import java.util.function.Function;
 /**
  * A class that uses Reflection to convert all the public data of an object to an ItemStack
  * Being an ItemStack, it has no interactivity and is only really suitable for displaying primitives
+ *
+ * It is however used by {@link CollectionToMenuAdapter}, which creates an interactive Menu based on a Collection of data
  */
 public class ObjectToItemStackAdapter<T> implements Function<T, ItemStack> {
 
     public ItemStack apply(T o) {
-        return adapt(o, Options.defaultOptions);
+        return adapt(o, Options.DEFAULT_OPTIONS);
     }
 
     public ItemStack adapt(T t, Options options) {

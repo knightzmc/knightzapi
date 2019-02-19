@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,41 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menu;
+package uk.knightz.knightzapi.menu.button;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
+import uk.knightz.knightzapi.menu.ClickEventAliases;
+import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+/**
+ * A Button that is placed in a Menu. It has an ItemStack that users view, and can interact with a MenuClickEvent when it's clicked
+ */
 @Getter
 public class MenuButton {
 
-    private final transient Consumer<MenuClickEvent> onClick;
+    private final String onClickAlias;
     private final Map<String, Object> injectedData = new HashMap<>();
     private final ItemStack item;
 
     public MenuButton(@NonNull ItemStack item, @NonNull Consumer<MenuClickEvent> onClick) {
         this.item = item;
-        this.onClick = onClick;
+        String random = UUID.randomUUID().toString();
+        this.onClickAlias = random;
+        ClickEventAliases.getInstance().add(random, onClick);
+    }
+
+    public Consumer<MenuClickEvent> getOnClick() {
+        return ClickEventAliases.getInstance().get(onClickAlias);
     }
 
 

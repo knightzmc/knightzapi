@@ -32,14 +32,18 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Converts Methods and Fields into Tokens
+ */
 public class Tokenizer {
 
-    public static Struct<List<MethodToken>, List<FieldToken>> convert(Struct<List<Method>, List<Field>> data) {
-        List<MethodToken> mts = convertMethods(data.getA(), null);
-        List<FieldToken> fts = convertFields(data.getB(), null);
-        return new Struct<>(mts, fts);
-    }
-
+    /**
+     * Convert 2 lists of Methods and Fields into 2 lists of MethodTokens and FieldTokens
+     *
+     * @param data               The Methods and Fields to convert
+     * @param retrieveValuesFrom An Object that these methods and fields will be called on to retrieve their values
+     * @return A Struct containing 2 converted lists
+     */
     public static Struct<List<MethodToken>, List<FieldToken>> convert(Struct<List<Method>, List<Field>> data, Object retrieveValuesFrom) {
         List<MethodToken> mts = convertMethods(data.getA(), retrieveValuesFrom);
         List<FieldToken> fts = convertFields(data.getB(), retrieveValuesFrom);

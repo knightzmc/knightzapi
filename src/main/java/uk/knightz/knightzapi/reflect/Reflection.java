@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2019 Alexander Leslie John Wood
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package uk.knightz.knightzapi.reflect;
 
 import lombok.SneakyThrows;
@@ -13,49 +37,6 @@ public class Reflection {
 
     public static final Class[] simpleTypes = {Double.class, Float.class, Long.class, Integer.class, Short.class, Character.class, Byte.class, Boolean.class, Enum.class, String.class};
     private static final Map<Class, Set<Method>> cache = new WeakHashMap<>();
-
-    /**
-     * Get all of the public Getter Methods of a Class that are deemed to be friendly to expose to the User
-     * A Method is classified as a public Getter and User-Friendly if:
-     * <br>
-     * 1) The name of the Method contains "get" - Accessor functions are not supported
-     * <br>
-     * 2) The method returns something other than an Object of void type
-     * <br>
-     * 3) The method's access modifier is public - if it is not, the data it returns is assumed to be for internal use, hence the encapsulation
-     * <br>
-     * 4) The method must have a parameter count of 0
-     * <br>
-     * 5) The method inherited from Object - "getClass" is not included as Class objects are not considered useful or friendly to show to the User
-     * <br>
-     * 6) Because of this, if the supplied "clazz" is of type Class, an empty Set will be returned, as the method {@link Class#getClassLoader()} causes StackOverflow errors.
-     *
-     * @param clazz   The Class to retrieve public, user-friendly Getters of
-     * @param options Includes a list of Methods to ignore, which will be removed from the Set. No other fields of {@link ReflectionOptions} are used
-     * @return A sometimes empty Set of all of the Class's getters
-     * @implNote Caching is in place to speed up the otherwise slow reflexive operations, so if any dynamic class modification is done at runtime, it is not guaranteed to update. Alternatively, the WeakReferences to the Class may be destroyed upon modification, causing new Getter generation
-     */
-    public static <T> Set<Method> getUserFriendlyPublicGetters(Class<T> clazz, ReflectionOptions<T> options) {
-        if (cache.containsKey(clazz)) {
-            return cache.get(clazz);
-        }
-
-        //Class classes cause StackOverflow errors because of getClassLoader()
-        //and any stored class probably shouldn't be exposed anyway
-        if (clazz.equals(Class.class)) {
-            return Collections.emptySet();
-        }
-        Set<Method> methods = new HashSet<>(Arrays.asList(clazz.getMethods()));
-        methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
-        methods.removeIf(m -> !m.getName().contains("get"));
-        methods.removeIf(m -> m.getName().equals("getClass"));
-        methods.removeIf(m -> m.getReturnType().equals(void.class));
-        methods.removeIf(m -> !Modifier.isPublic(m.getModifiers()));
-        methods.removeIf(m -> m.getParameters().length >= 1);
-        methods.removeIf(m -> options.getMethodsToIgnore().contains(m.getName()));
-        cache.put(clazz, methods);
-        return methods;
-    }
 
     /**
      * Check if a given class is of a "simple" type, meaning:
@@ -83,12 +64,59 @@ public class Reflection {
         return isSimpleType(o.getClass());
     }
 
+
+    /**
+     * Get all of the public Getter Methods of a Class that are deemed to be friendly to expose to the User
+     * A Method is classified as a public Getter and User-Friendly if:
+     * <br>
+     * 1) The name of the Method contains "get" - Accessor functions are not supported
+     * <br>
+     * 2) The method returns something other than an Object of void type
+     * <br>
+     * 3) The method's access modifier is public - if it is not, the data it returns is assumed to be for internal use, hence the encapsulation
+     * <br>
+     * 4) The method must have a parameter count of 0
+     * <br>
+     * 5) The method inherited from Object - "getClass" is not included as Class objects are not considered useful or friendly to show to the User
+     * <br>
+     * 6) Because of this, if the supplied "clazz" is of type Class, an empty Set will be returned, as the method {@link Class#getClassLoader()} causes StackOverflow errors.
+     * <p>
+     * Caching is in place to speed up the otherwise slow reflexive operations, so if any dynamic class modification is done at runtime, it is not guaranteed to update. Alternatively, the WeakReferences to the Class may be destroyed upon modification, causing new Getter generation
+     *
+     * @param clazz   The Class to retrieve public, user-friendly Getters of
+     * @param options Includes a list of Methods to ignore, which will be removed from the Set. No other fields of {@link ReflectionOptions} are used
+     * @param <T>     The type of Class
+     * @return A sometimes empty Set of all of the Class's getters
+     */
+    public static <T> Set<Method> getUserFriendlyPublicGetters(Class<T> clazz, ReflectionOptions<T> options) {
+        if (cache.containsKey(clazz)) {
+            return cache.get(clazz);
+        }
+
+        //Class classes cause StackOverflow errors because of getClassLoader()
+        //and any stored class probably shouldn't be exposed anyway
+        if (clazz.equals(Class.class)) {
+            return Collections.emptySet();
+        }
+        Set<Method> methods = new HashSet<>(Arrays.asList(clazz.getMethods()));
+        methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+        methods.removeIf(m -> !m.getName().contains("get"));
+        methods.removeIf(m -> m.getName().equals("getClass"));
+        methods.removeIf(m -> m.getReturnType().equals(void.class));
+        methods.removeIf(m -> !Modifier.isPublic(m.getModifiers()));
+        methods.removeIf(m -> m.getParameters().length >= 1);
+        methods.removeIf(m -> options.getMethodsToIgnore().contains(m.getName()));
+        cache.put(clazz, methods);
+        return methods;
+    }
+
     /**
      * Invoke all getters of an Object and put them into a Map with the Getter's friendly name as the key, and its returned value as the value
      * <p>
      * No caching is used as some getters may not always return the same value if the Object changes state.
      *
      * @param o The Object
+     * @param options Options to use
      * @return The map
      */
     @SneakyThrows

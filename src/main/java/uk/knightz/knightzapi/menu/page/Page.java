@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,9 @@ import uk.knightz.knightzapi.menu.Menu;
 
 import java.util.List;
 
+/**
+ * Subclass of Menu that represents a Page in a Menu. It behaves slightly differently to a normal Menu object.
+ */
 @Getter
 public class Page extends Menu {
 

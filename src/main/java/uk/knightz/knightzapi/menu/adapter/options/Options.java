@@ -25,26 +25,54 @@
 package uk.knightz.knightzapi.menu.adapter.options;
 
 import lombok.Data;
+import uk.knightz.knightzapi.menu.adapter.ObjectToItemStackAdapter;
 import uk.knightz.knightzapi.menu.adapter.iface.DefaultObjectTokenToItemStackAdapter;
 import uk.knightz.knightzapi.menu.adapter.iface.DefaultUnfriendlyFilter;
 import uk.knightz.knightzapi.menu.adapter.iface.ObjectTokenToItemStackAdapter;
 import uk.knightz.knightzapi.menu.adapter.iface.UnfriendlyFilter;
 
+/**
+ * Options for Reflection and Adapter operations
+ */
 @Data
 public class Options {
 
-    public static final Options defaultOptions = new Options(
+    /**
+     * Default Options settings. This is used if no Options is provided.
+     * It has no settings, no blacklisted modifiers, and uses the default implementations of all interfaces
+     */
+    public static final Options DEFAULT_OPTIONS = new Options(
             0,
             new DefaultObjectTokenToItemStackAdapter(),
             new DefaultUnfriendlyFilter(),
             0
     );
+    /**
+     * A bitmasked- blacklist of any modifiers (eg public, private, transient) that if a method or field has any of these, will
+     * be excluded from any friendly Reflexive operations
+     */
     private final int modifierBlacklist;
+    /**
+     * Implementation of {@link ObjectToItemStackAdapter}
+     */
     private final ObjectTokenToItemStackAdapter objectTokenToItemStackAdapter;
+    /**
+     * Implementation of {@link UnfriendlyFilter}
+     */
     private final UnfriendlyFilter filter;
+    /**
+     * Bitmask-ed integer representing any of {@link Settings} to use
+     */
     private final int settings;
 
 
+    /**
+     * Construct a bitmask-ed settings int from a series of ints
+     * These ints should be obtained from {@link Settings}, however can be used for any bitmasking
+     *
+     * @param settings An array of integers to bitmask
+     * @return A bitmask-ed integer representing the given settings
+     */
     public static int constructSettings(int... settings) {
         int total = 0;
         for (int setting : settings) {

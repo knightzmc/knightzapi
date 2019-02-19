@@ -29,11 +29,30 @@ import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
 
 import java.lang.reflect.Field;
 
+/**
+ * Token that stores attributes about a Field, and a value of that field
+ *
+ * @param <V> The type of Value (ie the type of the Field)
+ */
 @Data
 public class FieldToken<V> implements DataToken<Field, V> {
 
-    private final Field field;
+    private final FieldAttributes<V> field;
     private V value;
+
+    public FieldToken(FieldAttributes<V> field, V value) {
+        this.field = field;
+        this.value = value;
+    }
+
+    public FieldToken(Field field, V value) {
+        this.field = FieldAttributes.ofField(field);
+        this.value = value;
+    }
+
+    public FieldToken(Field field) {
+        this(field, null);
+    }
 
     @Override
     public String getFriendlyDataName() {

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import uk.knightz.knightzapi.lang.Chat;
 import uk.knightz.knightzapi.menu.button.BackPageButton;
+import uk.knightz.knightzapi.menu.button.MenuButton;
 import uk.knightz.knightzapi.menu.button.NextPageButton;
 import uk.knightz.knightzapi.menu.page.Page;
 import uk.knightz.knightzapi.utils.MathUtils;
@@ -164,5 +165,17 @@ public class Menu {
 
     public Map<Integer, MenuButton> getButtons() {
         return this.buttons;
+    }
+
+    Inventory getInventory() {
+        return inventory;
+    }
+
+    void setInventory(Inventory read) {
+        this.inventory = read;
+    }
+
+    void addPage(Page page) {
+        this.pages.add(page);
     }
 }

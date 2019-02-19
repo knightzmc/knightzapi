@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,10 +22,25 @@
  * SOFTWARE.
  */
 
-package uk.knightz.knightzapi.menuold.conversion;
+package uk.knightz.knightzapi.menu.adapter.token;
+
+import lombok.Data;
+
+import java.lang.reflect.Field;
 
 /**
- * The Object adapter can take two forms - conversion to a MenuButton or to a String to appear in lore.
+ * A serializable, thread-safe store of some of the attributes of a certain Field object
+ * It does not store a reference to the original Field, as this poses a security risk when serializing
+ * It also doesn't store the return type of the Field because when stored in a Field token,
+ * the return type can be obtained with {@link FieldToken#getValue()} {@link Object#getClass()}
  */
-public class ObjectInfo {
+@Data
+public class FieldAttributes<T> {
+
+    private final String name;
+    private final int modifiers;
+
+    public static <V> FieldAttributes<V> ofField(Field Field) {
+        return new FieldAttributes<>(Field.getName(), Field.getModifiers());
+    }
 }

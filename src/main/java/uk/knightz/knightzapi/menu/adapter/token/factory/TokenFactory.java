@@ -36,8 +36,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Wrapper for {@link Tokenizer} and other classes to allow easy generation of Tokens for an Object or Collection
+ *
+ * @param <T> The Type of Object
+ */
 public class TokenFactory<T> {
 
+    /**
+     * Generate an array of ObjectTokens from a Collection of Objects
+     * @param ts The Collection
+     * @param options Options to use
+     * @return An array of ObjectTokens
+     */
     public ObjectToken<T>[] generate(Collection<T> ts, Options options) {
         ObjectToken<T>[] arr = new ObjectToken[ts.size()];
         Iterator<T> tIterator = ts.iterator();
@@ -48,15 +59,34 @@ public class TokenFactory<T> {
         return arr;
     }
 
+    /**
+     * Generate an ObjectToken for a given Object.
+     * Uses Default Options
+     * @param t The Object to Generate
+     * @return An ObjectToken
+     */
     public ObjectToken<T> generate(T t) {
-        return generate(t, Options.defaultOptions);
+        return generate(t, Options.DEFAULT_OPTIONS);
     }
 
+    /**
+     * Generate an ObjectToken for a given Object.
+     * @param t The Object to Generate
+     * @param options Options to use
+     * @return An ObjectToken
+     */
     public ObjectToken<T> generate(T t, Options options) {
         return generate(t, (Class<T>) t.getClass(), options);
     }
 
 
+    /**
+     * Generate an ObjectToken for a given Object.
+     * @param t The Object to Generate
+     * @param tClass The Class of the Object
+     * @param options Options to use
+     * @return An ObjectToken
+     */
     private ObjectToken<T> generate(T t, Class<T> tClass, Options options) {
         if (Reflection.isSimpleType(tClass)) {
             return new PrimitiveToken(t);

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.ClickEventAliases;
-import uk.knightz.knightzapi.menu.MenuButton;
 import uk.knightz.knightzapi.menu.MenuClickEvent;
 
 import java.util.function.Consumer;

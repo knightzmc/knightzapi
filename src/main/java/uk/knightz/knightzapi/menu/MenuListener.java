@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Alexander Leslie John Wood
+ * Copyright (c) 2019 Alexander Leslie John Wood
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import uk.knightz.knightzapi.KnightzAPI;
 import uk.knightz.knightzapi.utils.Listeners;
 
+/**
+ * Listens to InventoryClickEvents and calls any MenuClickEvents if they are one
+ */
 public class MenuListener implements Listener {
     private MenuListener() {
         Listeners.registerOnce(this, KnightzAPI.getP());
@@ -49,16 +52,15 @@ public class MenuListener implements Listener {
         MenuClickEvent me = convert(e);
 
         Bukkit.getPluginManager().callEvent(me);
-
-        if (me.isCancelled()) {
-            e.setCancelled(true);
-            return;
-        }
         if (me.getClickedButton() == null) {
             return;
         }
-
         me.getClickedButton().getOnClick().accept(me);
+
+        if (me.isCancelled()) {
+            e.setCancelled(true);
+        }
+
 
     }
 

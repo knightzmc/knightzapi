@@ -1,7 +1,7 @@
 language: java
 after_success:
 - echo "Building Javadocs"
-- mvn javadoc:aggregate
+- ./gradlew javadoc
 jobs:
   include:
   - script: echo "Deploying to GitHub Releases..."
@@ -9,7 +9,7 @@ jobs:
       provider: releases
       api_key: $GITHUB_OAUTH_TOKEN
       file:
-        - "knightzapinoweb/target/knightzapinoweb.jar"
+        - "build/libs/knightzapi.jar"
       skip_cleanup: true
       on:
         tags: true
