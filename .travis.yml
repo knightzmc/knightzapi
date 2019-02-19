@@ -2,6 +2,7 @@ language: java
 after_success:
   - echo "Building Javadocs"
   - ./gradlew javadoc
+  - mkdir docs
   - mv build/docs/javadoc docs
 jobs:
   include:
