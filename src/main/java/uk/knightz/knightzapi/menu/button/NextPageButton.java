@@ -58,7 +58,7 @@ public final class NextPageButton extends MenuButton {
     }
 
     /**
-     * Create a new next Page Button with the default back button
+     * Create a new next Page Button with the default back build
      */
     public NextPageButton() {
         super(defaultItem, NextPageButton::accept);

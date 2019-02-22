@@ -57,7 +57,7 @@ public final class BackPageButton extends MenuButton {
     }
 
     /**
-     * Create a new BackPageButton with the default back button ItemStack
+     * Create a new BackPageButton with the default back build ItemStack
      */
     public BackPageButton() {
         super(defaultItem, BackPageButton::accept);

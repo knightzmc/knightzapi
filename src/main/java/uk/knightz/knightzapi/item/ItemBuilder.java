@@ -234,7 +234,7 @@ public class ItemBuilder implements ConfigurationSerializable {
     /**
      * Build the current ItemBuilder to an ItemStack, generateMenu any Player-Dependent placeholders, then give it to the given player
      *
-     * @param player The player who will receive the button
+     * @param player The player who will receive the build
      */
     public void giveToPlayer(Player player) {
         final val i = build();

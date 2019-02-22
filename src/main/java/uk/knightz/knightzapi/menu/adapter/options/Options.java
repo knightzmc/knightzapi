@@ -81,6 +81,11 @@ public class Options {
         return total;
     }
 
+
+    public boolean isAllowSettingValues() {
+        return (settings & Settings.ALLOW_SETTING_VALUES) != 0;
+    }
+
     public boolean isIncludeFields() {
         return (settings & Settings.INCLUDE_FIELDS) != 0;
     }

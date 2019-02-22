@@ -26,8 +26,10 @@ package uk.knightz.knightzapi.menu.adapter.token;
 
 import lombok.Data;
 import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
+import uk.knightz.knightzapi.reflect.Reflection;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * Token that stores attributes about a Field, and a value of that field
@@ -67,5 +69,15 @@ public class FieldToken<V> implements DataToken<Field, V> {
     @Override
     public Class<V> getType() {
         return (Class<V>) value.getClass();
+    }
+
+    @Override
+    public boolean hasSettingFunctionality() {
+        return !Modifier.isFinal(field.getModifiers());
+    }
+
+    @Override
+    public AbstractSetter getSetter() {
+        return o -> Reflection.setFieldValue(field.getField(), value, o);
     }
 }

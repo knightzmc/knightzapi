@@ -35,7 +35,6 @@ import uk.knightz.knightzapi.menu.MenuClickEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -65,11 +64,7 @@ public class MenuButton {
         return this;
     }
 
-    public void injectDataFrom(MenuButton b) {
-        injectDataFrom(b.injectedData);
-    }
-
-    public void injectDataFrom(Map<String, Object> map) {
+    public void injectData(Map<String, Object> map) {
         ItemBuilder builder = new ItemBuilder(item);
         builder.setName(parse(map, builder.getName()));
 
@@ -80,9 +75,13 @@ public class MenuButton {
     }
 
     private String parse(Map<String, Object> data, String s) {
-        AtomicReference<String> str = new AtomicReference<>(s);
-        data.forEach((k, v) -> str.set(str.get().replace(k, v.toString())));
-        return str.get();
+        String str = s;
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            str = str.replace(key, value.toString());
+        }
+        return str;
     }
 
 }

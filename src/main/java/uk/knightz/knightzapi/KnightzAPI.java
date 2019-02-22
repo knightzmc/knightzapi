@@ -46,9 +46,9 @@ import uk.knightz.knightzapi.lang.Log;
 import uk.knightz.knightzapi.lang.fancy.FancyCommand;
 import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.menu.MenuListener;
+import uk.knightz.knightzapi.menu.MenuSerializer;
 import uk.knightz.knightzapi.serializers.InventorySerializer;
 import uk.knightz.knightzapi.serializers.ItemStackJsonSerializer;
-import uk.knightz.knightzapi.menu.MenuSerializer;
 import uk.knightz.knightzapi.user.User;
 import uk.knightz.knightzapi.utils.VersionUtil;
 

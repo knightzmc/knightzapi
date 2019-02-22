@@ -115,7 +115,7 @@ public class Reflection {
      * <p>
      * No caching is used as some getters may not always return the same value if the Object changes state.
      *
-     * @param o The Object
+     * @param o       The Object
      * @param options Options to use
      * @return The map
      */
@@ -157,5 +157,52 @@ public class Reflection {
         }
         return null;
 
+    }
+
+    public static void setFieldValue(Field field, Object value, Object o) {
+        try {
+            field.set(value, o);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Attempt to get a Setter method from a Getter method
+     * If the provided method is something like int getAge(),
+     * the respective Setter must be setAge(int age)
+     *
+     * @param method
+     * @return
+     */
+    public static Method getSetterOfGetter(Method method) {
+        if (!isGetter(method)) return null;
+        String getterName = method.getName();
+        String variableName = method.getName().substring(3); //remove "get"
+        String setterName = "set".concat(variableName);
+
+        return getPublicMethod(method.getDeclaringClass(), setterName, method.getReturnType());
+    }
+
+    public static Method getPublicMethod(Class clazz, String name, Class... parameters) {
+        Method method;
+        try {
+            method = clazz.getMethod(name, parameters);
+        } catch (NoSuchMethodException e) {
+            try {
+                method = clazz.getDeclaredMethod(name, parameters);
+            } catch (NoSuchMethodException e1) {
+                return null;
+            }
+        }
+        if (!Modifier.isPublic(method.getModifiers())) return null;
+        return method;
+    }
+
+
+    public static boolean isGetter(Method method) {
+        return method.getName().contains("get")
+                && method.getParameterCount() == 0
+                && method.getReturnType() != Void.class;
     }
 }

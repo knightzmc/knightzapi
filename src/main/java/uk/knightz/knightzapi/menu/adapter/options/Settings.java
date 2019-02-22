@@ -24,4 +24,9 @@ public class Settings {
      */
     public static final int INCLUDE_STATIC = 4;
 
+    /**
+     * Beta functionality. When enabled, allow the user to set the values of any data they receive
+     */
+    public static final int ALLOW_SETTING_VALUES = 8;
+
 }

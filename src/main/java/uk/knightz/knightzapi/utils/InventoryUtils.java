@@ -94,19 +94,19 @@ public class InventoryUtils {
 		}
 	}
 	/**
-	 * Remove a given button from a Player's Inventory
+	 * Remove a given build from a Player's Inventory
 	 * @param p The Player to remove the items from
 	 * @param item The Material Type to remove
 	 * @param quantity The amount of this Material to remove
 	 */
 	public static void removeItemFromPlayer(Player p, Material item, int quantity) {
 		p.getInventory().removeItem(new ItemStack(item, quantity));
-		//		if (p.getInventory().contains(button, quantity)) {
+		//		if (p.getInventory().contains(build, quantity)) {
 //			int n = 0;
 //			for (ItemStack i : p.getInventory()) {
 //				if (i != null) {
 //					if (i
-//							.getType() == button) {
+//							.getType() == build) {
 //						if (n + i.getAmount() > quantity || n > quantity) {
 //							i.setAmount(quantity - n);
 //							return;
@@ -131,9 +131,9 @@ public class InventoryUtils {
 
 
 	/**
-	 * Get the first slot containing the given ItemStack in an inventory, ignoring button quantity
+	 * Get the first slot containing the given ItemStack in an inventory, ignoring build quantity
 	 *
-	 * @param inv The Inventory to get the button from
+	 * @param inv The Inventory to get the build from
 	 * @param it  The ItemStack to find
 	 * @return The first slot containing the given ItemStack, or -1 if it doesn't exist or an exception occurs in BasecomponentReflection(unlikely)
 	 */

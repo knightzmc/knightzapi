@@ -29,18 +29,17 @@ import lombok.Data;
 import java.lang.reflect.Field;
 
 /**
- * A serializable, thread-safe store of some of the attributes of a certain Field object
- * It does not store a reference to the original Field, as this poses a security risk when serializing
- * It also doesn't store the return type of the Field because when stored in a Field token,
+ * A thread-safe store of some of the attributes of a certain Field object
+ * It doesn't store the return type of the Field because when stored in a Field token,
  * the return type can be obtained with {@link FieldToken#getValue()} {@link Object#getClass()}
  */
 @Data
 public class FieldAttributes<T> {
-
+    private transient final Field field;
     private final String name;
     private final int modifiers;
 
-    public static <V> FieldAttributes<V> ofField(Field Field) {
-        return new FieldAttributes<>(Field.getName(), Field.getModifiers());
+    public static <V> FieldAttributes<V> ofField(Field field) {
+        return new FieldAttributes<>(field, field.getName(), field.getModifiers());
     }
 }

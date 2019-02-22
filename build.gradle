@@ -24,9 +24,10 @@
 
 plugins {
     id 'java'
+    id 'maven'
 }
 group = 'uk.knightz'
-version = '1.1-RELEASE'
+version = '1.1.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -65,6 +66,20 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.16.20'
 }
 
-jar{
-  jar.archiveFileName='knightzapi.jar'
+jar {
+    jar.archiveFileName = 'knightzapi.jar'
+}
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(
+                    url: "${nexusUrl}/repository/maven-releases") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+            snapshotRepository(
+                    url: "${nexusUrl}/repository/maven-snapshots") {
+                authentication(userName: nexusUsername, password: nexusPassword)
+            }
+        }
+    }
 }

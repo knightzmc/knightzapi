@@ -27,6 +27,7 @@ package uk.knightz.knightzapi.menu.adapter.token;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
+import uk.knightz.knightzapi.reflect.Reflection;
 
 import java.lang.reflect.Method;
 
@@ -72,5 +73,15 @@ public class MethodToken<V> implements DataToken<Method, V> {
             return null;
         }
         return (Class<V>) value.getClass();
+    }
+
+    @Override
+    public boolean hasSettingFunctionality() {
+        return method.getSetter() != null;
+    }
+
+    @Override
+    public AbstractSetter getSetter() {
+        return o -> Reflection.callMethod(method.getSetter(), value, o);
     }
 }

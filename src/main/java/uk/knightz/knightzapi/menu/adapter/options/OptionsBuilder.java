@@ -67,6 +67,12 @@ public class OptionsBuilder {
         return this;
     }
 
+
+    public OptionsBuilder allowSettingValues() {
+        this.settings |= Settings.ALLOW_SETTING_VALUES;
+        return this;
+    }
+
     public OptionsBuilder modifierBlacklist(int modifierBlacklist) {
         this.modifierBlacklist = modifierBlacklist;
         return this;

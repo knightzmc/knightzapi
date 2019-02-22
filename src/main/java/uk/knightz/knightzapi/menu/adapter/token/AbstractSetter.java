@@ -24,47 +24,7 @@
 
 package uk.knightz.knightzapi.menu.adapter.token;
 
-/**
- * Any Token
- *
- * @param <O> The type of Token eg Object, Method, Field
- */
-public interface Token<O> {
+public interface AbstractSetter<T> {
 
-
-    /**
-     * An extension of Token for {@link MethodToken} and {@link FieldToken}
-     *
-     * @param <O> The type of Token (Method or Field)
-     * @param <V> The type of Object it stores
-     */
-    interface DataToken<O, V> extends Token {
-
-
-        /**
-         * @return A friendly name of the data. A method will have its "get" removed
-         */
-        String getFriendlyDataName();
-
-        /**
-         * @return A full data name of the data
-         */
-        String getDataName();
-
-        /**
-         * @return The type of Object this Token holds
-         */
-        Class<V> getType();
-
-        /**
-         * @return The actual value of the Token's data
-         */
-        V getValue();
-
-
-        boolean hasSettingFunctionality();
-
-        AbstractSetter getSetter();
-    }
-
+    void setValue(T t);
 }

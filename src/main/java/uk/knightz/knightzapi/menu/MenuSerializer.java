@@ -65,7 +65,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
             try {
                 out.beginObject();
                 out.name("slot").value(integer);
-                out.name("button");
+                out.name("build");
                 KnightzAPI.GSON.getAdapter(ItemStack.class).write(out, menuButton.getItem());
                 if (ClickEventAliases.getInstance().getMapToEvent().containsKey(menuButton.getOnClickAlias()))
                     out.name("alias").value(menuButton.getOnClickAlias());
@@ -108,7 +108,7 @@ public class MenuSerializer extends TypeAdapter<Menu> {
                                 case "slot":
                                     slot = in.nextInt();
                                     break;
-                                case "button":
+                                case "build":
                                     stack = KnightzAPI.GSON.getAdapter(ItemStack.class).read(in);
                                     break;
                                 case "alias":
