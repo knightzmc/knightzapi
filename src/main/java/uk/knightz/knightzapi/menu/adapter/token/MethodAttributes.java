@@ -24,7 +24,6 @@
 
 package uk.knightz.knightzapi.menu.adapter.token;
 
-import com.sun.istack.internal.Nullable;
 import lombok.Data;
 import uk.knightz.knightzapi.reflect.Reflection;
 
@@ -39,7 +38,9 @@ import java.lang.reflect.Method;
 public class MethodAttributes<T> {
 
     private transient final Method method;
-    @Nullable
+    /**
+     * Nullable
+     */
     private transient final Method setter;
     private final String name;
     private final int modifiers;
