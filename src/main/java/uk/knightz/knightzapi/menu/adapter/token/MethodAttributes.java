@@ -37,6 +37,9 @@ import java.lang.reflect.Method;
 @Data
 public class MethodAttributes<T> {
 
+    /**
+     * Nullable
+     */
     private transient final Method method;
     /**
      * Nullable

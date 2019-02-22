@@ -38,7 +38,7 @@ public class PrimitiveToken<T> extends ObjectToken<T> {
     public PrimitiveToken(T value) {
         super(new ArrayList<>(), Collections.singletonList(
                 new MethodToken<>(
-                        new MethodAttributes<>("getValue", 1), //create a fake MethodAttributes class to replicate the value of a primitive type
+                        new MethodAttributes<>(null,null,"getValue", 1), //create a fake MethodAttributes class to replicate the value of a primitive type
                         value)
         ));
     }
