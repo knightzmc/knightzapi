@@ -24,6 +24,8 @@
 
 package uk.knightz.knightzapi.menu.adapter.token;
 
+import uk.knightz.knightzapi.menu.adapter.token.types.AbstractSetter;
+
 /**
  * Any Token
  *
@@ -64,7 +66,7 @@ public interface Token<O> {
 
         boolean hasSettingFunctionality();
 
-        AbstractSetter getSetter();
+        AbstractSetter<V, Object> getSetter();
     }
 
 }

@@ -52,31 +52,56 @@ public class NumberBuilder {
 
     /**
      * Append a Number to the Builder
+     * Only positive numbers are allowed, and so the absolute value of the given number is used
      *
      * @param n the Number to append
      * @return this Builder
      */
     public NumberBuilder append(Number n) {
-        Number[] numbers = Arrays.copyOf(this.numbers, this.numbers.length + 1);
-        numbers[this.numbers.length] = n;
-        this.numbers = numbers;
+        if (n == null) return this;
+        n = Math.abs(n.longValue());
+        Number[] newNumbers = Arrays.copyOf(numbers, numbers.length + 1);
+        newNumbers[this.numbers.length] = n;
+        this.numbers = newNumbers;
         return this;
     }
 
+    public NumberBuilder backspace() {
+        if (isEmpty()) return this;
+        this.numbers = Arrays.copyOf(numbers, numbers.length - 1);
+        return this;
+    }
 
     public long toLong() {
-        StringBuilder buffer = new StringBuilder();
-        for (Number number : numbers) {
-            buffer.append(number.longValue());
-        }
-        return Long.valueOf(buffer.toString());
+        return Long.valueOf(toString());
     }
 
     public int toInt() {
-        StringBuilder buffer = new StringBuilder();
+        return Integer.valueOf(toString());
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
         for (Number number : numbers) {
-            buffer.append(number.intValue());
+            builder.append(number.longValue());
         }
-        return Integer.valueOf(buffer.toString());
+        return builder.toString();
+    }
+
+    public int length() {
+        return numbers.length;
+    }
+
+
+    /**
+     * Check if this builder is empty
+     * Normally an array of objects would loop and check if they are all null,
+     * but we don't allow any null entries. The only way to edit values changes the array length.
+     * However, the builder could be all zeros (000000)
+     *
+     * @return if this builder is empty
+     */
+    public boolean isEmpty() {
+        return length() == 0;
     }
 }

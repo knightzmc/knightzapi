@@ -26,6 +26,7 @@ package uk.knightz.knightzapi.menu.adapter.token;
 
 import lombok.Data;
 import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
+import uk.knightz.knightzapi.menu.adapter.token.types.AbstractSetter;
 import uk.knightz.knightzapi.reflect.Reflection;
 
 import java.lang.reflect.Field;
@@ -77,7 +78,7 @@ public class FieldToken<V> implements DataToken<Field, V> {
     }
 
     @Override
-    public AbstractSetter getSetter() {
-        return o -> Reflection.setFieldValue(field.getField(), value, o);
+    public AbstractSetter<V, Object> getSetter() {
+        return (type, value) -> Reflection.setFieldValue(field.getField(), type, value);
     }
 }

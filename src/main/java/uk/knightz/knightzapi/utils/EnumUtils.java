@@ -56,9 +56,9 @@ public class EnumUtils {
      *
      * @param enm     The Enum
      * @param exclude Any elements from this array will never be selected.
-     * @param ifFull  A Supplier that will be called if there are no enum entries that aren't excluded
+     * @param ifFull  A AbstractSetter that will be called if there are no enum entries that aren't excluded
      * @param <T>     The type of Enum
-     * @return A random Element from the enum that will never be anything in exclude unless include contains all of the Enum constants, in which case the returned value from the Supplier will be returned
+     * @return A random Element from the enum that will never be anything in exclude unless include contains all of the Enum constants, in which case the returned value from the AbstractSetter will be returned
      */
     @SafeVarargs
     public static <T extends Enum<T>> T getRandom(Class<? extends T> enm, Supplier<T> ifFull, T... exclude) {

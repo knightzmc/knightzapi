@@ -24,55 +24,89 @@
 
 package uk.knightz.knightzapi.menu.button.builder;
 
-import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.menu.Menu;
 import uk.knightz.knightzapi.menu.MenuClickEvent;
-import uk.knightz.knightzapi.menu.button.MenuButton;
 
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class MenuButtonClickEventBuilder {
     private final MenuButtonBuilder buttonBuilder;
-    private final Queue<Consumer<MenuClickEvent>> tasks = new LinkedList<>();
+    private final Queue<ClickAction> tasks = new LinkedList<>();
+
+    private Queue<Predicate<MenuClickEvent>> tempConditions = new LinkedList<>();
 
     MenuButtonClickEventBuilder(MenuButtonBuilder previous) {
         this.buttonBuilder = previous;
     }
 
 
-    public MenuButtonClickEventBuilder thenOpenMenu(Menu menu) {
-        tasks.add(e -> menu.open(e.getWhoClicked()));
+    public MenuButtonClickEventBuilder ifSlotIs(int slot) {
+        tempConditions.add(e -> e.getSlot() == slot);
         return this;
+    }
+
+    public MenuButtonClickEventBuilder ifTrue(Supplier<Boolean> supplier) {
+        tempConditions.add(e -> supplier.get());
+        return this;
+    }
+
+    public MenuButtonClickEventBuilder ifTrue(Predicate<MenuClickEvent> check) {
+        tempConditions.add(check);
+        return this;
+    }
+
+    public MenuButtonClickEventBuilder otherwise() {
+        this.tempConditions = inverseTempConditions();
+        return this;
+    }
+
+
+    private Queue<Predicate<MenuClickEvent>> inverseTempConditions() {
+        Queue<Predicate<MenuClickEvent>> list = new LinkedList<>();
+        for (Predicate<MenuClickEvent> tempCondition : tempConditions) {
+            list.add(e -> !tempCondition.test(e));
+        }
+        return list;
+    }
+
+    public MenuButtonClickEventBuilder thenOpenMenu(Menu menu) {
+        return thenAction(e -> menu.open(e.getWhoClicked()));
     }
 
     public MenuButtonClickEventBuilder thenCloseMenu() {
-        tasks.add(e -> e.getWhoClicked().closeInventory());
-        return this;
+        return thenAction(e -> e.getWhoClicked().closeInventory());
     }
 
     public MenuButtonClickEventBuilder thenAction(Consumer<MenuClickEvent> onClick) {
-        tasks.add(onClick);
+        return thenAction(onClick, false);
+    }
+
+    public MenuButtonClickEventBuilder clearConditions() {
+        tempConditions.clear();
         return this;
     }
 
-    public MenuButton build() {
-        ItemStack is = buttonBuilder.build();
-        Consumer<MenuClickEvent> onClick = e -> tasks.forEach(t -> t.accept(e));
-        MenuButton menuButton = new MenuButton(is, onClick);
-        menuButton.injectData(combineInjectMapAndList());
-        return menuButton;
+    public MenuButtonClickEventBuilder thenAction(Consumer<MenuClickEvent> onClick, boolean resetConditions) {
+        tasks.add(new ClickAction(onClick, tempConditions));
+        if (resetConditions)
+            tempConditions = new LinkedList<>();
+        return this;
     }
 
-    private Map<String, Object> combineInjectMapAndList() {
-        LinkedList<Object> list = buttonBuilder.injectedData;
-        Map<String, Object> map = buttonBuilder.injectedDataMap;
-        for (int i = 0, listSize = list.size(); i < listSize; i++) {
-            Object o = list.get(i);
-            map.put(String.valueOf(i), o);
-        }
-        return map;
+    public MenuButtonBuilder done() {
+        return buttonBuilder;
+    }
+
+    Consumer<MenuClickEvent> build() {
+        return e -> tasks.forEach(t -> t.perform(e));
+    }
+
+
+    public MenuButtonClickEventBuilder thenCancel() {
+        return thenAction(e -> e.setCancelled(true));
     }
 }

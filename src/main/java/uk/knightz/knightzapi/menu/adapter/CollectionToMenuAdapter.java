@@ -24,29 +24,17 @@
 
 package uk.knightz.knightzapi.menu.adapter;
 
-import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import uk.knightz.knightzapi.menu.Menu;
-import uk.knightz.knightzapi.menu.MenuEvents;
 import uk.knightz.knightzapi.menu.adapter.iface.ObjectTokenToItemStackAdapter;
 import uk.knightz.knightzapi.menu.adapter.options.Options;
-import uk.knightz.knightzapi.menu.adapter.token.FieldToken;
-import uk.knightz.knightzapi.menu.adapter.token.MethodToken;
 import uk.knightz.knightzapi.menu.adapter.token.ObjectToken;
-import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
+import uk.knightz.knightzapi.menu.adapter.token.factory.ButtonCreator;
 import uk.knightz.knightzapi.menu.adapter.token.factory.TokenFactory;
-import uk.knightz.knightzapi.menu.button.MenuButton;
-import uk.knightz.knightzapi.menu.button.OpenMenuButton;
-import uk.knightz.knightzapi.reflect.Reflection;
 import uk.knightz.knightzapi.utils.ColorUtils;
-import uk.knightz.knightzapi.utils.MathUtils;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Powerful adapter class that takes a Collection (or array) of data and uses reflection to create an interactive Menu GUI
@@ -60,18 +48,6 @@ import java.util.Map;
  * @param <T> The Type of Object in the Collection
  */
 public class CollectionToMenuAdapter<T> {
-
-    /**
-     * If the Object is complex (not a primitive, enum, or String)
-     * we tell users that they can click to view details about it with this Lore String
-     */
-    private static final String VIEW_MORE_LORE = ChatColor.GREEN + "Click for more info";
-
-    /**
-     * String Format for the Title of a Menu showing details about an object
-     * eg: "Person Info" when supplied with a Person object
-     */
-    private static final String VIEW_MORE_TITLE = ChatColor.GREEN + "%s Info";
 
 
     /**
@@ -126,10 +102,15 @@ public class CollectionToMenuAdapter<T> {
             }
             T t = collectionIterator.next();
             ItemStack adapted = adapter.adapt(t, token, null);
-            if (Reflection.isSimpleType(t)) {
-                menu.addButton(createSimpleButton(adapted, t));
-            } else
-                menu.addButton(createDisplayButton(menu, adapted, token, t));
+
+            ButtonCreator creator = new ButtonCreator(options);
+            menu.addButton(creator.convert(adapted, t, token, null, menu));
+//
+//            if (Reflection.isSimpleType(t)) menu.addButton(createSimpleButton(adapted, t));
+//
+//            else if (isEmpty(t)) menu.addButton(createEmptyCollectionButton(adapted, t));
+//
+//            else menu.addButton(createDisplayButton(menu, adapted, token, t));
 
         }
 
@@ -137,78 +118,4 @@ public class CollectionToMenuAdapter<T> {
     }
 
 
-    /**
-     * Create a new MenuButton that displays when clicked, opens a new Menu with information about a corresponding Object
-     */
-    private MenuButton createDisplayButton(Menu parentMenu, ItemStack adapted, ObjectToken<T> token, T t) {
-        String lore = VIEW_MORE_LORE;
-        if (isEmpty(t)) {
-            lore = ChatColor.RED + "List/Array/Map is empty.";
-            if (adapted.hasItemMeta()) {
-                ItemMeta itemMeta = adapted.getItemMeta();
-                itemMeta.setLore(Collections.singletonList(lore));
-                adapted.setItemMeta(itemMeta);
-            }
-            return createSimpleButton(adapted, t);
-        }
-
-        if (adapted.hasItemMeta()) {
-            ItemMeta itemMeta = adapted.getItemMeta();
-            itemMeta.setLore(Collections.singletonList(lore));
-            adapted.setItemMeta(itemMeta);
-        }
-        return new MenuButton(adapted, e -> {
-            e.setCancelled(true);
-            Menu displayMenu = createDisplayMenu(parentMenu, token, t);
-            displayMenu.open(e.getWhoClicked());
-        });
-    }
-
-
-    private Menu createDisplayMenu(Menu parentMenu, ObjectToken<T> token, T t) {
-        if (t instanceof Collection) {
-            return adapt((Collection<T>) t, options);
-        }
-        int size = token.getFieldTokens().size() + token.getMethodTokens().size();
-        if (size == 0) {
-            size = 1;
-        }
-        Menu menu = new Menu(String.format(VIEW_MORE_TITLE, t.getClass().getSimpleName()), MathUtils.roundUp(size) / 9);
-
-        menu.addButton(new OpenMenuButton(parentMenu));
-        for (MethodToken methodToken : token.getMethodTokens()) {
-            menu.addButton(menuButtonOfToken(menu, methodToken));
-        }
-        for (FieldToken fieldToken : token.getFieldTokens()) {
-            menu.addButton(menuButtonOfToken(menu, fieldToken));
-        }
-        return menu;
-    }
-
-    private MenuButton menuButtonOfToken(Menu parentMenu, DataToken<Object, T> dataToken) {
-        T value = dataToken.getValue();
-        ObjectToken token = new TokenFactory<>().generate(value, options);
-
-        ItemStack adapted = adapter.adapt(value, token, dataToken.getFriendlyDataName());
-        if (Reflection.isSimpleType(dataToken.getType())) {
-            return createSimpleButton(adapted, value);
-        } else {
-            return createDisplayButton(parentMenu, adapted, token, value);
-        }
-    }
-
-    private MenuButton createSimpleButton(ItemStack adapted, T t) {
-        return new MenuButton(adapted, MenuEvents.CANCEL);
-    }
-
-    private boolean isEmpty(T t) {
-        if (t instanceof Collection) return ((Collection) t).isEmpty();
-        if (t.getClass().isArray()) {
-            return Array.getLength(t) == 0;
-        }
-        if (t instanceof Map) {
-            return ((Map) t).isEmpty();
-        }
-        return false;
-    }
 }

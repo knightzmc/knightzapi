@@ -123,12 +123,15 @@ public class ItemBuilder implements ConfigurationSerializable {
     public ItemBuilder(ItemStack root) {
         setType(root.getType());
         setAmount(root.getAmount());
-        setName(root.getItemMeta().getDisplayName());
-        flags = root.getItemMeta().getItemFlags();
-        setLore(root.getItemMeta().getLore());
-        setData(root.getDurability());
-        if (root.getItemMeta().spigot().isUnbreakable()) {
-            setUnbreakable(true);
+        if (root.hasItemMeta()) {
+            setName(root.getItemMeta().getDisplayName());
+            flags = root.getItemMeta().getItemFlags();
+            setLore(root.getItemMeta().getLore());
+            setData(root.getDurability());
+            if (VersionUtil.isNewerThan(VersionUtil.Version.v1_8)) {
+                setUnbreakable(root.getItemMeta().isUnbreakable());
+            } else
+                setUnbreakable(root.getItemMeta().spigot().isUnbreakable());
         }
         setEnchantments(root.getEnchantments());
     }
@@ -201,8 +204,9 @@ public class ItemBuilder implements ConfigurationSerializable {
         return this;
     }
 
-    public void addFlag(ItemFlag... flag) {
+    public ItemBuilder addFlag(ItemFlag... flag) {
         flags.addAll(Arrays.asList(flag));
+        return this;
     }
 
     public ItemBuilder setType(Material type) {
@@ -212,6 +216,7 @@ public class ItemBuilder implements ConfigurationSerializable {
     }
 
     public ItemBuilder setLore(List<String> lore) {
+        if (lore == null) return this;
         this.lore = lore;
         return this;
     }
@@ -244,9 +249,6 @@ public class ItemBuilder implements ConfigurationSerializable {
 
 
     public ItemBuilder addLore(String... lore) {
-        if (getLore() == null) {
-            setLore(new ArrayList<>());
-        }
         List<String> loreList = getLore();
         Collections.addAll(loreList, lore);
         setLore(loreList);
@@ -260,34 +262,36 @@ public class ItemBuilder implements ConfigurationSerializable {
      */
     public ItemStack build() {
         ItemStack temp = new ItemStack(type, amount, data, color == null ? null : color.getWoolData());
-        ItemMeta tempMeta = temp.getItemMeta();
-        if (tempMeta == null) return temp;
+        enchantments.forEach(temp::addUnsafeEnchantment);
+        ItemMeta meta = temp.getItemMeta();
+        if (meta == null) return temp;
+
         if (name != null)
-            tempMeta.setDisplayName(Chat.color(name));
-        placeholders.forEach(p -> tempMeta.setDisplayName(p.replace(tempMeta.getDisplayName())));
+            meta.setDisplayName(Chat.color(name));
+
+        placeholders.forEach(p -> meta.setDisplayName(p.replace(meta.getDisplayName())));
         placeholders.forEach(p -> lore.replaceAll(p::replace));
-        tempMeta.setLore(Chat.color(lore));
+        meta.setLore(Chat.color(lore));
         if (unbreakable) {
-            tempMeta.spigot().setUnbreakable(true);
+            meta.spigot().setUnbreakable(true);
         }
 
         if (potion) {
-            PotionMeta meta = (PotionMeta) tempMeta;
-            effects.forEach(ef -> meta.addCustomEffect(ef, true));
+            PotionMeta potionMeta = (PotionMeta) meta;
+            effects.forEach(ef -> potionMeta.addCustomEffect(ef, true));
             if (VersionUtil.isNewerThan(VersionUtil.Version.v1_11)) {
-                meta.setColor(potionColor);
+                potionMeta.setColor(potionColor);
             } else
-                throw new UnsupportedOperationException("Custom potion colours are not supported below version 1.11!");
+                throw new UnsupportedOperationException("Custom potion colours are not supported below version 1.11.");
             if (VersionUtil.isNewerThan(VersionUtil.Version.v1_9))
-                meta.setBasePotionData(new PotionData(potionType));
+                potionMeta.setBasePotionData(new PotionData(potionType));
             else {
-                meta.setMainEffect(potionType.getEffectType());
-                effects.forEach(e -> meta.addCustomEffect(e, true));
+                potionMeta.setMainEffect(potionType.getEffectType());
+                effects.forEach(e -> potionMeta.addCustomEffect(e, true));
             }
         }
-        flags.forEach(tempMeta::addItemFlags);
-        temp.setItemMeta(tempMeta);
-        enchantments.forEach(temp::addUnsafeEnchantment);
+        flags.forEach(meta::addItemFlags);
+        temp.setItemMeta(meta);
         return temp;
     }
 

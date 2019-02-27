@@ -92,7 +92,7 @@ public class Reflection {
         if (cache.containsKey(clazz)) {
             return cache.get(clazz);
         }
-
+        String s;
         //Class classes cause StackOverflow errors because of getClassLoader()
         //and any stored class probably shouldn't be exposed anyway
         if (clazz.equals(Class.class)) {
@@ -159,9 +159,9 @@ public class Reflection {
 
     }
 
-    public static void setFieldValue(Field field, Object value, Object o) {
+    public static void setFieldValue(Field field, Object object, Object value) {
         try {
-            field.set(value, o);
+            field.set(object, value);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

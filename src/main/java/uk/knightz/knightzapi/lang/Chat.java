@@ -34,55 +34,56 @@ import java.util.stream.Collectors;
  * A Utility class of various Chat related functions
  */
 public class Chat {
-	private Chat() {
-	}
+    private Chat() {
+    }
 
-	/**
-	 * Apply color codes to a given String
-	 *
-	 * @param msg The String to colorize
-	 * @return The colorized String
-	 */
-	public static String color(String msg) {
-		if (msg == null) {
-			return null;
-		}
-		return ChatColor.translateAlternateColorCodes('&', msg);
-	}
+    /**
+     * Apply color codes to a given String
+     *
+     * @param msg The String to colorize
+     * @return The colorized String
+     */
+    public static String color(String msg) {
+        if (msg == null) {
+            return null;
+        }
+        return ChatColor.translateAlternateColorCodes('&', msg);
+    }
 
-	/**
-	 * Strip colors from a given String
-	 *
-	 * @param msg The colored String
-	 * @return The String with all colors removed
-	 */
-	public static String decolor(String msg) {
-		return ChatColor.stripColor(msg);
-	}
+    /**
+     * Strip colors from a given String
+     *
+     * @param msg The colored String
+     * @return The String with all colors removed
+     */
+    public static String stripColor(String msg) {
+        return ChatColor.stripColor(msg);
+    }
 
-	/**
-	 * Color a list of Strings
-	 * If the given List is null, then an empty List is returned
-	 *
-	 * @param msgs The list of Strings to colorize
-	 * @return The List of Strings with each element colorized.
-	 */
-	public static List<String> color(List<String> msgs) {
-		if (msgs == null) {
-			return new ArrayList<>();
-		}
-		return msgs.stream().map(Chat::color).collect(Collectors.toCollection(ArrayList::new));
-	}
+    /**
+     * Color a list of Strings
+     * If the given List is null, then an empty List is returned
+     *
+     * @param messages The list of Strings to colorize
+     * @return The List of Strings with each element colorized.
+     */
+    public static List<String> color(List<String> messages) {
+        if (messages == null) {
+            return new ArrayList<>();
+        }
+        return messages.stream().map(Chat::color).collect(Collectors.toCollection(ArrayList::new));
+    }
 
-	/**
-	 * Attempt to center a String of text in the default Minecraft Chat Window.
-	 * Obviously, this doesn't take changed settings into account.
-	 * @param text The text to center
-	 * @return An attempt at centering the text.
-	 */
-	public static String center(String text) {
-		int maxWidth = 80;
-		int spaces = (int) Math.round(((double) maxWidth - 1.4 * (double) ChatColor.stripColor(text).length()) / 2.0);
-		return StringUtils.repeat(" ", spaces) + text;
-	}
+    /**
+     * Attempt to center a String of text in the default Minecraft Chat Window.
+     * This doesn't take changed settings into account as the client doesn't send this data
+     *
+     * @param text The text to center
+     * @return An attempt at centering the text.
+     */
+    public static String center(String text) {
+        int maxWidth = 80;
+        int spaces = (int) Math.round(((double) maxWidth - 1.4 * (double) ChatColor.stripColor(text).length()) / 2.0);
+        return StringUtils.repeat(" ", spaces) + text;
+    }
 }

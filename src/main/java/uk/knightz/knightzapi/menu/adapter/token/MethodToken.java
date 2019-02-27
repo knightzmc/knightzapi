@@ -27,21 +27,22 @@ package uk.knightz.knightzapi.menu.adapter.token;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import uk.knightz.knightzapi.menu.adapter.token.Token.DataToken;
-import uk.knightz.knightzapi.reflect.Reflection;
+import uk.knightz.knightzapi.menu.adapter.token.types.AbstractSetter;
 
 import java.lang.reflect.Method;
 
 /**
- * Token that stores attributes about a Method, and a value of that Method
+ * Token that stores attributes about a Method (almost always a getter, even if not necessarily named "getX"),
+ * and a return value of that Method
  *
  * @param <V> The type of Value (ie the type of the Method)
  */
 @Data
 public class MethodToken<V> implements DataToken<Method, V> {
-    private final MethodAttributes<V> method;
+    private final GetterAttributes<V> method;
     private V value;
 
-    public MethodToken(MethodAttributes<V> method, V value) {
+    public MethodToken(GetterAttributes<V> method, V value) {
         this.method = method;
         this.value = value;
     }
@@ -51,9 +52,10 @@ public class MethodToken<V> implements DataToken<Method, V> {
     }
 
     public MethodToken(Method method, V v) {
-        this.method = MethodAttributes.ofMethod(method);
+        this.method = GetterAttributes.ofMethod(method);
         this.value = v;
     }
+
 
 
     @Override
@@ -81,7 +83,7 @@ public class MethodToken<V> implements DataToken<Method, V> {
     }
 
     @Override
-    public AbstractSetter getSetter() {
-        return o -> Reflection.callMethod(method.getSetter(), value, o);
+    public AbstractSetter<V, Object> getSetter() {
+        return method.getSetter();
     }
 }

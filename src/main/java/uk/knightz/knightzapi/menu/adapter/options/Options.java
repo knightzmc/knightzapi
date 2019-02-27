@@ -82,7 +82,7 @@ public class Options {
     }
 
 
-    public boolean isAllowSettingValues() {
+    public boolean allowSettingValues() {
         return (settings & Settings.ALLOW_SETTING_VALUES) != 0;
     }
 

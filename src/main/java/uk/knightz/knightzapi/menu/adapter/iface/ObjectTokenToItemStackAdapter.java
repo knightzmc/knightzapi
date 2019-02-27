@@ -40,9 +40,9 @@ public interface ObjectTokenToItemStackAdapter<T> {
      *
      * @param data             The actual Object to convert
      * @param token            The ObjectToken of this Object
-     * @param obtainedFromName A nullable String that essentially says where this method was called from. EG it might be "getChild" if we are currently converting a TestData object that was obtained by calling TestData#getChild
+     * @param source A nullable String that essentially says where this method was called from. EG it might be "getChild" if we are currently converting a TestData object that was obtained by calling TestData#getChild
      * @return An ItemStack representing the given ObjectToken
      */
-    ItemStack adapt(T data, ObjectToken<T> token, String obtainedFromName);
+    ItemStack adapt(T data, ObjectToken<T> token, String source);
 
 }

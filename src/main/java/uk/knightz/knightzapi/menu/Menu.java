@@ -167,6 +167,9 @@ public class Menu {
         return this.buttons;
     }
 
+    public MenuButton getButton(int slot){
+        return buttons.get(slot);
+    }
     Inventory getInventory() {
         return inventory;
     }

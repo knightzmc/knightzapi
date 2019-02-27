@@ -66,7 +66,6 @@ public class KnightzAPI extends JavaPlugin implements Listener {
     private static KnightzAPI plugin;
     private static FileConfiguration config;
 
-
     @Getter
     private Economy economy;
     @Getter

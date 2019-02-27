@@ -55,9 +55,9 @@ import java.util.List;
 @Data
 public class ObjectToken<T> implements Token<Object> {
 
-    private final List<FieldToken> fieldTokens;
+    protected final List<FieldToken> fieldTokens;
 
-    private final List<MethodToken> methodTokens;
+    protected final List<MethodToken> methodTokens;
 
     public boolean hasNoValues() {
         return fieldTokens.isEmpty() && methodTokens.isEmpty();

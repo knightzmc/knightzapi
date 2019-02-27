@@ -43,16 +43,20 @@ public class DefaultObjectTokenToItemStackAdapter<T> implements ObjectTokenToIte
     private static final String FORMAT = "%s%s = %s";
 
     @Override
-    public ItemStack adapt(T data, ObjectToken<T> token, String obtainedFromName) {
+    public ItemStack adapt(T data, ObjectToken<T> token, String source) {
         List<DataToken> allData =
                 Stream.concat(token.getFieldTokens().stream(),
                         token.getMethodTokens().stream()).collect(Collectors.toList());
 
-        String name = ColorUtils.colorOfClass(data.getClass()) + (obtainedFromName == null ? data.getClass().getSimpleName() : obtainedFromName);
+        String name = ColorUtils.colorOfClass(data.getClass()) + (source == null ? data.getClass().getSimpleName() : source);
         Material type = attemptExtractType(data, allData);
         List<String> dataStrings = new ArrayList<>();
-        allData.forEach(f -> dataStrings.add(colorString(f)));
+        allData.forEach(f -> {
+            String string = colorString(f);
+            dataStrings.add(string);
+        });
         dataStrings.removeIf(Objects::isNull);
+        dataStrings.removeIf(String::isEmpty);
         return new ItemBuilder().setType(type).setName(name).setLore(dataStrings).build();
     }
 

@@ -26,15 +26,12 @@ package uk.knightz.knightzapi.menu.button;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.val;
 import org.bukkit.inventory.ItemStack;
 import uk.knightz.knightzapi.item.ItemBuilder;
 import uk.knightz.knightzapi.menu.ClickEventAliases;
 import uk.knightz.knightzapi.menu.MenuClickEvent;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -66,20 +63,18 @@ public class MenuButton {
 
     public void injectData(Map<String, Object> map) {
         ItemBuilder builder = new ItemBuilder(item);
-        builder.setName(parse(map, builder.getName()));
+        builder.setName(replace(map, builder.getName()));
 
-        val lore = builder.getLore();
-        builder.getLore().clear();
-        lore.forEach(s -> builder.addLore(parse(map, s)));
+        List<String> lore = builder.getLore();
+        builder.setLore(new ArrayList<>());
+        lore.forEach(s -> builder.addLore(replace(map, s)));
         item.setItemMeta(builder.build().getItemMeta());
     }
 
-    private String parse(Map<String, Object> data, String s) {
+    private String replace(Map<String, Object> data, String s) {
         String str = s;
         for (Map.Entry<String, Object> entry : data.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            str = str.replace(key, value.toString());
+            str = str.replace(entry.getKey(), entry.getValue().toString());
         }
         return str;
     }

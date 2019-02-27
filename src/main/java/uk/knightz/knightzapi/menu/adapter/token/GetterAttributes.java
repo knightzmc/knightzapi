@@ -24,7 +24,36 @@
 
 package uk.knightz.knightzapi.menu.adapter.token;
 
-public interface AbstractSetter<T> {
+import lombok.Data;
+import uk.knightz.knightzapi.menu.adapter.token.types.AbstractGetter;
+import uk.knightz.knightzapi.menu.adapter.token.types.AbstractSetter;
+import uk.knightz.knightzapi.reflect.Reflection;
 
-    void setValue(T t);
+import java.lang.reflect.Method;
+
+/**
+ * A thread-safe store of some of the attributes of a certain Method object
+ * It doesn't store the return type of the Method because when stored in a Method token,
+ * the return type can be obtained with {@link MethodToken#getValue()} {@link Object#getClass()}
+ */
+@Data
+public class GetterAttributes<T> {
+    /**
+     * Nullable
+     */
+    private transient final AbstractGetter method;
+    /**
+     * Nullable
+     */
+    private transient final AbstractSetter<T, Object> setter;
+    private final String name;
+    private final int modifiers;
+
+    public static <V> GetterAttributes<V> ofMethod(Method method) {
+        return new GetterAttributes<>(
+                clazz -> Reflection.callMethod(method, clazz),
+                (type, value) -> Reflection.callMethod(Reflection.getSetterOfGetter(method), type, value),
+                method.getName(),
+                method.getModifiers());
+    }
 }
