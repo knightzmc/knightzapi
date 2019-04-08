@@ -42,7 +42,7 @@ public class VersionUtil {
     public static Version getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         if (name.contains("knightzapi")) {
-            return Version.v1_12; //Testing
+            return Version.v1_12; //For Unit Testing
         }
         String versionPackage = name.substring(name.lastIndexOf(46) + 1) + ".";
         Version[] var2 = Version.values();
@@ -79,20 +79,15 @@ public class VersionUtil {
 
 
     public enum Version {
-        v1_8(1),
-        v1_9(2),
-        v1_10(3),
-        v1_11(4),
-        v1_12(5);
+        v1_8,
+        v1_9,
+        v1_10,
+        v1_11,
+        v1_12;
 
-        private final int v;
-
-        Version(int v) {
-            this.v = v;
-        }
 
         public int version() {
-            return v;
+            return ordinal();
         }
 
         public boolean matchesPackageName(String name) {

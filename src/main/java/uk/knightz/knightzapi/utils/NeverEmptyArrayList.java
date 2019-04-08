@@ -26,31 +26,20 @@ package uk.knightz.knightzapi.utils;
 import org.apache.commons.lang.Validate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * A wrapper class of ArrayList that cannot be empty
  *
  * @param <E> The element type of the List
  */
-public class NotEmptyArrayList<E> extends ArrayList<E> {
+public class NeverEmptyArrayList<E> extends ArrayList<E> {
 
-	public NotEmptyArrayList(E initial) {
+	public NeverEmptyArrayList(E initial) {
 		this.ensureCapacity(1);
 		Validate.notNull(initial);
 		add(initial);
 	}
 
-	@SafeVarargs
-	public NotEmptyArrayList(E... initial) {
-		super(Arrays.stream(initial).collect(Collectors.toList()));
-	}
-
-	@SafeVarargs
-	public static <T> NotEmptyArrayList<T> asNotEmptyArrayList(T... args) {
-		return new NotEmptyArrayList<>(args);
-	}
 
 	public E getFirst() {
 		return get(0);
@@ -67,7 +56,7 @@ public class NotEmptyArrayList<E> extends ArrayList<E> {
 	@Override
 	public E remove(int index) {
 		if (size() == 1) {
-			throw new UnsupportedOperationException("Removal of element would make NotEmptyArrayList empty");
+			throw new UnsupportedOperationException("Removal of element would make NeverEmptyArrayList empty");
 		}
 		return super.remove(index);
 	}

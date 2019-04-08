@@ -23,14 +23,14 @@
 
 package uk.knightz.knightzapi.item;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,7 +43,6 @@ import uk.knightz.knightzapi.lang.placeholder.Placeholder;
 import uk.knightz.knightzapi.utils.VersionUtil;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 /**
  * A builder class for creating {@link ItemStack} objects.
@@ -52,8 +51,6 @@ import java.util.function.BiConsumer;
 @Data
 @NoArgsConstructor
 public class ItemBuilder implements ConfigurationSerializable {
-    @Getter
-    private final List<ItemBuilderPlayerPlaceholder> playerDependentPlaceholders = new ArrayList<>();
     private String name = null;
     private Material type = Material.AIR;
     private Set<ItemFlag> flags = new HashSet<>();
@@ -112,7 +109,6 @@ public class ItemBuilder implements ConfigurationSerializable {
         setPotion(previous.potion);
         setPotionColor(previous.potionColor);
         setPotionType(previous.potionType);
-        getPlayerDependentPlaceholders().addAll(previous.playerDependentPlaceholders);
     }
 
     /**
@@ -236,17 +232,6 @@ public class ItemBuilder implements ConfigurationSerializable {
         return this;
     }
 
-    /**
-     * Build the current ItemBuilder to an ItemStack, generateMenu any Player-Dependent placeholders, then give it to the given player
-     *
-     * @param player The player who will receive the build
-     */
-    public void giveToPlayer(Player player) {
-        final val i = build();
-        playerDependentPlaceholders.forEach(p -> p.replacementFromPlayer.accept(player, i));
-        player.getInventory().addItem(i);
-    }
-
 
     public ItemBuilder addLore(String... lore) {
         List<String> loreList = getLore();
@@ -293,47 +278,6 @@ public class ItemBuilder implements ConfigurationSerializable {
         flags.forEach(meta::addItemFlags);
         temp.setItemMeta(meta);
         return temp;
-    }
-
-    /**
-     * A Placeholder that requires a Player provided to it, but will format the ItemStack in some way depending to that Player
-     */
-    public static class ItemBuilderPlayerPlaceholder {
-        private final String placeholder;
-        private final BiConsumer<Player, ItemStack> replacementFromPlayer;
-
-        public ItemBuilderPlayerPlaceholder(String placeholder, BiConsumer<Player, ItemStack> getReplacementFromPlayer) {
-            this.replacementFromPlayer = getReplacementFromPlayer;
-            this.placeholder = placeholder;
-        }
-    }
-
-    /**
-     * A collection of actions that can be performed on an ItemStack to change some aspect of it.
-     * Largely unused, made for a contract that needed dynamic ItemStack editing.
-     */
-    public static class ItemActions<EXPECTED_TYPE> {
-        public static final ItemActions SET_NAME = new ItemActions<String>((s, i) -> {
-            val m = i.getItemMeta();
-            m.setDisplayName(s);
-            i.setItemMeta(m);
-        });
-        public static final ItemActions SET_TYPE = new ItemActions<Material>((s, i) -> i.setType(s));
-        public static final ItemActions SET_COLOR = new ItemActions<DyeColor>((s, i) -> {
-            val d = i.getData();
-            d.setData(s.getWoolData());
-            i.setData(d);
-        });
-        private final BiConsumer<EXPECTED_TYPE, ItemStack> apply;
-
-        private ItemActions(BiConsumer<EXPECTED_TYPE, ItemStack> apply) {
-            this.apply = apply;
-        }
-
-        @NonNull
-        public void apply(EXPECTED_TYPE type, ItemStack itemStack) {
-            apply.accept(type, itemStack);
-        }
     }
 
 }
